@@ -2,6 +2,11 @@ package com.example.siscat.controller;
 
 import com.example.siscat.dto.PersonDto;
 import com.example.siscat.service.PersonService;
+import com.example.siscat.session.UserSession;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +18,11 @@ import java.util.List;
 public class PersonController {
 
     private final PersonService personService;
+    private final UserSession userSession;
 
-    public PersonController(PersonService personService) {
+    public PersonController(PersonService personService, UserSession userSession) {
         this.personService = personService;
+        this.userSession = userSession;
     }
 
     @GetMapping
@@ -44,5 +51,17 @@ public class PersonController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         personService.delete(id);
+    }
+
+    /**
+     * Ejemplo de acceso a la session del usuario usando {@link UserSession}.
+     */
+    @GetMapping("/session-info")
+    public Map<String, Object> sessionInfo() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("user", userSession.getUser());
+        data.put("roles", userSession.getRoles());
+        data.put("config", userSession.getConfig());
+        return data;
     }
 }

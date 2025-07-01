@@ -13,4 +13,13 @@ Este proyecto es un ejemplo sencillo de backend usando Spring Boot con autentica
 - `PUT /persons/{id}` – Actualizar persona (requiere rol `ADMIN`).
 - `DELETE /persons/{id}` – Eliminar persona (requiere rol `ADMIN`).
 
+- `GET /persons/session-info` – Ejemplo de acceso a la sesion del usuario.
+
 La documentación OpenAPI/Swagger se genera en `/swagger-ui.html` cuando la aplicación está en ejecución.
+
+## Sesión de usuario
+
+Cada petición autenticada inicializa un bean `UserSession` con la información del
+usuario logeado, sus roles y los parámetros de configuración relevantes. Este
+bean tiene alcance de petición y puede inyectarse en cualquier controlador o
+servicio.

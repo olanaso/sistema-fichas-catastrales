@@ -2,6 +2,10 @@ package com.example.siscat.controller;
 
 import com.example.siscat.model.Persona;
 import com.example.siscat.service.PersonaService;
+import com.example.siscat.session.UserSession;
+
+import java.util.HashMap;
+import java.util.Map;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +19,11 @@ import java.util.List;
 public class PersonaController {
 
     private final PersonaService service;
+    private final UserSession userSession;
 
-    public PersonaController(PersonaService service) {
+    public PersonaController(PersonaService service, UserSession userSession) {
         this.service = service;
+        this.userSession = userSession;
     }
 
     /**
@@ -58,5 +64,17 @@ public class PersonaController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    /**
+     * Ejemplo de uso de la session de usuario.
+     */
+    @GetMapping("/session-info")
+    public Map<String, Object> sessionInfo() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("user", userSession.getUser());
+        data.put("roles", userSession.getRoles());
+        data.put("config", userSession.getConfig());
+        return data;
     }
 }
