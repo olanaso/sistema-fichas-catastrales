@@ -1,6 +1,7 @@
 package com.example.siscat.config;
 
 import com.example.siscat.repository.UserRepository;
+import com.example.siscat.config.UserSessionFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,10 +22,14 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
     private final UserRepository userRepository;
+    private final UserSessionFilter userSessionFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtFilter, UserRepository userRepository) {
+    public SecurityConfig(JwtAuthenticationFilter jwtFilter,
+                          UserRepository userRepository,
+                          UserSessionFilter userSessionFilter) {
         this.jwtFilter = jwtFilter;
         this.userRepository = userRepository;
+        this.userSessionFilter = userSessionFilter;
     }
 
     @Bean
@@ -53,7 +58,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/auth/login", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .anyRequest().authenticated())
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(userSessionFilter, JwtAuthenticationFilter.class);
         return http.build();
     }
 }
