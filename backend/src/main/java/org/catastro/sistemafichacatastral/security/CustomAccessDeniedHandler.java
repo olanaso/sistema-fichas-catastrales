@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.catastro.sistemafichacatastral.exception.ErrorResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -14,6 +15,9 @@ import java.io.IOException;
 
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
@@ -29,7 +33,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                 request.getRequestURI()
         );
         
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getOutputStream(), errorResponse);
+        objectMapper.writeValue(response.getOutputStream(), errorResponse);
     }
 } 

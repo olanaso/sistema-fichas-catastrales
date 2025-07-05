@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido al Sistema</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #27ae60;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 5px 5px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #27ae60;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sistema de Fichas Catastrales</h1>
+        <h2>¡Bienvenido!</h2>
+    </div>
+    
+    <div class="content">
+        <p>Hola <strong th:text="${userName}">Usuario</strong>,</p>
+        
+        <p>¡Bienvenido al Sistema de Fichas Catastrales!</p>
+        
+        <p>Tu cuenta ha sido creada exitosamente y ya puedes acceder al sistema con tus credenciales.</p>
+        
+        <div class="info">
+            <strong>📋 Información importante:</strong>
+            <ul>
+                <li>Tu cuenta tiene permisos de administrador</li>
+                <li>Puedes gestionar usuarios y roles del sistema</li>
+                <li>Para mayor seguridad, te recomendamos cambiar tu contraseña en tu primer acceso</li>
+            </ul>
+        </div>
+        
+        <p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>
+        
+        <p>¡Que tengas un excelente día!</p>
+        
+        <p>Saludos,<br>
+        <strong>Equipo del Sistema de Fichas Catastrales</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>Este es un email automático, por favor no respondas a este mensaje.</p>
+        <p>© 2024 Sistema de Fichas Catastrales. Todos los derechos reservados.</p>
+    </div>
+</body>
+</html> 

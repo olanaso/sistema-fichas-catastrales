@@ -11,4 +11,5 @@ public class UsuarioRegisterDto {
     private String dni;
     private Integer edad;
     private Integer idRol;
+    private String codigoRol;
 }
