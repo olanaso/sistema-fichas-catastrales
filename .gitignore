@@ -1,0 +1,21 @@
+# Ignorar node_modules en cualquier lugar
+**/node_modules/
+
+# Ignorar logs
+logs
+*.log
+npm-debug.log*
+
+# Ignorar entorno
+.env
+
+# Ignorar sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar build
+dist/
+build/
+
+# Ignorar carpeta de caché
+.cache/
