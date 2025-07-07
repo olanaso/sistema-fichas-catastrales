@@ -1,11 +1,11 @@
-import api from '../../../config/api'
+import { privateApi } from '../../../config/api'
 
 // Servicio para gestión de usuarios
 export const usuariosService = {
     // Obtener todos los usuarios
     async getAll(params = {}) {
         try {
-            const response = await api.get('/usuarios', { params })
+            const response = await privateApi.get('/usuarios', { params })
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -18,7 +18,7 @@ export const usuariosService = {
     // Obtener usuario por ID
     async getById(id) {
         try {
-            const response = await api.get(`/usuarios/${id}`)
+            const response = await privateApi.get(`/usuarios/${id}`)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -31,7 +31,7 @@ export const usuariosService = {
     // Crear nuevo usuario
     async create(userData) {
         try {
-            const response = await api.post('/usuarios', userData)
+            const response = await privateApi.post('/usuarios', userData)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -44,7 +44,7 @@ export const usuariosService = {
     // Actualizar usuario
     async update(id, userData) {
         try {
-            const response = await api.put(`/usuarios/${id}`, userData)
+            const response = await privateApi.put(`/usuarios/${id}`, userData)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -57,7 +57,7 @@ export const usuariosService = {
     // Eliminar usuario
     async delete(id) {
         try {
-            await api.delete(`/usuarios/${id}`)
+            await privateApi.delete(`/usuarios/${id}`)
             return { success: true }
         } catch (error) {
             return {
@@ -70,7 +70,7 @@ export const usuariosService = {
     // Búsqueda de usuarios
     async search(searchTerm, filters = {}) {
         try {
-            const response = await api.get('/usuarios/search', {
+            const response = await privateApi.get('/usuarios/search', {
                 params: { q: searchTerm, ...filters }
             })
             return { success: true, data: response.data }
@@ -85,7 +85,7 @@ export const usuariosService = {
     // Cambiar contraseña
     async changePassword(id, passwordData) {
         try {
-            const response = await api.put(`/usuarios/${id}/password`, passwordData)
+            const response = await privateApi.put(`/usuarios/${id}/password`, passwordData)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -98,7 +98,7 @@ export const usuariosService = {
     // Activar/desactivar usuario
     async toggleStatus(id) {
         try {
-            const response = await api.put(`/usuarios/${id}/toggle-status`)
+            const response = await privateApi.put(`/usuarios/${id}/toggle-status`)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -111,7 +111,7 @@ export const usuariosService = {
     // Obtener roles disponibles
     async getRoles() {
         try {
-            const response = await api.get('/usuarios/roles')
+            const response = await privateApi.get('/usuarios/roles')
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -124,7 +124,7 @@ export const usuariosService = {
     // Asignar rol a usuario
     async assignRole(userId, roleId) {
         try {
-            const response = await api.post(`/usuarios/${userId}/roles`, { roleId })
+            const response = await privateApi.post(`/usuarios/${userId}/roles`, { roleId })
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -137,7 +137,7 @@ export const usuariosService = {
     // Remover rol de usuario
     async removeRole(userId, roleId) {
         try {
-            await api.delete(`/usuarios/${userId}/roles/${roleId}`)
+            await privateApi.delete(`/usuarios/${userId}/roles/${roleId}`)
             return { success: true }
         } catch (error) {
             return {
@@ -150,7 +150,7 @@ export const usuariosService = {
     // Obtener permisos de usuario
     async getPermissions(userId) {
         try {
-            const response = await api.get(`/usuarios/${userId}/permissions`)
+            const response = await privateApi.get(`/usuarios/${userId}/permissions`)
             return { success: true, data: response.data }
         } catch (error) {
             return {

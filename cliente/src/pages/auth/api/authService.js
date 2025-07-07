@@ -1,30 +1,39 @@
-import api from '../../../config/api'
+import { publicApi, privateApi } from '../../../config/api'
 
 // Servicio de autenticación
 export const authService = {
-    // Iniciar sesión
+    // Iniciar sesión (usa API pública)
     async login(credentials) {
         try {
-            const response = await api.post('/auth/login', credentials)
-            const { token, user } = response.data
-
-            // Guardar token en localStorage
-            localStorage.setItem('authToken', token)
-            localStorage.setItem('user', JSON.stringify(user))
-
-            return { success: true, data: response.data }
+            const response = await publicApi.post('/auth/login', {
+                email: credentials.email,
+                password: credentials.password
+            })
+            
+            const { success, data } = response.data
+            
+            if (success && data) {
+                // Guardar tokens y usuario en localStorage
+                localStorage.setItem('accessToken', data.accessToken)
+                localStorage.setItem('refreshToken', data.refreshToken)
+                localStorage.setItem('user', JSON.stringify(data.user))
+                
+                return { success: true, data: data }
+            }
+            
+            return { success: false, error: 'Respuesta inválida del servidor' }
         } catch (error) {
-            return {
-                success: false,
-                error: error.response?.data?.message || 'Error en el login'
+            return { 
+                success: false, 
+                error: error.response?.data?.message || 'Error en el login' 
             }
         }
     },
 
-    // Registrar usuario
+    // Registrar usuario (usa API pública)
     async register(userData) {
         try {
-            const response = await api.post('/auth/register', userData)
+            const response = await publicApi.post('/auth/register', userData)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -34,19 +43,52 @@ export const authService = {
         }
     },
 
-    // Cerrar sesión
+    // Solicitar reset de contraseña (usa API pública)
+    async forgotPassword(email) {
+        try {
+            const response = await publicApi.post('/auth/forgot-password', email)
+            
+            return { success: true, data: response.data }
+        } catch (error) {
+            return { 
+                success: false, 
+                error: error.response?.data?.message || 'Error al enviar solicitud de reset' 
+            }
+        }
+    },
+
+    // Reset de contraseña (usa API pública)
+    async resetPassword(resetData) {
+        try {
+            const response = await publicApi.post('/auth/reset-password', {
+                token: resetData.token,
+                password: resetData.password
+            })
+            
+            return { success: true, data: response.data }
+        } catch (error) {
+            return { 
+                success: false, 
+                error: error.response?.data?.message || 'Error al resetear contraseña' 
+            }
+        }
+    },
+
+    // Cerrar sesión (usa API privada)
     async logout() {
         try {
-            await api.post('/auth/logout')
-            localStorage.removeItem('authToken')
-            localStorage.removeItem('user')
-            return { success: true }
+            // Intentar cerrar sesión en el servidor
+            await privateApi.post('/auth/logout')
         } catch (error) {
-            // Aunque falle la petición, limpiamos el localStorage
-            localStorage.removeItem('authToken')
+            console.warn('Error al cerrar sesión en servidor:', error)
+        } finally {
+            // Siempre limpiar localStorage
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken') 
             localStorage.removeItem('user')
-            return { success: true }
         }
+        
+        return { success: true }
     },
 
     // Obtener usuario actual
@@ -57,59 +99,47 @@ export const authService = {
 
     // Verificar si está autenticado
     isAuthenticated() {
-        return !!localStorage.getItem('authToken')
+        return !!localStorage.getItem('accessToken')
     },
 
-    // Refrescar token
+    // Obtener token de acceso
+    getAccessToken() {
+        return localStorage.getItem('accessToken')
+    },
+
+    // Obtener refresh token
+    getRefreshToken() {
+        return localStorage.getItem('refreshToken')
+    },
+
+    // Refrescar token (usa API pública ya que puede incluir refresh token)
     async refreshToken() {
         try {
-            const response = await api.post('/auth/refresh')
-            const { token } = response.data
-            localStorage.setItem('authToken', token)
-            return { success: true, token }
-        } catch (error) {
-            return {
-                success: false,
-                error: error.response?.data?.message || 'Error al refrescar token'
+            const refreshToken = this.getRefreshToken()
+            if (!refreshToken) {
+                throw new Error('No hay refresh token disponible')
             }
-        }
-    },
 
-    // Validar token
-    async validateToken() {
-        try {
-            const response = await api.get('/auth/validate')
-            return { success: true, data: response.data }
-        } catch (error) {
-            return {
-                success: false,
-                error: error.response?.data?.message || 'Token no válido'
+            const response = await publicApi.post('/auth/refresh', {
+                refreshToken: refreshToken
+            })
+            
+            const { data } = response.data
+            if (data && data.accessToken) {
+                localStorage.setItem('accessToken', data.accessToken)
+                if (data.refreshToken) {
+                    localStorage.setItem('refreshToken', data.refreshToken)
+                }
+                return { success: true, token: data.accessToken }
             }
-        }
-    },
-
-    // Solicitar reset de contraseña
-    async requestPasswordReset(email) {
-        try {
-            const response = await api.post('/auth/request-password-reset', { email })
-            return { success: true, data: response.data }
+            
+            return { success: false, error: 'Respuesta inválida' }
         } catch (error) {
-            return {
-                success: false,
-                error: error.response?.data?.message || 'Error al solicitar reset de contraseña'
-            }
-        }
-    },
-
-    // Reset de contraseña
-    async resetPassword(token, newPassword) {
-        try {
-            const response = await api.post('/auth/reset-password', { token, newPassword })
-            return { success: true, data: response.data }
-        } catch (error) {
-            return {
-                success: false,
-                error: error.response?.data?.message || 'Error al resetear contraseña'
+            // Si falla el refresh, cerrar sesión
+            this.logout()
+            return { 
+                success: false, 
+                error: error.response?.data?.message || 'Error al refrescar token' 
             }
         }
     }

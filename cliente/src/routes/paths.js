@@ -1,11 +1,18 @@
 // Definición de rutas del sistema
 export const Paths = {
+    // Rutas principales
     dashboard: '/dashboard',
     emergencia: '/emergencia',
     config: '/config',
     contacto: '/contacto',
     usuarios: '/usuarios',
     calendar: '/config/events/calendar',
+    
+    // Rutas de autenticación
+    login: '/login',
+    forgotPassword: '/forgot-password',
+    resetPassword: '/reset-password',
+    
     // Agregar más rutas según sea necesario
 }
 
@@ -30,6 +37,9 @@ export const getBreadcrumb = (pathname) => {
         '/contacto': 'Contactos',
         '/usuarios': 'Usuarios',
         '/config/events/calendar': 'Eventos - Calendario',
+        '/login': 'Iniciar Sesión',
+        '/forgot-password': 'Recuperar Contraseña',
+        '/reset-password': 'Nueva Contraseña',
     }
 
     return breadcrumbs[pathname] || 'Página'

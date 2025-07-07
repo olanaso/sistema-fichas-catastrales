@@ -1,59 +1,95 @@
 import axios from 'axios'
 
 // Configuración base de la API
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
+const API_BASE_URL = 'http://localhost:8081/api'
 
-// Crear instancia de axios
-const api = axios.create({
+// Configuración base común
+const baseConfig = {
     baseURL: API_BASE_URL,
     timeout: 10000, // 10 segundos
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
-})
+}
 
-// Interceptor para peticiones (request)
-api.interceptors.request.use(
+// =====================================================
+// API PÚBLICA - Sin token (para login, registro, etc.)
+// =====================================================
+const publicApi = axios.create(baseConfig)
+
+// Interceptor para peticiones públicas
+publicApi.interceptors.request.use(
     (config) => {
-        // Agregar token de autenticación si existe
-        const token = localStorage.getItem('authToken')
+        return config
+    },
+    (error) => {
+        console.error('❌ Public Request Error:', error)
+        return Promise.reject(error)
+    }
+)
+
+// Interceptor para respuestas públicas
+publicApi.interceptors.response.use(
+    (response) => {
+        return response
+    },
+    (error) => {
+        if (error.response) {
+            const { status, data } = error.response
+            console.error('❌ Public API Error:', status, data)
+        } else if (error.request) {
+            // Error de red - no respuesta del servidor
+            if (error.request.status === 0) {
+                console.error('❌ Servidor no disponible: Verifica que el backend esté ejecutándose en http://localhost:8081')
+                error.message = 'No se puede conectar al servidor. Verifica que esté ejecutándose.'
+            } else {
+                console.error('❌ Public Network Error:', error.request)
+            }
+        } else {
+            console.error('❌ Public Error:', error.message)
+        }
+        return Promise.reject(error)
+    }
+)
+
+// =====================================================
+// API PRIVADA - Con token (para operaciones autenticadas)
+// =====================================================
+const privateApi = axios.create(baseConfig)
+
+// Interceptor para peticiones privadas (agregar token)
+privateApi.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('accessToken')
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
-        }
-
-        // Log para desarrollo
-        if (import.meta.env.DEV) {
-            console.log('🚀 Request:', config.method?.toUpperCase(), config.url)
         }
 
         return config
     },
     (error) => {
-        console.error('❌ Request Error:', error)
+        console.error('❌ Private Request Error:', error)
         return Promise.reject(error)
     }
 )
 
-// Interceptor para respuestas (response)
-api.interceptors.response.use(
+// Interceptor para respuestas privadas (manejo de token expirado)
+privateApi.interceptors.response.use(
     (response) => {
-        // Log para desarrollo
-        if (import.meta.env.DEV) {
-            console.log('✅ Response:', response.status, response.config.url)
-        }
-
         return response
     },
     (error) => {
-        // Manejo de errores comunes
         if (error.response) {
             const { status, data } = error.response
 
             switch (status) {
                 case 401:
                     // Token expirado o no válido
-                    localStorage.removeItem('authToken')
+                    console.error('❌ Token expirado o no válido')
+                    localStorage.removeItem('accessToken')
+                    localStorage.removeItem('refreshToken')
+                    localStorage.removeItem('user')
                     window.location.href = '/login'
                     break
                 case 403:
@@ -66,16 +102,26 @@ api.interceptors.response.use(
                     console.error('❌ Error del servidor')
                     break
                 default:
-                    console.error('❌ Error de respuesta:', status, data)
+                    console.error('❌ Private API Error:', status, data)
             }
         } else if (error.request) {
-            console.error('❌ Error de red:', error.request)
+            // Error de red - no respuesta del servidor
+            if (error.request.status === 0) {
+                console.error('❌ Servidor no disponible: Verifica que el backend esté ejecutándose en http://localhost:8081')
+                error.message = 'No se puede conectar al servidor. Verifica que esté ejecutándose.'
+            } else {
+                console.error('❌ Private Network Error:', error.request)
+            }
         } else {
-            console.error('❌ Error:', error.message)
+            console.error('❌ Private Error:', error.message)
         }
 
         return Promise.reject(error)
     }
 )
 
-export default api 
+// Exportar ambas instancias
+export { publicApi, privateApi }
+
+// Exportar publicApi como default para compatibilidad
+export default publicApi 

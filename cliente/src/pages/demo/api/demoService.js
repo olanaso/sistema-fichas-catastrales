@@ -1,11 +1,11 @@
-import api from '../../../config/api'
+import { publicApi } from '../../../config/api'
 
 // Servicio para funcionalidades demo
 export const demoService = {
     // Obtener datos de prueba
     async getTestData() {
         try {
-            const response = await api.get('/demo/test-data')
+            const response = await publicApi.get('/demo/test-data')
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -33,7 +33,7 @@ export const demoService = {
     // Probar conexión con API
     async testConnection() {
         try {
-            const response = await api.get('/health')
+            const response = await publicApi.get('/health')
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -46,7 +46,7 @@ export const demoService = {
     // Enviar datos de prueba
     async sendTestData(data) {
         try {
-            const response = await api.post('/demo/test', data)
+            const response = await publicApi.post('/demo/test', data)
             return { success: true, data: response.data }
         } catch (error) {
             return {

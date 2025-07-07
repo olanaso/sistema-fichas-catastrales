@@ -1,11 +1,11 @@
-import api from '../../../config/api'
+import { privateApi } from '../../../config/api'
 
 // Servicio para fichas catastrales
 export const fichasCatastralesService = {
     // Obtener todas las fichas catastrales
     async getAll(params = {}) {
         try {
-            const response = await api.get('/fichas-catastrales', { params })
+            const response = await privateApi.get('/fichas-catastrales', { params })
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -18,7 +18,7 @@ export const fichasCatastralesService = {
     // Obtener ficha catastral por ID
     async getById(id) {
         try {
-            const response = await api.get(`/fichas-catastrales/${id}`)
+            const response = await privateApi.get(`/fichas-catastrales/${id}`)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -31,7 +31,7 @@ export const fichasCatastralesService = {
     // Crear nueva ficha catastral
     async create(fichaData) {
         try {
-            const response = await api.post('/fichas-catastrales', fichaData)
+            const response = await privateApi.post('/fichas-catastrales', fichaData)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -44,7 +44,7 @@ export const fichasCatastralesService = {
     // Actualizar ficha catastral
     async update(id, fichaData) {
         try {
-            const response = await api.put(`/fichas-catastrales/${id}`, fichaData)
+            const response = await privateApi.put(`/fichas-catastrales/${id}`, fichaData)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -57,7 +57,7 @@ export const fichasCatastralesService = {
     // Eliminar ficha catastral
     async delete(id) {
         try {
-            await api.delete(`/fichas-catastrales/${id}`)
+            await privateApi.delete(`/fichas-catastrales/${id}`)
             return { success: true }
         } catch (error) {
             return {
@@ -70,7 +70,7 @@ export const fichasCatastralesService = {
     // Buscar fichas catastrales
     async search(searchTerm, filters = {}) {
         try {
-            const response = await api.get('/fichas-catastrales/search', {
+            const response = await privateApi.get('/fichas-catastrales/search', {
                 params: { q: searchTerm, ...filters }
             })
             return { success: true, data: response.data }
@@ -85,7 +85,7 @@ export const fichasCatastralesService = {
     // Obtener fichas por coordenadas (geolocalización)
     async getByCoordinates(lat, lng, radius = 1000) {
         try {
-            const response = await api.get('/fichas-catastrales/geo', {
+            const response = await privateApi.get('/fichas-catastrales/geo', {
                 params: { lat, lng, radius }
             })
             return { success: true, data: response.data }
@@ -100,7 +100,7 @@ export const fichasCatastralesService = {
     // Obtener fichas por polígono
     async getByPolygon(polygon) {
         try {
-            const response = await api.post('/fichas-catastrales/polygon', { polygon })
+            const response = await privateApi.post('/fichas-catastrales/polygon', { polygon })
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -117,7 +117,7 @@ export const fichasCatastralesService = {
             formData.append('file', file)
             formData.append('metadata', JSON.stringify(metadata))
 
-            const response = await api.post('/fichas-catastrales/upload-geo', formData, {
+            const response = await privateApi.post('/fichas-catastrales/upload-geo', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -134,7 +134,7 @@ export const fichasCatastralesService = {
     // Procesar archivo Shapefile
     async processShapefile(fileData) {
         try {
-            const response = await api.post('/fichas-catastrales/process-shapefile', fileData)
+            const response = await privateApi.post('/fichas-catastrales/process-shapefile', fileData)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -147,7 +147,7 @@ export const fichasCatastralesService = {
     // Obtener estadísticas de fichas
     async getStatistics() {
         try {
-            const response = await api.get('/fichas-catastrales/statistics')
+            const response = await privateApi.get('/fichas-catastrales/statistics')
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -160,7 +160,7 @@ export const fichasCatastralesService = {
     // Exportar fichas a diferentes formatos
     async export(format = 'excel', filters = {}) {
         try {
-            const response = await api.get('/fichas-catastrales/export', {
+            const response = await privateApi.get('/fichas-catastrales/export', {
                 params: { format, ...filters },
                 responseType: 'blob'
             })
@@ -176,7 +176,7 @@ export const fichasCatastralesService = {
     // Validar datos de ficha
     async validateFicha(fichaData) {
         try {
-            const response = await api.post('/fichas-catastrales/validate', fichaData)
+            const response = await privateApi.post('/fichas-catastrales/validate', fichaData)
             return { success: true, data: response.data }
         } catch (error) {
             return {
@@ -189,7 +189,7 @@ export const fichasCatastralesService = {
     // Obtener historial de cambios
     async getHistory(fichaId) {
         try {
-            const response = await api.get(`/fichas-catastrales/${fichaId}/history`)
+            const response = await privateApi.get(`/fichas-catastrales/${fichaId}/history`)
             return { success: true, data: response.data }
         } catch (error) {
             return {
