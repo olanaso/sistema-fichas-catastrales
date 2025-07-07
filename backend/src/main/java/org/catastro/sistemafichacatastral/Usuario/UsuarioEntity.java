@@ -33,9 +33,6 @@ public class UsuarioEntity implements UserDetails {
     @Column( length = 100, nullable = false)
     private String apellidos;
 
-    @Column( length = 100, nullable = false)
-    private Integer edad;
-
     @Column( length = 150, nullable = false)
     private String email;
 

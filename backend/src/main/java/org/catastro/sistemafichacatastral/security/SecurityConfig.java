@@ -37,8 +37,8 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/usuarios/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/usuarios/register").hasRole("ADMIN")
+                        .requestMatchers("/usuarios/**").hasAnyRole("ADMIN", "SUPERVISOR", "INSPECTOR")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling

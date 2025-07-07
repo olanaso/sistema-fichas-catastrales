@@ -18,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,28 +39,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UsuarioEntity>> register(@RequestBody UsuarioRegisterDto usuarioRegisterDto) {
+    public ResponseEntity<ApiResponse<UsuarioEntity>> register(@Valid @RequestBody UsuarioRegisterDto usuarioRegisterDto) {
         try {
-            // Validaciones básicas
-            if (usuarioRegisterDto.getNombres() == null || usuarioRegisterDto.getNombres().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El nombre es obligatorio"));
-            }
-            if (usuarioRegisterDto.getApellidos() == null || usuarioRegisterDto.getApellidos().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Los apellidos son obligatorios"));
-            }
-            if (usuarioRegisterDto.getEmail() == null || usuarioRegisterDto.getEmail().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El email es obligatorio"));
-            }
-            if (usuarioRegisterDto.getPassword() == null || usuarioRegisterDto.getPassword().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("La contraseña es obligatoria"));
-            }
-            if (usuarioRegisterDto.getDni() == null || usuarioRegisterDto.getDni().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El DNI es obligatorio"));
-            }
-            if (usuarioRegisterDto.getEdad() == null || usuarioRegisterDto.getEdad() <= 0) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("La edad debe ser mayor a 0"));
-            }
-
             UsuarioEntity usuario = this.usuarioService.create(usuarioRegisterDto);
             
             // Enviar email de bienvenida
@@ -79,28 +60,8 @@ public class AuthController {
     }
 
     @PostMapping("/register-admin")
-    public ResponseEntity<ApiResponse<UsuarioEntity>> registerAdmin(@RequestBody UsuarioRegisterDto usuarioRegisterDto) {
+    public ResponseEntity<ApiResponse<UsuarioEntity>> registerAdmin(@Valid @RequestBody UsuarioRegisterDto usuarioRegisterDto) {
         try {
-            // Validaciones básicas
-            if (usuarioRegisterDto.getNombres() == null || usuarioRegisterDto.getNombres().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El nombre es obligatorio"));
-            }
-            if (usuarioRegisterDto.getApellidos() == null || usuarioRegisterDto.getApellidos().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Los apellidos son obligatorios"));
-            }
-            if (usuarioRegisterDto.getEmail() == null || usuarioRegisterDto.getEmail().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El email es obligatorio"));
-            }
-            if (usuarioRegisterDto.getPassword() == null || usuarioRegisterDto.getPassword().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("La contraseña es obligatoria"));
-            }
-            if (usuarioRegisterDto.getDni() == null || usuarioRegisterDto.getDni().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El DNI es obligatorio"));
-            }
-            if (usuarioRegisterDto.getEdad() == null || usuarioRegisterDto.getEdad() <= 0) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("La edad debe ser mayor a 0"));
-            }
-
             UsuarioEntity usuario = this.usuarioService.create(usuarioRegisterDto);
             return ResponseEntity.ok(ApiResponse.success("Administrador registrado exitosamente", usuario));
         } catch (RuntimeException e) {
@@ -111,33 +72,10 @@ public class AuthController {
     }
 
     @PostMapping("/register-with-role")
-    public ResponseEntity<ApiResponse<UsuarioEntity>> registerWithRole(@RequestBody UsuarioRegisterDto usuarioRegisterDto) {
+    public ResponseEntity<ApiResponse<UsuarioEntity>> registerWithRole(@Valid @RequestBody UsuarioRegisterDto usuarioRegisterDto) {
         try {
-            // Validaciones básicas
-            if (usuarioRegisterDto.getNombres() == null || usuarioRegisterDto.getNombres().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El nombre es obligatorio"));
-            }
-            if (usuarioRegisterDto.getApellidos() == null || usuarioRegisterDto.getApellidos().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Los apellidos son obligatorios"));
-            }
-            if (usuarioRegisterDto.getEmail() == null || usuarioRegisterDto.getEmail().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El email es obligatorio"));
-            }
-            if (usuarioRegisterDto.getPassword() == null || usuarioRegisterDto.getPassword().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("La contraseña es obligatoria"));
-            }
-            if (usuarioRegisterDto.getDni() == null || usuarioRegisterDto.getDni().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El DNI es obligatorio"));
-            }
-            if (usuarioRegisterDto.getEdad() == null || usuarioRegisterDto.getEdad() <= 0) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("La edad debe ser mayor a 0"));
-            }
-            if (usuarioRegisterDto.getCodigoRol() == null || usuarioRegisterDto.getCodigoRol().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("El código de rol es obligatorio"));
-            }
-
-            UsuarioEntity usuario = this.usuarioService.createWithSpecificRole(usuarioRegisterDto, usuarioRegisterDto.getCodigoRol());
-            return ResponseEntity.ok(ApiResponse.success("Usuario registrado exitosamente con rol: " + usuarioRegisterDto.getCodigoRol(), usuario));
+            UsuarioEntity usuario = this.usuarioService.createWithSpecificRole(usuarioRegisterDto);
+            return ResponseEntity.ok(ApiResponse.success("Usuario registrado exitosamente con rol ID: " + usuarioRegisterDto.getIdRol(), usuario));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al registrar usuario: " + e.getMessage()));
         } catch (Exception e) {

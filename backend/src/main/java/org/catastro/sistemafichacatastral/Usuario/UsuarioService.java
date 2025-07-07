@@ -80,7 +80,6 @@ public class UsuarioService {
         usuarioEntity.setApellidos(usuarioRegisterDto.getApellidos());
         usuarioEntity.setDni(usuarioRegisterDto.getDni());
         usuarioEntity.setEmail(usuarioRegisterDto.getEmail());
-        usuarioEntity.setEdad(usuarioRegisterDto.getEdad());
         usuarioEntity.setPassword(passwordEncoder.encode(usuarioRegisterDto.getPassword()));
 
         // Asignar automáticamente el rol de administrador
@@ -104,7 +103,7 @@ public class UsuarioService {
         }
     }
 
-    public UsuarioEntity createWithSpecificRole(UsuarioRegisterDto usuarioRegisterDto, String roleCode) {
+    public UsuarioEntity createWithSpecificRole(UsuarioRegisterDto usuarioRegisterDto) {
         // Verificar si el usuario ya existe por email
         if(usuarioRepository.findByEmail(usuarioRegisterDto.getEmail()).isPresent()){
             throw new RuntimeException("El usuario con el correo ya existe");
@@ -120,16 +119,15 @@ public class UsuarioService {
         usuarioEntity.setApellidos(usuarioRegisterDto.getApellidos());
         usuarioEntity.setDni(usuarioRegisterDto.getDni());
         usuarioEntity.setEmail(usuarioRegisterDto.getEmail());
-        usuarioEntity.setEdad(usuarioRegisterDto.getEdad());
         usuarioEntity.setPassword(passwordEncoder.encode(usuarioRegisterDto.getPassword()));
 
-        // Asignar el rol específico
+        // Asignar el rol específico por ID
         Set<RolEntity> roles = new HashSet<>();
         try {
-            RolEntity rol = rolService.findByCodigoOrThrow(roleCode);
+            RolEntity rol = rolService.findByIdOrThrow(usuarioRegisterDto.getIdRol().longValue());
             roles.add(rol);
         } catch (ResourceNotFoundException e) {
-            throw new RuntimeException("El rol con código '" + roleCode + "' no existe");
+            throw new RuntimeException("El rol con ID '" + usuarioRegisterDto.getIdRol() + "' no existe");
         }
         
         usuarioEntity.setRol(roles);
@@ -150,8 +148,7 @@ public class UsuarioService {
         usuario.setApellidos(usuarioDetails.getApellidos());
         usuario.setDni(usuarioDetails.getDni());
         usuario.setEmail(usuarioDetails.getEmail());
-        usuario.setEdad(usuarioDetails.getEdad());
-        
+
         if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
         }

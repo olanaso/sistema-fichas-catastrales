@@ -34,6 +34,11 @@ public class RolService {
                 .orElseThrow(() -> new ResourceNotFoundException("Rol", "codigo", codigo));
     }
 
+    public RolEntity findByIdOrThrow(Long id) {
+        return rolRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rol", "id", id));
+    }
+
     /* FUNCIONES POST */
 
     public RolEntity create(String rolName, String rolCode) {
