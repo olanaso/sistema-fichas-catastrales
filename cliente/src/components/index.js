@@ -1,0 +1,42 @@
+// Exportaciones de componentes generales
+export * from './layout'
+
+// Componentes existentes
+export { default as Button } from './Button'
+export { default as AlertItem } from './AlertItem'
+export { default as Alerts } from './Alerts'
+export { default as BreadCrumb } from './BreadCrumb'
+export { default as ButtonModal } from './ButtonModal'
+export { default as ButtonToggle } from './ButtonToggle'
+export { default as ComboOptions } from './ComboOptions'
+export { default as FormLogin } from './FormLogin'
+export { default as Header } from './Header'
+export { default as InputCheckbox } from './InputCheckbox'
+export { default as InputFile } from './InputFile'
+export { default as InputGroup } from './InputGroup'
+export { default as InputRadio } from './InputRadio'
+export { default as InputWeather } from './InputWeather'
+export { default as Menu } from './Menu'
+export { default as Select } from './Select'
+export { default as Switch } from './Switch'
+export { default as Table } from './Table'
+export { default as TableItem } from './TableItem'
+export { default as TableItemAnalysis } from './TableItemAnalysis'
+export { default as TableItemCheck } from './TableItemCheck'
+export { default as TableItemSimple } from './TableItemSimple'
+export { default as Tags } from './Tags'
+export { default as TextArea } from './TextArea'
+
+// Layout Components
+export { default as BaseLayout } from './layout/BaseLayout'
+export { default as AdminLayout } from './layout/AdminLayout'
+export { default as Navbar } from './layout/Navbar'
+export { default as Sidebar } from './layout/Sidebar'
+export { default as PageHeader } from './layout/PageHeader'
+
+// Common Components
+export { default as PageContainer } from './common/PageContainer'
+export { default as DataTable } from './common/DataTable'
+export { default as SearchFilters } from './common/SearchFilters'
+export { default as LoadingState } from './common/LoadingState'
+export { default as ComingSoon } from './common/ComingSoon' 
