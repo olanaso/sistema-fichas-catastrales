@@ -75,7 +75,7 @@ const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole
                         >
                             <i className={`${item.icon} ${collapsed ? 'fs-5' : 'me-3'}`}></i>
                             {!collapsed && (
-                                <div className="flex-grow-1">
+                                <div className="">
                                     <div className="fw-semibold">{item.title}</div>
                                     {item.description && (
                                         <small className="opacity-75">{item.description}</small>

@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom'
 
 const PageHeader = ({ title, breadcrumbItems = [], actions = null }) => {
     return (
-        <div className="bg-white">
+        <div className="">
             <div className="container-fluid py-3">
-                <Row className="align-items-center">
+                <Row className="align-items-left">
                     <Col>
                         {/* Breadcrumb simplificado */}
                         {breadcrumbItems.length > 0 && (
@@ -25,7 +25,7 @@ const PageHeader = ({ title, breadcrumbItems = [], actions = null }) => {
                         )}
 
                         {/* Título de la página */}
-                        <h1 className="h4 mb-0 fw-bold text-dark">{title}</h1>
+                        <h4 className=" fw-bold text-dark d-flex justify-content-left">{title}</h4>
                     </Col>
 
                     {/* Acciones */}
