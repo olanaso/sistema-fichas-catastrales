@@ -87,8 +87,8 @@ const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
                             style={{ 
                                 paddingLeft: collapsed ? '0px' : `${paddingLeft}px`,
                                 paddingRight: collapsed ? '0px' : '12px',
-                                marginLeft: collapsed ? '10px' : '12px',
-                                marginRight: collapsed ? '10px' : '12px'
+                                marginLeft: collapsed ? '10px' : '0px',
+                                marginRight: collapsed ? '10px' : '0px'
                             }}
                             title={collapsed ? item.title : ''}
                         >
@@ -158,7 +158,7 @@ const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
 
             {/* Menú de navegación - Ocupa el espacio disponible */}
             <div className="flex-grow-1 overflow-auto">
-                <Nav className={`flex-column ${collapsed ? 'p-0' : 'p-2'}`}>
+                <Nav className={`flex-column ${collapsed ? 'p-0' : 'p-3'}`}>
                     {menuItems.map(item => renderMenuItem(item))}
                 </Nav>
             </div>
