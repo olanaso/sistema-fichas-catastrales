@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Card, Row, Col, Form, Button, Badge, Collapse } from 'react-bootstrap'
-import { FilterButton } from './ActionButtons'
+import { FilterButton } from '../buttons'
 
 const FilterPanel = ({
     // Búsqueda

@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal, Form, Row, Col } from 'react-bootstrap'
-import { SaveButton, CancelButton } from './ActionButtons'
+import { SaveButton, CancelButton } from '../buttons/ActionButtons'
+import { useToast, ValidationErrors } from '../feedback/ToastSystem'
 
 const CreateModal = ({
     show = false,
@@ -14,57 +15,130 @@ const CreateModal = ({
     keyboard = false,
     initialData = {},
     customBody = null,
+    validationSchema = null,
+    validateField = null,
+    validateForm = null,
+    showInlineErrors = true,
+    showToastErrors = true,
     ...props
 }) => {
     const [formData, setFormData] = useState(initialData)
     const [errors, setErrors] = useState({})
+    const [touched, setTouched] = useState({})
+    const { showValidationErrors, showApiError, showSuccess } = useToast()
+
+    // Reset form cuando se abre/cierra el modal
+    useEffect(() => {
+        if (show) {
+            setFormData(initialData)
+            setErrors({})
+            setTouched({})
+        }
+    }, [show, initialData])
 
     const handleChange = (fieldKey, value) => {
         setFormData(prev => ({
             ...prev,
             [fieldKey]: value
         }))
+        
+        // Marcar campo como tocado
+        setTouched(prev => ({
+            ...prev,
+            [fieldKey]: true
+        }))
 
-        // Limpiar error si existe
-        if (errors[fieldKey]) {
+        // Validar campo en tiempo real si hay schema
+        if (validateField && validationSchema) {
+            const validation = validateField(fieldKey, value, validationSchema)
             setErrors(prev => ({
                 ...prev,
-                [fieldKey]: null
+                [fieldKey]: validation.isValid ? null : validation.error
+            }))
+        }
+    }
+
+    const handleBlur = (fieldKey) => {
+        setTouched(prev => ({
+            ...prev,
+            [fieldKey]: true
+        }))
+
+        // Validar al salir del campo
+        if (validateField && validationSchema) {
+            const validation = validateField(fieldKey, formData[fieldKey], validationSchema)
+            setErrors(prev => ({
+                ...prev,
+                [fieldKey]: validation.isValid ? null : validation.error
             }))
         }
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
-        // Validación básica
-        const newErrors = {}
+        
+        // Marcar todos los campos como tocados
+        const allTouched = {}
         fields.forEach(field => {
-            if (field.required && !formData[field.key]) {
-                newErrors[field.key] = `${field.label} es requerido`
-            }
+            allTouched[field.key] = true
         })
+        setTouched(allTouched)
 
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors)
+        // Validación completa del formulario
+        let formErrors = {}
+        let isValid = true
+
+        if (validateForm && validationSchema) {
+            const validation = validateForm(formData, validationSchema)
+            isValid = validation.isValid
+            formErrors = validation.errors
+            setErrors(formErrors)
+        } else {
+            // Validación básica sin schema
+            fields.forEach(field => {
+                if (field.required && !formData[field.key]) {
+                    formErrors[field.key] = `${field.label} es requerido`
+                    isValid = false
+                }
+            })
+            setErrors(formErrors)
+        }
+
+        if (!isValid) {
+            if (showToastErrors) {
+                showValidationErrors(formErrors, 'Complete los campos requeridos')
+            }
             return
         }
 
-        // Llamar función onSave
-        if (onSave) {
-            await onSave(formData)
+        try {
+            // Llamar función onSave
+            if (onSave) {
+                const result = await onSave(formData)
+                
+                // Si retorna un resultado exitoso, mostrar mensaje y cerrar
+                if (result !== false) {
+                    showSuccess('Elemento creado exitosamente')
+                    handleClose()
+                }
+            }
+        } catch (error) {
+            showApiError(error, 'Error al crear el elemento')
         }
     }
 
     const handleClose = () => {
         setFormData(initialData)
         setErrors({})
+        setTouched({})
         onHide && onHide()
     }
 
     const renderField = (field) => {
         const value = formData[field.key] || ''
         const error = errors[field.key]
+        const isTouched = touched[field.key]
+        const showError = showInlineErrors && error && isTouched
 
         switch (field.type) {
             case 'text':
@@ -77,11 +151,13 @@ const CreateModal = ({
                         placeholder={field.placeholder}
                         value={value}
                         onChange={(e) => handleChange(field.key, e.target.value)}
-                        isInvalid={!!error}
+                        onBlur={() => handleBlur(field.key)}
+                        isInvalid={showError}
                         disabled={field.disabled || loading}
                         min={field.min}
                         max={field.max}
                         step={field.step}
+                        readOnly={field.readOnly}
                     />
                 )
 
@@ -93,8 +169,10 @@ const CreateModal = ({
                         placeholder={field.placeholder}
                         value={value}
                         onChange={(e) => handleChange(field.key, e.target.value)}
-                        isInvalid={!!error}
+                        onBlur={() => handleBlur(field.key)}
+                        isInvalid={showError}
                         disabled={field.disabled || loading}
+                        readOnly={field.readOnly}
                     />
                 )
 
@@ -103,7 +181,8 @@ const CreateModal = ({
                     <Form.Select
                         value={value}
                         onChange={(e) => handleChange(field.key, e.target.value)}
-                        isInvalid={!!error}
+                        onBlur={() => handleBlur(field.key)}
+                        isInvalid={showError}
                         disabled={field.disabled || loading}
                     >
                         <option value="">{field.placeholder || 'Seleccionar...'}</option>
@@ -121,8 +200,10 @@ const CreateModal = ({
                         type="date"
                         value={value}
                         onChange={(e) => handleChange(field.key, e.target.value)}
-                        isInvalid={!!error}
+                        onBlur={() => handleBlur(field.key)}
+                        isInvalid={showError}
                         disabled={field.disabled || loading}
+                        readOnly={field.readOnly}
                     />
                 )
 
@@ -131,7 +212,8 @@ const CreateModal = ({
                     <Form.Control
                         type="file"
                         onChange={(e) => handleChange(field.key, e.target.files[0])}
-                        isInvalid={!!error}
+                        onBlur={() => handleBlur(field.key)}
+                        isInvalid={showError}
                         disabled={field.disabled || loading}
                         accept={field.accept}
                     />
@@ -155,12 +237,17 @@ const CreateModal = ({
                         placeholder={field.placeholder}
                         value={value}
                         onChange={(e) => handleChange(field.key, e.target.value)}
-                        isInvalid={!!error}
+                        onBlur={() => handleBlur(field.key)}
+                        isInvalid={showError}
                         disabled={field.disabled || loading}
+                        readOnly={field.readOnly}
                     />
                 )
         }
     }
+
+    // Contar errores para mostrar resumen
+    const errorCount = Object.values(errors).filter(Boolean).length
 
     return (
         <Modal
@@ -181,8 +268,16 @@ const CreateModal = ({
 
             <Form onSubmit={handleSubmit}>
                 <Modal.Body>
+                    {/* Mostrar errores de validación como resumen */}
+                    {showInlineErrors && errorCount > 0 && (
+                        <ValidationErrors 
+                            errors={errors} 
+                            className="mb-3"
+                        />
+                    )}
+
                     {customBody ? (
-                        customBody(formData, handleChange, errors)
+                        customBody(formData, handleChange, errors, handleBlur)
                     ) : (
                         <Row className="g-3">
                             {fields.map((field) => (
@@ -191,17 +286,19 @@ const CreateModal = ({
                                         {field.type !== 'checkbox' && (
                                             <Form.Label className="fw-semibold">
                                                 {field.label}
-                                                {field.required && <span className="text-danger">*</span>}
+                                                {field.required && <span className="text-danger ms-1">*</span>}
+                                                {field.readOnly && <span className="text-muted ms-1">(Solo lectura)</span>}
                                             </Form.Label>
                                         )}
                                         {renderField(field)}
-                                        {errors[field.key] && (
-                                            <Form.Control.Feedback type="invalid">
+                                        {showInlineErrors && errors[field.key] && touched[field.key] && (
+                                            <Form.Control.Feedback type="invalid" className="d-block">
                                                 {errors[field.key]}
                                             </Form.Control.Feedback>
                                         )}
                                         {field.help && (
                                             <Form.Text className="text-muted">
+                                                <i className="fas fa-info-circle me-1"></i>
                                                 {field.help}
                                             </Form.Text>
                                         )}
@@ -213,19 +310,31 @@ const CreateModal = ({
                 </Modal.Body>
 
                 <Modal.Footer className="bg-light">
-                    <CancelButton
-                        onClick={handleClose}
-                        disabled={loading}
-                    >
-                        Cancelar
-                    </CancelButton>
-                    <SaveButton
-                        type="submit"
-                        loading={loading}
-                        disabled={loading}
-                    >
-                        Guardar
-                    </SaveButton>
+                    <div className="d-flex justify-content-between align-items-center w-100">
+                        <div>
+                            {errorCount > 0 && (
+                                <small className="text-danger">
+                                    <i className="fas fa-exclamation-circle me-1"></i>
+                                    {errorCount} error{errorCount > 1 ? 'es' : ''} de validación
+                                </small>
+                            )}
+                        </div>
+                        <div className="d-flex gap-2">
+                            <CancelButton 
+                                onClick={handleClose}
+                                disabled={loading}
+                            >
+                                Cancelar
+                            </CancelButton>
+                            <SaveButton 
+                                type="submit"
+                                loading={loading}
+                                disabled={loading || (showInlineErrors && errorCount > 0)}
+                            >
+                                Guardar
+                            </SaveButton>
+                        </div>
+                    </div>
                 </Modal.Footer>
             </Form>
         </Modal>

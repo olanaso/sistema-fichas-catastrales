@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Alert } from 'react-bootstrap'
-import { DeleteButton, CancelButton } from './ActionButtons'
+import { DeleteButton, CancelButton } from '../buttons'
 
 const DeleteModal = ({
     show = false,

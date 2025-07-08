@@ -1,27 +1,44 @@
-// Exportaciones de layout
+// ==================================================
+// EXPORTACIONES ORGANIZADAS POR CARPETAS
+// ==================================================
+
+// 📂 Layout Components
 export { default as BaseLayout } from './layout/BaseLayout'
 export { default as AdminLayout } from './layout/AdminLayout'
 export { default as AppNavbar } from './layout/Navbar'
 export { default as Sidebar } from './layout/Sidebar'
 
-// Exportaciones de componentes comunes
-export { default as Button } from './common/Button'
-export { default as Card } from './common/Card'
-export { default as PageContainer } from './common/PageContainer'
-export { default as SearchFilters } from './common/SearchFilters'
-export { default as LoadingState } from './common/LoadingState'
-export { default as ComingSoon } from './common/ComingSoon'
+// 📂 UI Components (Componentes básicos de interfaz)
+export { default as Button } from './ui/Button'
+export { default as Card } from './ui/Card'
+export { default as PageContainer } from './ui/PageContainer'
 
-export { default as DataTable } from './common/DataTable'
-export { default as FilterPanel } from './common/FilterPanel'
-export { default as Pagination, SimplePagination } from './common/Pagination'
+// 📂 Table Components (Tablas, paginación y filtros)
+export { default as DataTable } from './tables/DataTable'
+export { default as FilterPanel } from './tables/FilterPanel'
+export { default as Pagination, SimplePagination } from './tables/Pagination'
 
-// Modales reutilizables
-export { default as CreateModal } from './common/CreateModal'
-export { default as EditModal } from './common/EditModal'
-export { default as DeleteModal } from './common/DeleteModal'
+// 📂 Form Components (Componentes de formularios)
+export { default as SearchFilters } from './forms/SearchFilters'
 
-// Botones de acción
+// 📂 Feedback Components (Estados de carga, mensajes, alertas)
+export { default as LoadingState } from './feedback/LoadingState'
+export { default as ComingSoon } from './feedback/ComingSoon'
+
+// 📂 Toast System (Sistema de alertas con react-hot-toast)
+export { 
+    default as ToastProvider, 
+    useToast, 
+    InlineAlert, 
+    ValidationErrors 
+} from './feedback/ToastSystem'
+
+// 📂 Modal Components (Modales reutilizables)
+export { default as CreateModal } from './modals/CreateModal'
+export { default as EditModal } from './modals/EditModal'
+export { default as DeleteModal } from './modals/DeleteModal'
+
+// 📂 Button Components (Botones de acción)
 export { 
     AddButton, 
     SaveButton, 
@@ -33,4 +50,4 @@ export {
     FilterButton, 
     ExportButton, 
     RefreshButton 
-} from './common/ActionButtons' 
+} from './buttons/ActionButtons' 
