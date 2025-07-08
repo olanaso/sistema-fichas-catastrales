@@ -62,7 +62,8 @@ export const authService = {
         try {
             const response = await publicApi.post('/auth/reset-password', {
                 token: resetData.token,
-                password: resetData.password
+                newPassword: resetData.password,
+                confirmPassword: resetData.password
             })
 
             return { success: true, data: response.data }
