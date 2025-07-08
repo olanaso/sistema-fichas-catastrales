@@ -3,6 +3,8 @@ package org.catastro.sistemafichacatastral.auth;
 import org.catastro.sistemafichacatastral.Usuario.UsuarioEntity;
 import org.catastro.sistemafichacatastral.Usuario.UsuarioService;
 import org.catastro.sistemafichacatastral.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @Service
 @Transactional
 public class AuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
@@ -122,12 +126,14 @@ public class AuthService {
         PasswordResetTokenEntity resetToken = verifyPasswordResetToken(token);
         
         UsuarioEntity usuario = resetToken.getUsuario();
-        usuario.setPassword(passwordEncoder.encode(newPassword));
-        usuarioService.update(usuario.getId(), usuario);
-
+        
+        // Usar el método específico para reset de contraseña
+        UsuarioEntity updatedUsuario = usuarioService.resetPassword(usuario.getId(), newPassword);
+        
         // Marcar token como usado
         resetToken.setUsed(true);
         passwordResetTokenRepository.save(resetToken);
+     
     }
 
     public void sendWelcomeEmail(UsuarioEntity usuario) {

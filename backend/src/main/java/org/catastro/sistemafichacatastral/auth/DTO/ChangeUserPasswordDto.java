@@ -7,10 +7,7 @@ import org.catastro.sistemafichacatastral.validation.PasswordMatch;
 
 @Data
 @PasswordMatch
-public class ChangePasswordDto {
-    
-    @NotBlank(message = "El token es obligatorio")
-    private String token;
+public class ChangeUserPasswordDto {
     
     @NotBlank(message = "La nueva contraseña es obligatoria")
     @Size(min = 6, max = 100, message = "La contraseña debe tener entre 6 y 100 caracteres")
