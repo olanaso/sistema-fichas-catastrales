@@ -9,23 +9,23 @@ export const authService = {
                 email: credentials.email,
                 password: credentials.password
             })
-            
+
             const { success, data } = response.data
-            
+
             if (success && data) {
                 // Guardar tokens y usuario en localStorage
                 localStorage.setItem('accessToken', data.accessToken)
                 localStorage.setItem('refreshToken', data.refreshToken)
                 localStorage.setItem('user', JSON.stringify(data.user))
-                
+
                 return { success: true, data: data }
             }
-            
+
             return { success: false, error: 'Respuesta inválida del servidor' }
         } catch (error) {
-            return { 
-                success: false, 
-                error: error.response?.data?.message || 'Error en el login' 
+            return {
+                success: false,
+                error: error.response?.data?.message || 'Error en el login'
             }
         }
     },
@@ -47,12 +47,12 @@ export const authService = {
     async forgotPassword(email) {
         try {
             const response = await publicApi.post('/auth/forgot-password', email)
-            
+
             return { success: true, data: response.data }
         } catch (error) {
-            return { 
-                success: false, 
-                error: error.response?.data?.message || 'Error al enviar solicitud de reset' 
+            return {
+                success: false,
+                error: error.response?.data?.message || 'Error al enviar solicitud de reset'
             }
         }
     },
@@ -64,12 +64,12 @@ export const authService = {
                 token: resetData.token,
                 password: resetData.password
             })
-            
+
             return { success: true, data: response.data }
         } catch (error) {
-            return { 
-                success: false, 
-                error: error.response?.data?.message || 'Error al resetear contraseña' 
+            return {
+                success: false,
+                error: error.response?.data?.message || 'Error al resetear contraseña'
             }
         }
     },
@@ -84,10 +84,10 @@ export const authService = {
         } finally {
             // Siempre limpiar localStorage
             localStorage.removeItem('accessToken')
-            localStorage.removeItem('refreshToken') 
+            localStorage.removeItem('refreshToken')
             localStorage.removeItem('user')
         }
-        
+
         return { success: true }
     },
 
@@ -123,7 +123,7 @@ export const authService = {
             const response = await publicApi.post('/auth/refresh', {
                 refreshToken: refreshToken
             })
-            
+
             const { data } = response.data
             if (data && data.accessToken) {
                 localStorage.setItem('accessToken', data.accessToken)
@@ -132,14 +132,14 @@ export const authService = {
                 }
                 return { success: true, token: data.accessToken }
             }
-            
+
             return { success: false, error: 'Respuesta inválida' }
         } catch (error) {
             // Si falla el refresh, cerrar sesión
             this.logout()
-            return { 
-                success: false, 
-                error: error.response?.data?.message || 'Error al refrescar token' 
+            return {
+                success: false,
+                error: error.response?.data?.message || 'Error al refrescar token'
             }
         }
     }

@@ -32,17 +32,17 @@ function ForgotPassword() {
     }
 
     return (
-        <div className="d-flex align-items-center justify-content-center min-vh-100" 
-             style={{ 
-                 backgroundColor: '#f8f9fa',
-                 padding: '20px'
-             }}>
+        <div className="d-flex align-items-center justify-content-center min-vh-100"
+            style={{
+                backgroundColor: '#f8f9fa',
+                padding: '20px'
+            }}>
             <div className="w-100" style={{ maxWidth: '450px' }}>
                 <div className="card shadow border-0">
-                    <div className="card-body p-5">
+                    <div className="card-body p-4">
                         <div className="text-center mb-4">
-                            <h2 className="fw-bold text-dark mb-3">Recuperar Contraseña</h2>
-                            <p className="text-muted">Ingresa tu email para recibir instrucciones de recuperación</p>
+                            <h3 className="fw-bold text-dark mb-2">Recuperar Contraseña</h3>
+                            <p className="text-muted small">Ingresa tu email para recibir instrucciones</p>
                         </div>
 
                         {error && (
@@ -59,20 +59,20 @@ function ForgotPassword() {
                                     {message}
                                 </div>
 
-                                <div className="text-center mt-4">
-                                    <p className="text-muted mb-3">Revisa tu bandeja de entrada y sigue las instrucciones.</p>
-                                    <Link to="/login" className="btn btn-primary btn-lg">
+                                <div className="text-center mt-3">
+                                    <p className="text-muted small mb-3">Revisa tu bandeja de entrada y sigue las instrucciones.</p>
+                                    <Link to="/login" className="btn btn-primary">
                                         Volver al Login
                                     </Link>
                                 </div>
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit}>
-                                <div className="mb-4">
-                                    <label className="form-label fw-semibold text-start d-block">Email</label>
+                                <div className="mb-3">
+                                    <label className="d-flex form-label fw-semibold m-1">Email</label>
                                     <input
                                         type="email"
-                                        className="form-control form-control-lg"
+                                        className="form-control"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
@@ -84,7 +84,7 @@ function ForgotPassword() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="btn btn-primary btn-lg w-100 mb-3"
+                                    className="btn btn-primary w-100 mb-3"
                                 >
                                     {loading ? (
                                         <>
@@ -99,8 +99,8 @@ function ForgotPassword() {
                         )}
 
                         <div className="text-center">
-                            <Link to="/login" className="text-decoration-none text-muted">
-                                <i className="fas fa-arrow-left me-2"></i>
+                            <Link to="/login" className="text-decoration-none text-muted small">
+                                <i className="fas fa-arrow-left me-1"></i>
                                 Volver al login
                             </Link>
                         </div>

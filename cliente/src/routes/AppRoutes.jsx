@@ -27,35 +27,15 @@ const NotFoundPage = () => (
                 { label: 'Error 404' }
             ]}
         >
-            <div className="py-4">
-                <div className="row justify-content-center">
-                    <div className="col-md-6">
-                        <div className="card shadow-sm border-0">
-                            <div className="card-body text-center py-5">
-                                <div className="mb-4">
-                                    <i className="fas fa-exclamation-triangle text-warning" style={{ fontSize: '4rem' }}></i>
-                                </div>
-                                <h2 className="text-warning mb-3">404 - Página no encontrada</h2>
-                                <p className="text-muted mb-4">
-                                    Lo sentimos, la página que estás buscando no existe.
-                                </p>
-                                <button 
-                                    className="btn btn-primary"
-                                    onClick={() => window.location.href = Paths.inicio}
-                                >
-                                    <i className="fas fa-home me-2"></i>
-                                    Ir al Inicio
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div className="text-center py-5">
+                <h1 className="display-1 text-muted">404</h1>
+                <p className="text-muted">La página que buscas no existe.</p>
             </div>
         </PageContainer>
     </AdminLayout>
 )
 
-// Componente wrapper para vistas ComingSoon
+// Componente para páginas en desarrollo
 const ComingSoonPage = ({ title, breadcrumbItems }) => (
     <AdminLayout>
         <PageContainer 
@@ -71,233 +51,64 @@ function AppRoutes() {
     return (
         <Router>
             <Routes>
+                {/* Rutas de autenticación (sin layout) */}
+                <Route path={Paths.login} element={<Login />} />
+                <Route path={Paths.forgotPassword} element={<ForgotPassword />} />
+                <Route path={Paths.resetPassword} element={<ResetPassword />} />
+
                 {/* Ruta principal - Inicio */}
                 <Route path="/" element={<Inicio />} />
                 <Route path={Paths.inicio} element={<Inicio />} />
-                <Route path={Paths.dashboard} element={<Inicio />} />
 
                 {/* Rutas de Fichas Catastrales */}
-                <Route path={Paths.fichas} element={
-                    <ComingSoonPage 
-                        title="Fichas Catastrales" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Fichas Catastrales' }
-                        ]}
-                    />
-                } />
                 <Route path={Paths.fichasList} element={<ListaFichas />} />
                 <Route path={Paths.fichasCreate} element={
                     <ComingSoonPage 
-                        title="Crear Ficha" 
+                        title="Crear Ficha Catastral" 
                         breadcrumbItems={[
                             { label: 'Inicio', href: '/inicio' },
-                            { label: 'Fichas Catastrales', href: '/fichas' },
+                            { label: 'Fichas', href: '/fichas/lista' },
                             { label: 'Crear Ficha' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.fichasSearch} element={
-                    <ComingSoonPage 
-                        title="Buscar Fichas" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Fichas Catastrales', href: '/fichas' },
-                            { label: 'Buscar Fichas' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.fichasEdit} element={
-                    <ComingSoonPage 
-                        title="Editar Ficha" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Fichas Catastrales', href: '/fichas' },
-                            { label: 'Editar Ficha' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.fichasView} element={
-                    <ComingSoonPage 
-                        title="Ver Ficha" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Fichas Catastrales', href: '/fichas' },
-                            { label: 'Ver Ficha' }
                         ]}
                     />
                 } />
 
                 {/* Rutas de Usuarios */}
-                <Route path={Paths.usuarios} element={
-                    <ComingSoonPage 
-                        title="Usuarios" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Usuarios' }
-                        ]}
-                    />
-                } />
                 <Route path={Paths.usuariosList} element={<ListaUsuarios />} />
                 <Route path={Paths.usuariosCreate} element={
                     <ComingSoonPage 
                         title="Crear Usuario" 
                         breadcrumbItems={[
                             { label: 'Inicio', href: '/inicio' },
-                            { label: 'Usuarios', href: '/usuarios' },
+                            { label: 'Usuarios', href: '/usuarios/lista' },
                             { label: 'Crear Usuario' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.usuariosRoles} element={
-                    <ComingSoonPage 
-                        title="Gestión de Roles" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Usuarios', href: '/usuarios' },
-                            { label: 'Gestión de Roles' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.usuariosEdit} element={
-                    <ComingSoonPage 
-                        title="Editar Usuario" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Usuarios', href: '/usuarios' },
-                            { label: 'Editar Usuario' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.usuariosView} element={
-                    <ComingSoonPage 
-                        title="Ver Usuario" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Usuarios', href: '/usuarios' },
-                            { label: 'Ver Usuario' }
                         ]}
                     />
                 } />
 
                 {/* Rutas de Reportes */}
-                <Route path={Paths.reportes} element={
+                <Route path={Paths.reportesDashboard} element={
                     <ComingSoonPage 
-                        title="Reportes" 
+                        title="Dashboard de Reportes" 
                         breadcrumbItems={[
                             { label: 'Inicio', href: '/inicio' },
                             { label: 'Reportes' }
                         ]}
                     />
                 } />
-                <Route path={Paths.reportesDashboard} element={
-                    <ComingSoonPage 
-                        title="Dashboard de Reportes" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Reportes', href: '/reportes' },
-                            { label: 'Dashboard' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.reportesFichas} element={
-                    <ComingSoonPage 
-                        title="Reporte de Fichas" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Reportes', href: '/reportes' },
-                            { label: 'Reporte de Fichas' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.reportesActividad} element={
-                    <ComingSoonPage 
-                        title="Actividad del Sistema" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Reportes', href: '/reportes' },
-                            { label: 'Actividad del Sistema' }
-                        ]}
-                    />
-                } />
 
                 {/* Rutas de Configuración */}
-                <Route path={Paths.configuracion} element={
+                <Route path={Paths.configSistema} element={
                     <ComingSoonPage 
-                        title="Configuración" 
+                        title="Configuración del Sistema" 
                         breadcrumbItems={[
                             { label: 'Inicio', href: '/inicio' },
                             { label: 'Configuración' }
                         ]}
                     />
                 } />
-                <Route path={Paths.configSistema} element={
-                    <ComingSoonPage 
-                        title="Configuración del Sistema" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Configuración', href: '/configuracion' },
-                            { label: 'Sistema' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.configBackup} element={
-                    <ComingSoonPage 
-                        title="Respaldos" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Configuración', href: '/configuracion' },
-                            { label: 'Respaldos' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.configLogs} element={
-                    <ComingSoonPage 
-                        title="Logs del Sistema" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Configuración', href: '/configuracion' },
-                            { label: 'Logs del Sistema' }
-                        ]}
-                    />
-                } />
 
-                {/* Rutas de autenticación (sin layout) */}
-                <Route path={Paths.login} element={<Login />} />
-                <Route path={Paths.forgotPassword} element={<ForgotPassword />} />
-                <Route path={Paths.resetPassword} element={<ResetPassword />} />
-
-                {/* Rutas adicionales */}
-                <Route path={Paths.emergencia} element={
-                    <ComingSoonPage 
-                        title="Emergencia" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Emergencia' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.contacto} element={
-                    <ComingSoonPage 
-                        title="Contacto" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Contacto' }
-                        ]}
-                    />
-                } />
-                <Route path={Paths.calendar} element={
-                    <ComingSoonPage 
-                        title="Calendario" 
-                        breadcrumbItems={[
-                            { label: 'Inicio', href: '/inicio' },
-                            { label: 'Configuración', href: '/configuracion' },
-                            { label: 'Calendario' }
-                        ]}
-                    />
-                } />
-
-                {/* Ruta 404 - Página no encontrada */}
+                {/* Página 404 */}
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </Router>

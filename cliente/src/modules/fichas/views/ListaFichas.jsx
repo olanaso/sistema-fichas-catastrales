@@ -1,50 +1,60 @@
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Button } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import { AdminLayout, PageContainer, DataTable, SearchFilters, LoadingState } from '../../../components'
+import { useApi } from '../../../hooks/useApi'
+import { fichasCatastralesService } from '../api/fichasCatastralesService'
 
 const ListaFichas = () => {
     const [fichas, setFichas] = useState([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
+    const [error, setError] = useState('')
+
+    // Hook para cargar fichas
+    const { execute: loadFichas, loading: loadingFichas } = useApi(fichasCatastralesService.getAll)
 
     useEffect(() => {
-        loadFichas()
+        loadFichasData()
     }, [])
 
-    const loadFichas = async () => {
-        // Simular carga de datos
-        setTimeout(() => {
-            setFichas([
-                {
-                    id: 1,
-                    codigo: 'FIC-001',
-                    direccion: 'Av. Principal 123',
-                    propietario: 'Juan Pérez',
-                    tipo: 'Residencial',
-                    estado: 'Activo',
-                    fecha: '2024-01-15'
-                },
-                {
-                    id: 2,
-                    codigo: 'FIC-002',
-                    direccion: 'Calle Secundaria 456',
-                    propietario: 'María García',
-                    tipo: 'Comercial',
-                    estado: 'Pendiente',
-                    fecha: '2024-01-20'
-                },
-                {
-                    id: 3,
-                    codigo: 'FIC-003',
-                    direccion: 'Plaza Central s/n',
-                    propietario: 'Carlos López',
-                    tipo: 'Industrial',
-                    estado: 'Activo',
-                    fecha: '2024-01-25'
-                }
-            ])
+    const loadFichasData = async () => {
+        try {
+            setLoading(true)
+            setError('')
+            
+            const result = await loadFichas()
+            if (result.success) {
+                setFichas(result.data || [])
+            } else {
+                setError(result.error || 'Error al cargar fichas')
+                // Datos de respaldo para desarrollo
+                setFichas([
+                    {
+                        id: 1,
+                        codigo: 'FIC-001',
+                        direccion: 'Av. Principal 123',
+                        propietario: 'Juan Pérez',
+                        tipo: 'Residencial',
+                        estado: 'Activo',
+                        fecha: '2024-01-15'
+                    },
+                    {
+                        id: 2,
+                        codigo: 'FIC-002',
+                        direccion: 'Calle Secundaria 456',
+                        propietario: 'María García',
+                        tipo: 'Comercial',
+                        estado: 'Pendiente',
+                        fecha: '2024-01-20'
+                    }
+                ])
+            }
+        } catch (err) {
+            setError('Error de conexión al servidor')
+            console.error('Error al cargar fichas:', err)
+        } finally {
             setLoading(false)
-        }, 1000)
+        }
     }
 
     const filteredFichas = fichas.filter(ficha =>
@@ -68,7 +78,7 @@ const ListaFichas = () => {
     ]
 
     const pageActions = (
-        <Button variant="primary">
+        <Button variant="primary" href="/fichas/crear">
             <i className="fas fa-plus me-2"></i>
             Nueva Ficha
         </Button>
@@ -109,19 +119,23 @@ const ListaFichas = () => {
             icon: 'fas fa-eye',
             variant: 'outline-primary',
             title: 'Ver',
-            onClick: (item) => console.log('Ver:', item)
+            onClick: (item) => window.location.href = `/fichas/ver/${item.id}`
         },
         {
             icon: 'fas fa-edit',
             variant: 'outline-secondary',
             title: 'Editar',
-            onClick: (item) => console.log('Editar:', item)
+            onClick: (item) => window.location.href = `/fichas/editar/${item.id}`
         },
         {
             icon: 'fas fa-trash',
             variant: 'outline-danger',
             title: 'Eliminar',
-            onClick: (item) => console.log('Eliminar:', item)
+            onClick: (item) => {
+                if (window.confirm('¿Está seguro de eliminar esta ficha?')) {
+                    console.log('Eliminar:', item)
+                }
+            }
         }
     ]
 
@@ -163,6 +177,13 @@ const ListaFichas = () => {
                 breadcrumbItems={breadcrumbItems}
                 actions={pageActions}
             >
+                {error && (
+                    <div className="alert alert-warning">
+                        <i className="fas fa-exclamation-triangle me-2"></i>
+                        {error} - Mostrando datos de ejemplo
+                    </div>
+                )}
+
                 <SearchFilters
                     searchValue={searchTerm}
                     onSearchChange={setSearchTerm}

@@ -1,50 +1,60 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from 'react-bootstrap'
 import { AdminLayout, PageContainer, DataTable, SearchFilters, LoadingState } from '../../../components'
+import { useApi } from '../../../hooks/useApi'
+import { usuariosService } from '../api/usuariosService'
 
 const ListaUsuarios = () => {
     const [usuarios, setUsuarios] = useState([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
+    const [error, setError] = useState('')
+
+    // Hook para cargar usuarios
+    const { execute: loadUsuarios, loading: loadingUsuarios } = useApi(usuariosService.getAll)
 
     useEffect(() => {
-        loadUsuarios()
+        loadUsuariosData()
     }, [])
 
-    const loadUsuarios = async () => {
-        // Simular carga de datos
-        setTimeout(() => {
-            setUsuarios([
-                {
-                    id: 1,
-                    nombre: 'Juan Pérez',
-                    email: 'juan@example.com',
-                    rol: 'admin',
-                    estado: 'Activo',
-                    ultimoAcceso: '2024-01-15 14:30',
-                    fechaCreacion: '2024-01-01'
-                },
-                {
-                    id: 2,
-                    nombre: 'María García',
-                    email: 'maria@example.com',
-                    rol: 'user',
-                    estado: 'Activo',
-                    ultimoAcceso: '2024-01-14 09:15',
-                    fechaCreacion: '2024-01-05'
-                },
-                {
-                    id: 3,
-                    nombre: 'Carlos López',
-                    email: 'carlos@example.com',
-                    rol: 'user',
-                    estado: 'Inactivo',
-                    ultimoAcceso: '2024-01-10 16:45',
-                    fechaCreacion: '2024-01-10'
-                }
-            ])
+    const loadUsuariosData = async () => {
+        try {
+            setLoading(true)
+            setError('')
+            
+            const result = await loadUsuarios()
+            if (result.success) {
+                setUsuarios(result.data || [])
+            } else {
+                setError(result.error || 'Error al cargar usuarios')
+                // Datos de respaldo para desarrollo
+                setUsuarios([
+                    {
+                        id: 1,
+                        nombre: 'Juan Pérez',
+                        email: 'juan@example.com',
+                        rol: 'admin',
+                        estado: 'Activo',
+                        ultimoAcceso: '2024-01-15 14:30',
+                        fechaCreacion: '2024-01-01'
+                    },
+                    {
+                        id: 2,
+                        nombre: 'María García',
+                        email: 'maria@example.com',
+                        rol: 'user',
+                        estado: 'Activo',
+                        ultimoAcceso: '2024-01-14 09:15',
+                        fechaCreacion: '2024-01-05'
+                    }
+                ])
+            }
+        } catch (err) {
+            setError('Error de conexión al servidor')
+            console.error('Error al cargar usuarios:', err)
+        } finally {
             setLoading(false)
-        }, 1000)
+        }
     }
 
     const filteredUsuarios = usuarios.filter(usuario =>
@@ -68,7 +78,7 @@ const ListaUsuarios = () => {
     ]
 
     const pageActions = (
-        <Button variant="primary">
+        <Button variant="primary" href="/usuarios/crear">
             <i className="fas fa-user-plus me-2"></i>
             Nuevo Usuario
         </Button>
@@ -124,19 +134,23 @@ const ListaUsuarios = () => {
             icon: 'fas fa-eye',
             variant: 'outline-primary',
             title: 'Ver',
-            onClick: (item) => console.log('Ver:', item)
+            onClick: (item) => window.location.href = `/usuarios/ver/${item.id}`
         },
         {
             icon: 'fas fa-edit',
             variant: 'outline-secondary',
             title: 'Editar',
-            onClick: (item) => console.log('Editar:', item)
+            onClick: (item) => window.location.href = `/usuarios/editar/${item.id}`
         },
         {
             icon: 'fas fa-trash',
             variant: 'outline-danger',
             title: 'Eliminar',
-            onClick: (item) => console.log('Eliminar:', item)
+            onClick: (item) => {
+                if (window.confirm('¿Está seguro de eliminar este usuario?')) {
+                    console.log('Eliminar:', item)
+                }
+            }
         }
     ]
 
@@ -178,6 +192,13 @@ const ListaUsuarios = () => {
                 breadcrumbItems={breadcrumbItems}
                 actions={pageActions}
             >
+                {error && (
+                    <div className="alert alert-warning">
+                        <i className="fas fa-exclamation-triangle me-2"></i>
+                        {error} - Mostrando datos de ejemplo
+                    </div>
+                )}
+
                 <SearchFilters
                     searchValue={searchTerm}
                     onSearchChange={setSearchTerm}

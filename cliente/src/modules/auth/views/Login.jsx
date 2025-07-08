@@ -43,14 +43,19 @@ function Login() {
         setShowPassword(!showPassword)
     }
 
+
     return (
-        <div className="d-flex align-items-center justify-content-center">
-            <div className="w-100" >
+        <div className="d-flex align-items-center justify-content-center min-vh-100"
+            style={{
+                backgroundColor: '#f8f9fa',
+                padding: '20px'
+            }}>
+            <div className="w-100" style={{ maxWidth: '450px' }}>
                 <div className="card shadow border-0">
-                    <div className="card-body">
+                    <div className="card-body p-4">
                         <div className="text-center mb-4">
-                            <h2 className="fw-bold text-dark mb-3">Iniciar Sesión</h2>
-                            <p className="text-muted">Ingresa a tu cuenta del sistema</p>
+                            <h3 className="fw-bold text-dark mb-2">Iniciar Sesión</h3>
+                            <p className="text-muted small">Accede al sistema catastral</p>
                         </div>
 
                         {error && (
@@ -62,11 +67,11 @@ function Login() {
 
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label fw-semibold text-start d-block">Email</label>
+                                <label className="d-flex form-label fw-semibold m-1">Email</label>
                                 <input
                                     type="email"
                                     name="email"
-                                    className="form-control form-control-sm"
+                                    className="form-control"
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
@@ -76,21 +81,21 @@ function Login() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label fw-semibold text-start d-block">Contraseña</label>
+                                <label className="d-flex form-label fw-semibold m-1">Contraseña</label>
                                 <div className="position-relative">
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         name="password"
-                                        className="form-control form-control-sm pe-5"
+                                        className="form-control pe-5"
                                         value={formData.password}
                                         onChange={handleChange}
                                         required
                                         placeholder="••••••••"
-                                        autoComplete="new-password"
+                                        autoComplete="current-password"
                                     />
                                     <button
                                         type="button"
-                                        className="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+                                        className="btn position-absolute top-50 end-0 translate-middle-y me-2"
                                         style={{
                                             border: 'none',
                                             background: 'transparent',
@@ -104,8 +109,8 @@ function Login() {
                                 </div>
                             </div>
 
-                            <div className="mb-4 text-end">
-                                <Link to="/forgot-password" className="text-decoration-none">
+                            <div className="mb-3 text-end">
+                                <Link to="/forgot-password" className="text-decoration-none small">
                                     ¿Olvidaste tu contraseña?
                                 </Link>
                             </div>
@@ -113,7 +118,7 @@ function Login() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="btn btn-primary w-100 mb-3"
+                                className="btn btn-primary w-100"
                             >
                                 {loading ? (
                                     <>
@@ -125,13 +130,6 @@ function Login() {
                                 )}
                             </button>
                         </form>
-
-                        <div className="text-center">
-                            <Link to="/" className="text-decoration-none text-muted">
-                                <i className="fas fa-arrow-left"></i>
-                                Volver al inicio
-                            </Link>
-                        </div>
                     </div>
                 </div>
             </div>

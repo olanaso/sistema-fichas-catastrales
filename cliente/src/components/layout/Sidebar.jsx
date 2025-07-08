@@ -100,21 +100,15 @@ const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole
 
     return (
         <div
-            className={`bg-white shadow-sm border-end ${collapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}
+            className={`bg-white shadow-sm border-end d-flex flex-column ${collapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}
             style={{
-                width: collapsed ? '80px' : '280px',
+                width: '100%',
                 height: '100vh',
-                position: 'fixed',
-                top: '0',
-                left: '0',
-                zIndex: 1000,
-                transition: 'width 0.3s ease-in-out',
-                overflowY: 'auto',
-                overflowX: 'hidden'
+                transition: 'width 0.3s ease-in-out'
             }}
         >
             {/* Header del sidebar */}
-            <div className="p-3 border-bottom bg-light">
+            <div className="p-3 border-bottom bg-light flex-shrink-0">
                 <div className="d-flex align-items-center justify-content-between">
                     {!collapsed && (
                         <div className="d-flex align-items-center">
@@ -140,13 +134,15 @@ const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole
                 </div>
             </div>
 
-            {/* Menú de navegación */}
-            <Nav className="flex-column p-3">
-                {menuItems.map(item => renderMenuItem(item))}
-            </Nav>
+            {/* Menú de navegación - Ocupa el espacio disponible */}
+            <div className="flex-grow-1 overflow-auto">
+                <Nav className="flex-column p-3">
+                    {menuItems.map(item => renderMenuItem(item))}
+                </Nav>
+            </div>
 
             {/* Footer del sidebar */}
-            <div className="position-absolute bottom-0 w-100 p-3 border-top bg-light">
+            <div className="p-3 border-top bg-light flex-shrink-0">
                 <div className="text-center">
                     {!collapsed ? (
                         <div className="text-muted small">

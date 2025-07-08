@@ -1,23 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import AppNavbar from './Navbar'
 import Sidebar from './Sidebar'
-import { authService } from '../../modules/auth/api/authService'
+import { useApp } from '../../context/AppContext'
 
-const BaseLayout = ({ 
-    children, 
-    menuItems = [], 
+const BaseLayout = ({
+    children,
+    menuItems = [],
     sidebarProps = {}
 }) => {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-    const [userRole, setUserRole] = useState('user')
-
-    useEffect(() => {
-        // Obtener rol del usuario
-        const user = authService.getCurrentUser()
-        if (user && user.role) {
-            setUserRole(user.role)
-        }
-    }, [])
+    const { user } = useApp()
 
     const handleToggleSidebar = () => {
         setSidebarCollapsed(!sidebarCollapsed)
@@ -26,30 +18,32 @@ const BaseLayout = ({
     const sidebarWidth = sidebarCollapsed ? 80 : 280
 
     return (
-        <div className="d-flex min-vh-100" style={{ backgroundColor: '#f8f9fa' }}>
-            {/* Sidebar */}
-            <Sidebar
-                menuItems={menuItems}
-                collapsed={sidebarCollapsed}
-                onToggleCollapse={handleToggleSidebar}
-                userRole={userRole}
-                {...sidebarProps}
-            />
+        <div className="d-flex" style={{ height: '100vh', overflow: 'hidden' }}>
+            {/* Sidebar - Ocupa toda la altura del lado izquierdo */}
+            <div style={{ width: `${sidebarWidth}px`, transition: 'width 0.3s ease-in-out' }}>
+                <Sidebar
+                    menuItems={menuItems}
+                    collapsed={sidebarCollapsed}
+                    onToggleCollapse={handleToggleSidebar}
+                    userRole={user?.role || 'user'}
+                    {...sidebarProps}
+                />
+            </div>
 
-            {/* Main Content Area */}
-            <div 
-                className="flex-grow-1 d-flex flex-column"
-                style={{
-                    marginLeft: `${sidebarWidth}px`,
-                    transition: 'margin-left 0.3s ease-in-out',
-                    minHeight: '100vh'
-                }}
-            >
-                {/* Navbar */}
-                <AppNavbar />
+            {/* Área principal - Navbar + Contenido */}
+            <div className="flex-grow-1 d-flex flex-column" style={{ height: '100vh', overflow: 'hidden' }}>
+                {/* Navbar - Ocupa la parte superior del área no ocupada por el sidebar */}
+                <div className="flex-shrink-0">
+                    <AppNavbar />
+                </div>
 
-                {/* Page Content - Ocupa todo el espacio restante */}
-                <div className="flex-grow-1 bg-white">
+                {/* Contenido principal - Ocupa todo el espacio restante */}
+                <div
+                    className="flex-grow-1 bg-white"
+                    style={{
+                        overflow: 'auto'
+                    }}
+                >
                     {children}
                 </div>
             </div>

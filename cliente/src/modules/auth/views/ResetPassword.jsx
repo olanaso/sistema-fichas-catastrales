@@ -59,7 +59,7 @@ function ResetPassword() {
                 token,
                 password: formData.password
             })
-            
+
             if (result.success) {
                 setSuccess(true)
             } else {
@@ -81,17 +81,17 @@ function ResetPassword() {
     }
 
     return (
-        <div className="d-flex align-items-center justify-content-center min-vh-100" 
-             style={{ 
-                 backgroundColor: '#f8f9fa',
-                 padding: '20px'
-             }}>
-            <div className="w-100" style={{ maxWidth: '450px' }}>
+        <div className="d-flex align-items-center justify-content-center min-vh-100"
+            style={{
+                backgroundColor: '#f8f9fa',
+                padding: '20px'
+            }}>
+            <div className="w-100" style={{ maxWidth: '400px' }}>
                 <div className="card shadow border-0">
-                    <div className="card-body p-5">
+                    <div className="card-body p-4">
                         <div className="text-center mb-4">
-                            <h2 className="fw-bold text-dark mb-3">Restablecer Contraseña</h2>
-                            <p className="text-muted">Ingresa tu nueva contraseña</p>
+                            <h3 className="fw-bold text-dark mb-2">Restablecer Contraseña</h3>
+                            <p className="text-muted small">Ingresa tu nueva contraseña</p>
                         </div>
 
                         {error && (
@@ -107,10 +107,10 @@ function ResetPassword() {
                                     <i className="fas fa-check-circle me-2"></i>
                                     Tu contraseña ha sido restablecida exitosamente.
                                 </div>
-                                
-                                <div className="text-center mt-4">
-                                    <p className="text-muted mb-3">Ya puedes iniciar sesión con tu nueva contraseña.</p>
-                                    <Link to="/login" className="btn btn-primary btn-lg">
+
+                                <div className="text-center mt-3">
+                                    <p className="text-muted small mb-3">Ya puedes iniciar sesión con tu nueva contraseña.</p>
+                                    <Link to="/login" className="btn btn-primary">
                                         Ir al Login
                                     </Link>
                                 </div>
@@ -118,12 +118,12 @@ function ResetPassword() {
                         ) : (
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
-                                    <label className="form-label fw-semibold text-start d-block">Nueva Contraseña</label>
+                                    <label className="form-label fw-semibold">Nueva Contraseña</label>
                                     <div className="position-relative">
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             name="password"
-                                            className="form-control form-control-lg pe-5"
+                                            className="form-control pe-5"
                                             value={formData.password}
                                             onChange={handleChange}
                                             required
@@ -132,8 +132,8 @@ function ResetPassword() {
                                         />
                                         <button
                                             type="button"
-                                            className="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
-                                            style={{ 
+                                            className="btn position-absolute top-50 end-0 translate-middle-y me-2"
+                                            style={{
                                                 border: 'none',
                                                 background: 'transparent',
                                                 zIndex: 5
@@ -146,13 +146,13 @@ function ResetPassword() {
                                     </div>
                                 </div>
 
-                                <div className="mb-4">
-                                    <label className="form-label fw-semibold text-start d-block">Confirmar Contraseña</label>
+                                <div className="mb-3">
+                                    <label className="form-label fw-semibold">Confirmar Contraseña</label>
                                     <div className="position-relative">
                                         <input
                                             type={showConfirmPassword ? "text" : "password"}
                                             name="confirmPassword"
-                                            className="form-control form-control-lg pe-5"
+                                            className="form-control pe-5"
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
                                             required
@@ -161,8 +161,8 @@ function ResetPassword() {
                                         />
                                         <button
                                             type="button"
-                                            className="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
-                                            style={{ 
+                                            className="btn position-absolute top-50 end-0 translate-middle-y me-2"
+                                            style={{
                                                 border: 'none',
                                                 background: 'transparent',
                                                 zIndex: 5
@@ -178,7 +178,7 @@ function ResetPassword() {
                                 <button
                                     type="submit"
                                     disabled={loading || !token}
-                                    className="btn btn-primary btn-lg w-100 mb-3"
+                                    className="btn btn-primary w-100 mb-3"
                                 >
                                     {loading ? (
                                         <>
@@ -193,8 +193,8 @@ function ResetPassword() {
                         )}
 
                         <div className="text-center">
-                            <Link to="/login" className="text-decoration-none text-muted">
-                                <i className="fas fa-arrow-left me-2"></i>
+                            <Link to="/login" className="text-decoration-none text-muted small">
+                                <i className="fas fa-arrow-left me-1"></i>
                                 Volver al login
                             </Link>
                         </div>

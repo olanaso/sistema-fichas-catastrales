@@ -1,46 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Row, Col, Card, Alert } from 'react-bootstrap'
-import { authService } from './auth/api/authService'
+import { useApp } from '../context/AppContext'
 import { AdminLayout, PageContainer, LoadingState } from '../components'
 
 function Inicio() {
-    const [userData, setUserData] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const navigate = useNavigate()
+    const { user, isAuthenticated } = useApp()
 
     useEffect(() => {
-        loadUserData()
-    }, [])
-
-    const loadUserData = async () => {
-        try {
-            // Verificar autenticación
-            if (!authService.isAuthenticated()) {
-                navigate('/login')
-                return
-            }
-
-            // Obtener datos del usuario desde localStorage
-            const user = authService.getCurrentUser()
-            if (user) {
-                setUserData(user)
-            } else {
-                // Si no hay datos de usuario pero sí token, mostrar información básica
-                setUserData({
-                    message: 'Usuario autenticado',
-                    token: authService.getAccessToken()?.substring(0, 20) + '...',
-                    loginTime: new Date().toLocaleString()
-                })
-            }
-        } catch (err) {
-            setError('Error al cargar datos del usuario')
-            setTimeout(() => navigate('/login'), 2000)
-        } finally {
-            setLoading(false)
+        // Verificar autenticación
+        if (!isAuthenticated) {
+            navigate('/login')
+            return
         }
-    }
+
+        // Simular carga de datos
+        setTimeout(() => {
+            setLoading(false)
+        }, 1000)
+    }, [isAuthenticated, navigate])
 
     const breadcrumbItems = [
         {
@@ -56,9 +37,24 @@ function Inicio() {
                     breadcrumbItems={breadcrumbItems}
                 >
                     <LoadingState 
-                        message="Cargando panel de inicio..."
+                        message="Cargando..."
                         fullPage={true}
                     />
+                </PageContainer>
+            </AdminLayout>
+        )
+    }
+
+    if (error) {
+        return (
+            <AdminLayout>
+                <PageContainer 
+                    title="Inicio"
+                    breadcrumbItems={breadcrumbItems}
+                >
+                    <Alert variant="danger">
+                        {error}
+                    </Alert>
                 </PageContainer>
             </AdminLayout>
         )
@@ -70,34 +66,42 @@ function Inicio() {
                 title="Inicio"
                 breadcrumbItems={breadcrumbItems}
             >
-                {error && (
-                    <Alert variant="danger" className="mb-4">
-                        <i className="fas fa-exclamation-circle me-2"></i>
-                        {error}
-                    </Alert>
-                )}
-
-                <Row className="g-4">
-                    {/* Información de Sesión */}
-                    {userData && (
-                        <Col xs={12}>
-                            <Card className="border-0 shadow-sm">
-                                <Card.Header className="bg-white border-bottom">
-                                    <Card.Title className="h6 mb-0">
-                                        <i className="fas fa-info-circle me-2 text-primary"></i>
-                                        Información de Sesión
-                                    </Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <div className="bg-dark rounded p-3">
-                                        <pre className="text-light mb-0 small">
-                                            {JSON.stringify(userData, null, 2)}
-                                        </pre>
+                <Row>
+                    <Col md={12}>
+                        <Card className="shadow-sm border-0">
+                            <Card.Body>
+                                <h4 className="text-primary mb-4">
+                                    <i className="fas fa-home me-2"></i>
+                                    Bienvenido al Sistema Catastral
+                                </h4>
+                                
+                                {user && (
+                                    <div className="mb-4">
+                                        <h5>Información del Usuario</h5>
+                                        <p><strong>Nombre:</strong> {user.nombres ? `${user.nombres} ${user.apellidos}` : user.name || 'N/A'}</p>
+                                        <p><strong>Email:</strong> {user.email || 'N/A'}</p>
+                                        <p><strong>Rol:</strong> {user.role || 'Usuario'}</p>
+                                        <p><strong>Fecha de acceso:</strong> {new Date().toLocaleString()}</p>
                                     </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    )}
+                                )}
+
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <h5>Accesos Rápidos</h5>
+                                        <ul className="list-unstyled">
+                                            <li><i className="fas fa-file-alt me-2"></i><a href="/fichas/lista">Lista de Fichas</a></li>
+                                            <li><i className="fas fa-users me-2"></i><a href="/usuarios/lista">Lista de Usuarios</a></li>
+                                            <li><i className="fas fa-chart-bar me-2"></i><a href="/reportes/dashboard">Reportes</a></li>
+                                        </ul>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <h5>Estadísticas</h5>
+                                        <p>Próximamente disponible...</p>
+                                    </div>
+                                </div>
+                            </Card.Body>
+                        </Card>
+                    </Col>
                 </Row>
             </PageContainer>
         </AdminLayout>

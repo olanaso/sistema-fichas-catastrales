@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Navbar, Container, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
-import { authService } from '../../modules/auth/api/authService'
+import { useApp } from '../../context/AppContext'
 
 const AppNavbar = () => {
     const [currentDate, setCurrentDate] = useState(new Date())
-    const [userData, setUserData] = useState(null)
     const navigate = useNavigate()
+    const { user, logout } = useApp()
 
     useEffect(() => {
         // Actualizar fecha cada segundo
@@ -14,24 +14,12 @@ const AppNavbar = () => {
             setCurrentDate(new Date())
         }, 1000)
 
-        // Obtener datos del usuario
-        const user = authService.getCurrentUser()
-        if (user) {
-            setUserData(user)
-        } else {
-            // Datos por defecto para testing
-            setUserData({
-                nombres: "Juan Carlos",
-                apellidos: "Pérez Gómez"
-            })
-        }
-
         return () => clearInterval(timer)
     }, [])
 
     const handleLogout = async () => {
         try {
-            await authService.logout()
+            logout()
             navigate('/login')
         } catch (error) {
             console.error('Error al cerrar sesión:', error)
@@ -57,53 +45,61 @@ const AppNavbar = () => {
     }
 
     const getUserName = () => {
-        if (userData?.nombres && userData?.apellidos) {
-            return `${userData.nombres} ${userData.apellidos}`
+        if (user?.nombres && user?.apellidos) {
+            return `${user.nombres} ${user.apellidos}`
         }
-        if (userData?.name) return userData.name
-        if (userData?.email) return userData.email.split('@')[0]
+        if (user?.name) return user.name
+        if (user?.email) return user.email.split('@')[0]
         return 'Usuario'
     }
 
     return (
-        <Navbar bg="white" expand="lg" className="shadow-sm border-bottom sticky-top">
-            <Container fluid className="py-3">
-                {/* Fecha y hora actual */}
-                <div className="d-flex flex-column align-items-start">
-                    <div className="fw-semibold text-dark small">
-                        {formatDate(currentDate)}
-                    </div>
-                    <div className="text-primary fw-bold">
-                        {formatTime(currentDate)}
-                    </div>
-                </div>
-
-                {/* Espaciador */}
-                <div className="flex-grow-1"></div>
-
-                {/* Sección de usuario */}
-                <div className="d-flex align-items-center gap-3">
-                    {/* Saludo al usuario */}
-                    <div className="d-flex align-items-center gap-2">
-                        <div className="text-end">
-                            <div className="fw-semibold text-dark small">
-                                ¡Bienvenido, {getUserName()}!
-                            </div>
-                            <div className="text-muted small">
-                                {userData?.role || 'Usuario'}
-                            </div>
+        <Navbar 
+            bg="white" 
+            expand="lg" 
+            className="shadow-sm border-bottom"
+            style={{ 
+                height: '80px',
+                minHeight: '80px',
+                maxHeight: '80px'
+            }}
+        >
+            <Container fluid className="px-4 h-100">
+                <div className="d-flex align-items-center justify-content-between w-100 h-100">
+                    {/* Fecha y hora actual */}
+                    <div className="d-flex flex-column justify-content-center">
+                        <div className="fw-semibold text-dark small">
+                            {formatDate(currentDate)}
+                        </div>
+                        <div className="text-primary fw-bold">
+                            {formatTime(currentDate)}
                         </div>
                     </div>
 
-                    {/* Botón de cerrar sesión */}
-                    <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={handleLogout}
-                        className="d-flex align-items-center gap-2"
-                    >
-                        <i className="fas fa-sign-out-alt"></i>
-                    </Button>
+                    {/* Sección de usuario */}
+                    <div className="d-flex align-items-center gap-3">
+                        {/* Saludo al usuario */}
+                        <div className="d-flex align-items-center gap-2">
+                            <div className="text-end">
+                                <div className="fw-semibold text-dark small">
+                                    ¡Bienvenido, {getUserName()}!
+                                </div>
+                                <div className="text-muted small">
+                                    {user?.role || 'Usuario'}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Botón de cerrar sesión */}
+                        <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={handleLogout}
+                            className="d-flex align-items-center gap-2"
+                        >
+                            <i className="fas fa-sign-out-alt"></i>
+                        </Button>
+                    </div>
                 </div>
             </Container>
         </Navbar>
