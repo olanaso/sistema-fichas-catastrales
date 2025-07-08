@@ -9,6 +9,10 @@ import {
     AddButton,
     DeleteButton,
     ExportButton,
+    CreateModal,
+    EditModal,
+    DeleteModal,
+    useToast
 } from '../../../components'
 import { useApi } from '../../../hooks/useApi'
 import { fichasCatastralesService } from '../api/fichasCatastralesService'
@@ -16,16 +20,30 @@ import {
     getFichasTableActions,
     getFichasTableColumns,
     getFichasFilterConfig,
-    getFichasFilterActions
+    getFichasFilterActions,
+    fichasValidationSchema,
+    validateFichaField,
+    validateFichaForm,
+    getFichasModalFields
 } from '../components'
 
-const ListaFichas = () => {
+const ListaFichasExample = () => {
     const [fichas, setFichas] = useState([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
     const [activeFilters, setActiveFilters] = useState({})
     const [error, setError] = useState('')
     const [selectedRows, setSelectedRows] = useState([])
+
+    // Estados para modales
+    const [showCreateModal, setShowCreateModal] = useState(false)
+    const [showEditModal, setShowEditModal] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [selectedItem, setSelectedItem] = useState(null)
+    const [modalLoading, setModalLoading] = useState(false)
+
+    // Hook para alertas
+    const { showSuccess, showError, showInfo } = useToast()
 
     // Hook para cargar fichas
     const { execute: loadFichas, loading: loadingFichas } = useApi(fichasCatastralesService.getAll)
@@ -42,6 +60,7 @@ const ListaFichas = () => {
             const result = await loadFichas()
             if (result.success) {
                 setFichas(result.data || [])
+                showInfo('Fichas cargadas correctamente')
             } else {
                 setError(result.error || 'Error al cargar fichas')
                 // Datos de respaldo para desarrollo
@@ -77,9 +96,11 @@ const ListaFichas = () => {
                         superficie: '250.00'
                     }
                 ])
+                showInfo('Usando datos de ejemplo')
             }
         } catch (err) {
             setError('Error de conexión al servidor')
+            showError('No se pudo conectar al servidor')
             console.error('Error al cargar fichas:', err)
         } finally {
             setLoading(false)
@@ -88,38 +109,136 @@ const ListaFichas = () => {
 
     // Filtrar fichas basado en búsqueda y filtros
     const filteredFichas = fichas.filter(ficha => {
-        // Filtro de búsqueda
         const matchesSearch = !searchTerm ||
             ficha.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
             ficha.direccion.toLowerCase().includes(searchTerm.toLowerCase()) ||
             ficha.propietario.toLowerCase().includes(searchTerm.toLowerCase())
 
-        // Filtros adicionales
         const matchesTipo = !activeFilters.tipo || ficha.tipo === activeFilters.tipo
         const matchesEstado = !activeFilters.estado || ficha.estado === activeFilters.estado
 
         return matchesSearch && matchesTipo && matchesEstado
     })
 
-    const breadcrumbItems = [
-        {
-            label: 'Inicio',
-            href: '/inicio'
-        },
-        {
-            label: 'Fichas Catastrales',
-            href: '/fichas'
-        },
-        {
-            label: 'Lista de Fichas'
+    // Manejar creación de ficha
+    const handleCreateSave = async (formData) => {
+        setModalLoading(true)
+        try {
+            // Simular llamada a API
+            await new Promise(resolve => setTimeout(resolve, 1500))
+
+            // Agregar nueva ficha a la lista
+            const newFicha = {
+                ...formData,
+                id: Date.now(),
+                fecha: formData.fecha || new Date().toISOString().split('T')[0]
+            }
+
+            setFichas(prev => [...prev, newFicha])
+            return true // Éxito
+        } catch (error) {
+            throw error
+        } finally {
+            setModalLoading(false)
         }
+    }
+
+    // Manejar edición de ficha
+    const handleEditSave = async (changedData, fullData) => {
+        setModalLoading(true)
+        try {
+            // Simular llamada a API
+            await new Promise(resolve => setTimeout(resolve, 1500))
+
+            // Actualizar ficha en la lista
+            setFichas(prev => prev.map(ficha =>
+                ficha.id === fullData.id ? { ...ficha, ...changedData } : ficha
+            ))
+
+            return true // Éxito
+        } catch (error) {
+            throw error
+        } finally {
+            setModalLoading(false)
+        }
+    }
+
+    // Manejar eliminación de ficha
+    const handleDelete = async () => {
+        setModalLoading(true)
+        try {
+            // Simular llamada a API
+            await new Promise(resolve => setTimeout(resolve, 1000))
+
+            // Eliminar ficha de la lista
+            setFichas(prev => prev.filter(ficha => ficha.id !== selectedItem.id))
+            setShowDeleteModal(false)
+            setSelectedItem(null)
+            showSuccess('Ficha eliminada correctamente')
+        } catch (error) {
+            showError('Error al eliminar la ficha')
+        } finally {
+            setModalLoading(false)
+        }
+    }
+
+    // Configurar acciones de tabla con funciones reales
+    const tableActions = [
+        {
+            icon: 'fas fa-eye',
+            variant: 'outline-info',
+            title: 'Ver Ficha',
+            onClick: (item) => {
+                showInfo(`Visualizando ficha: ${item.codigo}`)
+            }
+        },
+        {
+            icon: 'fas fa-edit',
+            variant: 'outline-primary',
+            title: 'Editar Ficha',
+            onClick: (item) => {
+                setSelectedItem(item)
+                setShowEditModal(true)
+            }
+        },
+        {
+            icon: 'fas fa-file-pdf',
+            variant: 'outline-danger',
+            title: 'Generar PDF',
+            onClick: (item) => {
+                showInfo(`Generando PDF para: ${item.codigo}`)
+            }
+        },
+        {
+            icon: 'fas fa-map-marker-alt',
+            variant: 'outline-success',
+            title: 'Ver en Mapa',
+            onClick: (item) => {
+                showInfo(`Mostrando en mapa: ${item.direccion}`)
+            }
+        },
+        {
+            icon: 'fas fa-trash',
+            variant: 'outline-danger',
+            title: 'Eliminar Ficha',
+            onClick: (item) => {
+                setSelectedItem(item)
+                setShowDeleteModal(true)
+            }
+        }
+    ]
+
+    const breadcrumbItems = [
+        { label: 'Inicio', href: '/inicio' },
+        { label: 'Fichas Catastrales', href: '/fichas' },
+        { label: 'Lista de Fichas' }
     ]
 
     // Configuraciones importadas desde componentes separados
     const filterConfig = getFichasFilterConfig()
     const filterActions = getFichasFilterActions(loadFichasData, loading, filteredFichas)
     const columns = getFichasTableColumns()
-    const tableActions = getFichasTableActions()
+    const modalFields = getFichasModalFields()
 
     if (loading) {
         return (
@@ -143,14 +262,6 @@ const ListaFichas = () => {
                 title="Lista de Fichas Catastrales"
                 breadcrumbItems={breadcrumbItems}
             >
-                {/* Mensaje de error si existe */}
-                {error && (
-                    <div className="alert alert-warning mb-3">
-                        <i className="fas fa-exclamation-triangle me-2"></i>
-                        {error} - Mostrando datos de ejemplo
-                    </div>
-                )}
-
                 {/* Panel de filtros */}
                 <FilterPanel
                     searchValue={searchTerm}
@@ -176,14 +287,14 @@ const ListaFichas = () => {
                                 <ExportButton
                                     variant="outline-success"
                                     size="sm"
-                                    onClick={() => console.log('Exportar seleccionadas:', selectedRows)}
+                                    onClick={() => showInfo('Exportando fichas seleccionadas')}
                                 >
                                     Exportar Seleccionadas
                                 </ExportButton>
                                 <DeleteButton
                                     variant="danger"
                                     size="sm"
-                                    onClick={() => console.log('Eliminar seleccionadas:', selectedRows)}
+                                    onClick={() => showInfo('Eliminando fichas seleccionadas')}
                                     confirmMessage={`¿Eliminar ${selectedRows.length} ficha(s) seleccionada(s)?`}
                                 >
                                     Eliminar Seleccionadas
@@ -195,23 +306,21 @@ const ListaFichas = () => {
 
                 {/* Card con tabla y botón agregar */}
                 <Card className="shadow-sm border-0">
-                    {/* Header del card con botón agregar */}
                     <Card.Header className="bg-white border-bottom">
                         <div className="d-flex justify-content-between align-items-center">
                             <h6 className="mb-0 text-muted">
                                 <i className="fas fa-file-alt me-2"></i>
-                                Listado ({filteredFichas.length})
+                                Fichas Catastrales ({filteredFichas.length})
                             </h6>
                             <AddButton
                                 size="sm"
-                                onClick={() => console.log('Crear nueva ficha')}
+                                onClick={() => setShowCreateModal(true)}
                             >
                                 Agregar
                             </AddButton>
                         </div>
                     </Card.Header>
 
-                    {/* Cuerpo del card con la tabla */}
                     <Card.Body className="p-0">
                         <DataTable
                             data={filteredFichas}
@@ -231,9 +340,59 @@ const ListaFichas = () => {
                         />
                     </Card.Body>
                 </Card>
+
+                {/* Modal de Crear Ficha */}
+                <CreateModal
+                    show={showCreateModal}
+                    onHide={() => setShowCreateModal(false)}
+                    onSave={handleCreateSave}
+                    title="Crear Nueva Ficha Catastral"
+                    fields={modalFields}
+                    loading={modalLoading}
+                    validationSchema={fichasValidationSchema}
+                    validateField={validateFichaField}
+                    validateForm={validateFichaForm}
+                    size="lg"
+                />
+
+                {/* Modal de Editar Ficha */}
+                <EditModal
+                    show={showEditModal}
+                    onHide={() => setShowEditModal(false)}
+                    onSave={handleEditSave}
+                    title="Editar Ficha Catastral"
+                    fields={modalFields.map(field => 
+                        field.key === 'codigo' 
+                            ? { ...field, readOnly: true }
+                            : field
+                    )}
+                    loading={modalLoading}
+                    initialData={selectedItem}
+                    validationSchema={fichasValidationSchema}
+                    validateField={validateFichaField}
+                    validateForm={validateFichaForm}
+                    size="lg"
+                />
+
+                {/* Modal de Eliminar Ficha */}
+                <DeleteModal
+                    show={showDeleteModal}
+                    onHide={() => setShowDeleteModal(false)}
+                    onDelete={handleDelete}
+                    title="Eliminar Ficha Catastral"
+                    message="¿Está seguro de que desea eliminar esta ficha catastral?"
+                    itemName={`${selectedItem?.codigo} - ${selectedItem?.direccion}`}
+                    details={[
+                        `Propietario: ${selectedItem?.propietario}`,
+                        `Tipo: ${selectedItem?.tipo}`,
+                        `Estado: ${selectedItem?.estado}`,
+                        `Superficie: ${selectedItem?.superficie} m²`
+                    ]}
+                    loading={modalLoading}
+                />
             </PageContainer>
         </AdminLayout>
     )
 }
 
-export default ListaFichas 
+export default ListaFichasExample 

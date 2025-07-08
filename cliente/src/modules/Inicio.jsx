@@ -5,23 +5,28 @@ import { useApp } from '../context/AppContext'
 import { AdminLayout, PageContainer, LoadingState } from '../components'
 
 function Inicio() {
-    const [loading, setLoading] = useState(true)
+    const [pageLoading, setPageLoading] = useState(true)
     const [error, setError] = useState('')
     const navigate = useNavigate()
-    const { user, isAuthenticated } = useApp()
+    const { user, isAuthenticated, loading } = useApp()
 
     useEffect(() => {
-        // Verificar autenticación
+        // Esperar a que termine la verificación inicial de autenticación
+        if (loading) {
+            return // Aún está verificando la autenticación
+        }
+
+        // Una vez verificada la autenticación, decidir qué hacer
         if (!isAuthenticated) {
             navigate('/login')
             return
         }
 
-        // Simular carga de datos
+        // Si está autenticado, simular carga de datos de la página
         setTimeout(() => {
-            setLoading(false)
+            setPageLoading(false)
         }, 1000)
-    }, [isAuthenticated, navigate])
+    }, [isAuthenticated, loading, navigate])
 
     const breadcrumbItems = [
         {
@@ -29,15 +34,16 @@ function Inicio() {
         }
     ]
 
-    if (loading) {
+    // Mostrar loading mientras se verifica autenticación o se cargan datos
+    if (loading || pageLoading) {
         return (
             <AdminLayout>
-                <PageContainer 
+                <PageContainer
                     title="Inicio"
                     breadcrumbItems={breadcrumbItems}
                 >
-                    <LoadingState 
-                        message="Cargando..."
+                    <LoadingState
+                        message={loading ? "Verificando autenticación..." : "Cargando..."}
                         fullPage={true}
                     />
                 </PageContainer>
@@ -48,7 +54,7 @@ function Inicio() {
     if (error) {
         return (
             <AdminLayout>
-                <PageContainer 
+                <PageContainer
                     title="Inicio"
                     breadcrumbItems={breadcrumbItems}
                 >
@@ -62,7 +68,7 @@ function Inicio() {
 
     return (
         <AdminLayout>
-            <PageContainer 
+            <PageContainer
                 title="Inicio"
                 breadcrumbItems={breadcrumbItems}
             >
@@ -74,7 +80,7 @@ function Inicio() {
                                     <i className="fas fa-home me-2"></i>
                                     Bienvenido al Sistema Catastral
                                 </h4>
-                                
+
                                 {user && (
                                     <div className="mb-4">
                                         <h5>Información del Usuario</h5>

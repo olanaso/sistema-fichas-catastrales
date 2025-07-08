@@ -20,7 +20,7 @@ import ListaUsuarios from '../modules/usuarios/views/ListaUsuarios'
 // Componente para páginas 404
 const NotFoundPage = () => (
     <AdminLayout>
-        <PageContainer 
+        <PageContainer
             title="Página no encontrada"
             breadcrumbItems={[
                 { label: 'Inicio', href: '/inicio' },
@@ -38,7 +38,7 @@ const NotFoundPage = () => (
 // Componente para páginas en desarrollo
 const ComingSoonPage = ({ title, breadcrumbItems }) => (
     <AdminLayout>
-        <PageContainer 
+        <PageContainer
             title={title}
             breadcrumbItems={breadcrumbItems}
         >
@@ -63,8 +63,8 @@ function AppRoutes() {
                 {/* Rutas de Fichas Catastrales */}
                 <Route path={Paths.fichasList} element={<ListaFichas />} />
                 <Route path={Paths.fichasCreate} element={
-                    <ComingSoonPage 
-                        title="Crear Ficha Catastral" 
+                    <ComingSoonPage
+                        title="Crear Ficha Catastral"
                         breadcrumbItems={[
                             { label: 'Inicio', href: '/inicio' },
                             { label: 'Fichas', href: '/fichas/lista' },
@@ -76,8 +76,8 @@ function AppRoutes() {
                 {/* Rutas de Usuarios */}
                 <Route path={Paths.usuariosList} element={<ListaUsuarios />} />
                 <Route path={Paths.usuariosCreate} element={
-                    <ComingSoonPage 
-                        title="Crear Usuario" 
+                    <ComingSoonPage
+                        title="Crear Usuario"
                         breadcrumbItems={[
                             { label: 'Inicio', href: '/inicio' },
                             { label: 'Usuarios', href: '/usuarios/lista' },
@@ -88,8 +88,8 @@ function AppRoutes() {
 
                 {/* Rutas de Reportes */}
                 <Route path={Paths.reportesDashboard} element={
-                    <ComingSoonPage 
-                        title="Dashboard de Reportes" 
+                    <ComingSoonPage
+                        title="Dashboard de Reportes"
                         breadcrumbItems={[
                             { label: 'Inicio', href: '/inicio' },
                             { label: 'Reportes' }
@@ -99,8 +99,8 @@ function AppRoutes() {
 
                 {/* Rutas de Configuración */}
                 <Route path={Paths.configSistema} element={
-                    <ComingSoonPage 
-                        title="Configuración del Sistema" 
+                    <ComingSoonPage
+                        title="Configuración del Sistema"
                         breadcrumbItems={[
                             { label: 'Inicio', href: '/inicio' },
                             { label: 'Configuración' }
