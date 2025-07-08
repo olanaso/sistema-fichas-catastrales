@@ -15,7 +15,7 @@ const BaseLayout = ({
         setSidebarCollapsed(!sidebarCollapsed)
     }
 
-    const sidebarWidth = sidebarCollapsed ? 80 : 280
+    const sidebarWidth = sidebarCollapsed ? 60 : 240
 
     return (
         <div className="d-flex" style={{ height: '100vh', overflow: 'hidden' }}>
@@ -24,7 +24,6 @@ const BaseLayout = ({
                 <Sidebar
                     menuItems={menuItems}
                     collapsed={sidebarCollapsed}
-                    onToggleCollapse={handleToggleSidebar}
                     userRole={user?.role || 'user'}
                     {...sidebarProps}
                 />
@@ -34,7 +33,10 @@ const BaseLayout = ({
             <div className="flex-grow-1 d-flex flex-column" style={{ height: '100vh', overflow: 'hidden' }}>
                 {/* Navbar - Ocupa la parte superior del área no ocupada por el sidebar */}
                 <div className="flex-shrink-0">
-                    <AppNavbar />
+                    <AppNavbar 
+                        onToggleSidebar={handleToggleSidebar}
+                        sidebarCollapsed={sidebarCollapsed}
+                    />
                 </div>
 
                 {/* Contenido principal - Ocupa todo el espacio restante */}

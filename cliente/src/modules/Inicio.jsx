@@ -6,7 +6,7 @@ import { AdminLayout, PageContainer, LoadingState } from '../components'
 
 function Inicio() {
     const [pageLoading, setPageLoading] = useState(true)
-    const [error, setError] = useState('')
+    const [error] = useState('')
     const navigate = useNavigate()
     const { user, isAuthenticated, loading } = useApp()
 

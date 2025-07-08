@@ -1,5 +1,6 @@
 import React from 'react'
 import BaseLayout from './BaseLayout'
+import { LuBarcode, LuHouse } from 'react-icons/lu'
 
 const AdminLayout = ({ children, ...props }) => {
     // Menú de administrador
@@ -7,13 +8,13 @@ const AdminLayout = ({ children, ...props }) => {
         {
             id: 'inicio',
             title: 'Inicio',
-            icon: 'fas fa-home',
+            icon: <LuHouse />,
             path: '/inicio'
         },
         {
             id: 'fichas',
             title: 'Fichas Catastrales',
-            icon: 'fas fa-file-alt',
+            icon: <LuBarcode />,
             children: [
                 { id: 'fichas-lista', title: 'Lista', path: '/fichas/lista' },
                 { id: 'fichas-crear', title: 'Crear', path: '/fichas/crear' },
@@ -23,7 +24,7 @@ const AdminLayout = ({ children, ...props }) => {
         {
             id: 'usuarios',
             title: 'Usuarios',
-            icon: 'fas fa-users',
+            icon: <LuBarcode />,
             roles: ['admin'],
             children: [
                 { id: 'usuarios-lista', title: 'Lista', path: '/usuarios/lista' },
@@ -34,7 +35,7 @@ const AdminLayout = ({ children, ...props }) => {
         {
             id: 'reportes',
             title: 'Reportes',
-            icon: 'fas fa-chart-bar',
+            icon: <LuBarcode />,
             children: [
                 { id: 'reportes-dashboard', title: 'Dashboard', path: '/reportes/dashboard' },
                 { id: 'reportes-fichas', title: 'Fichas', path: '/reportes/fichas' },
@@ -44,7 +45,7 @@ const AdminLayout = ({ children, ...props }) => {
         {
             id: 'configuracion',
             title: 'Configuración',
-            icon: 'fas fa-cogs',
+            icon: <LuBarcode />,
             roles: ['admin'],
             children: [
                 { id: 'config-sistema', title: 'Sistema', path: '/configuracion/sistema' },

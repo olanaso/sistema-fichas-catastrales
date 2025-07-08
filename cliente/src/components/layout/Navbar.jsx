@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { Navbar, Container, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../../context/AppContext'
+import { LuLogOut, LuPanelLeft } from "react-icons/lu"
 
-const AppNavbar = () => {
+const AppNavbar = ({ onToggleSidebar, sidebarCollapsed }) => {
     const [currentDate, setCurrentDate] = useState(new Date())
     const navigate = useNavigate()
     const { user, logout } = useApp()
@@ -36,14 +37,6 @@ const AppNavbar = () => {
         })
     }
 
-    const formatTime = (date) => {
-        return date.toLocaleTimeString('es-ES', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        })
-    }
-
     const getUserName = () => {
         if (user?.nombres && user?.apellidos) {
             return `${user.nombres} ${user.apellidos}`
@@ -59,20 +52,35 @@ const AppNavbar = () => {
             expand="lg" 
             className="shadow-sm border-bottom"
             style={{ 
-                height: '80px',
-                minHeight: '80px',
-                maxHeight: '80px'
+                height: '60px',
+                minHeight: '60px',
+                maxHeight: '60px'
             }}
         >
-            <Container fluid className="px-4 h-100">
-                <div className="d-flex align-items-center justify-content-between w-100 h-100">
-                    {/* Fecha y hora actual */}
-                    <div className="d-flex flex-column justify-content-center">
-                        <div className="fw-semibold text-dark small">
-                            {formatDate(currentDate)}
-                        </div>
-                        <div className="text-primary fw-bold">
-                            {formatTime(currentDate)}
+            <Container fluid className="px-4 h-80">
+                <div className="d-flex align-items-center justify-content-between w-100 h-80">
+                    {/* Botón de toggle del sidebar y fecha/hora */}
+                    <div className="d-flex align-items-center gap-3">
+                        {/* Botón de toggle del sidebar */}
+                        <Button
+                            variant="light"
+                            size="sm"
+                            onClick={onToggleSidebar}
+                            title={sidebarCollapsed ? 'Expandir sidebar' : 'Contraer sidebar'}
+                            className="border-0 d-flex align-items-center justify-content-center"
+                            style={{ width: '36px', height: '36px' }}
+                        >
+                            <LuPanelLeft size={18} />
+                        </Button>
+
+                        {/* Fecha y hora actual */}
+                        <div className="d-flex flex-column justify-content-center">
+                            <div className="fw-semibold text-dark small">
+                                {formatDate(currentDate).charAt(0).toUpperCase() + formatDate(currentDate).slice(1)}
+                            </div>
+                            {/* <div className="text-primary fw-bold">
+                                {formatTime(currentDate)}
+                            </div> */}
                         </div>
                     </div>
 
@@ -84,9 +92,9 @@ const AppNavbar = () => {
                                 <div className="fw-semibold text-dark small">
                                     ¡Bienvenido, {getUserName()}!
                                 </div>
-                                <div className="text-muted small">
+                                {/* <div className="text-muted small">
                                     {user?.role || 'Usuario'}
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 
@@ -94,10 +102,11 @@ const AppNavbar = () => {
                         <Button
                             variant="outline-danger"
                             size="sm"
+                            rounded={false}
                             onClick={handleLogout}
                             className="d-flex align-items-center gap-2"
                         >
-                            <i className="fas fa-sign-out-alt"></i>
+                            <LuLogOut size={18} />
                         </Button>
                     </div>
                 </div>

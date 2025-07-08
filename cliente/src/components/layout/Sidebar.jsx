@@ -2,15 +2,9 @@ import React, { useState } from 'react'
 import { Nav, Button, Collapse } from 'react-bootstrap'
 import { Link, useLocation } from 'react-router-dom'
 
-const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole = 'user' }) => {
+const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
     const [expandedItems, setExpandedItems] = useState({})
     const location = useLocation()
-
-    const toggleCollapse = () => {
-        if (onToggleCollapse) {
-            onToggleCollapse()
-        }
-    }
 
     const toggleSubmenu = (itemId) => {
         setExpandedItems(prev => ({
@@ -39,7 +33,24 @@ const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole
         const isItemActive = isActive(item.path)
         const hasChildren = hasSubmenu(item)
         const isExpanded = expandedItems[item.id]
-        const paddingLeft = collapsed ? 0 : level * 20 + 16
+        const paddingLeft = collapsed ? 0 : level * 20
+
+        // Función para renderizar el icono
+        const renderIcon = (icon) => {
+            if (typeof icon === 'string') {
+                // Icono de Font Awesome
+                return <i className={`${icon} ${collapsed ? 'fs-5' : 'me-3'}`}></i>
+            } else if (React.isValidElement(icon)) {
+                // Icono de React Icons o Lucide React (JSX element)
+                return React.cloneElement(icon, {
+                    size: collapsed ? 20 : 16,
+                    className: collapsed ? 'me-0' : 'me-2'
+                })
+            } else {
+                // Fallback
+                return <span className={collapsed ? 'fs-5' : 'me-3'}>{icon}</span>
+            }
+        }
 
         return (
             <div key={item.id} className="mb-1">
@@ -51,10 +62,13 @@ const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole
                             className={`w-100 text-start p-0 border-0 text-decoration-none ${isItemActive ? 'bg-primary text-white' : 'text-dark'
                                 }`}
                             onClick={() => toggleSubmenu(item.id)}
-                            style={{ paddingLeft: `${paddingLeft}px` }}
+                            style={{ 
+                                paddingLeft: collapsed ? '0px' : `${paddingLeft}px`,
+                                paddingRight: collapsed ? '0px' : '12px'
+                            }}
                         >
-                            <div className="d-flex align-items-center py-2 px-3">
-                                <i className={`${item.icon} ${collapsed ? 'fs-5' : 'me-3'}`}></i>
+                            <div className={`d-flex align-items-center ${collapsed ? 'justify-content-center py-2' : 'py-2 px-3'}`}>
+                                {renderIcon(item.icon)}
                                 {!collapsed && (
                                     <>
                                         <span className="flex-grow-1 fw-semibold">{item.title}</span>
@@ -66,22 +80,29 @@ const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole
                     ) : (
                         <Link
                             to={item.path}
-                            className={`d-flex align-items-center py-2 px-3 text-decoration-none rounded ${isItemActive
+                            className={`d-flex align-items-center text-decoration-none rounded ${isItemActive
                                     ? 'bg-primary text-white'
                                     : 'text-dark hover-bg-light'
                                 }`}
-                            style={{ paddingLeft: `${paddingLeft}px` }}
+                            style={{ 
+                                paddingLeft: collapsed ? '0px' : `${paddingLeft}px`,
+                                paddingRight: collapsed ? '0px' : '12px',
+                                marginLeft: collapsed ? '10px' : '12px',
+                                marginRight: collapsed ? '10px' : '12px'
+                            }}
                             title={collapsed ? item.title : ''}
                         >
-                            <i className={`${item.icon} ${collapsed ? 'fs-5' : 'me-3'}`}></i>
-                            {!collapsed && (
-                                <div className="">
-                                    <div className="fw-semibold">{item.title}</div>
-                                    {item.description && (
-                                        <small className="opacity-75">{item.description}</small>
-                                    )}
-                                </div>
-                            )}
+                            <div className={`d-flex align-items-center ${collapsed ? 'justify-content-center py-2' : 'py-2 px-3'}`}>
+                                {renderIcon(item.icon)}
+                                {!collapsed && (
+                                    <div className="">
+                                        <div className="fw-semibold">{item.title}</div>
+                                        {item.description && (
+                                            <small className="opacity-75">{item.description}</small>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </Link>
                     )}
                 </div>
@@ -108,41 +129,42 @@ const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole
             }}
         >
             {/* Header del sidebar */}
-            <div className="p-3 border-bottom bg-light flex-shrink-0">
-                <div className="d-flex align-items-center justify-content-between">
-                    {!collapsed && (
+            <div className={`${collapsed ? 'px-0' : 'px-3'} bg-light flex-shrink-0`} 
+                style={{
+                    paddingTop: collapsed ? '12px' : '14px',
+                    paddingBottom: collapsed ? '12px' : '14px'
+                }}
+            >
+                <div className="d-flex align-items-center justify-content-center">
+                    {collapsed ? (
+                        <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center"
+                            style={{ width: '32px', height: '32px', marginTop: '6px', marginBottom: '6px' }}>
+                            <i className="fas fa-building text-white small"></i>
+                        </div>
+                    ) : (
                         <div className="d-flex align-items-center">
                             <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2"
                                 style={{ width: '32px', height: '32px' }}>
                                 <i className="fas fa-building text-white small"></i>
                             </div>
                             <div>
-                                <div className="fw-bold text-dark small">Sistema</div>
-                                <div className="text-muted small">Catastral</div>
+                                <div className="fw-bold text-dark small">CATASTRO</div>
+                                {/* <div className="text-muted small">Catastral</div> */}
                             </div>
                         </div>
                     )}
-                    <Button
-                        variant="outline-secondary"
-                        size="sm"
-                        onClick={toggleCollapse}
-                        title={collapsed ? 'Expandir sidebar' : 'Contraer sidebar'}
-                        className="border-0"
-                    >
-                        <i className={`fas fa-${collapsed ? 'chevron-right' : 'chevron-left'}`}></i>
-                    </Button>
                 </div>
             </div>
 
             {/* Menú de navegación - Ocupa el espacio disponible */}
             <div className="flex-grow-1 overflow-auto">
-                <Nav className="flex-column p-3">
+                <Nav className={`flex-column ${collapsed ? 'p-0' : 'p-2'}`}>
                     {menuItems.map(item => renderMenuItem(item))}
                 </Nav>
             </div>
 
             {/* Footer del sidebar */}
-            <div className="p-3 border-top bg-light flex-shrink-0">
+            <div className={`${collapsed ? 'p-0' : 'p-3'} border-top bg-light flex-shrink-0`}>
                 <div className="text-center">
                     {!collapsed ? (
                         <div className="text-muted small">
@@ -150,7 +172,9 @@ const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole
                             Versión 1.0
                         </div>
                     ) : (
-                        <i className="fas fa-shield-alt text-muted"></i>
+                        <div className="d-flex justify-content-center align-items-center" style={{ height: '40px' }}>
+                            <i className="fas fa-shield-alt text-muted small"></i>
+                        </div>
                     )}
                 </div>
             </div>
@@ -161,13 +185,28 @@ const Sidebar = ({ menuItems = [], collapsed = false, onToggleCollapse, userRole
                     background-color: #f8f9fa !important;
                 }
                 .sidebar-expanded {
-                    width: 280px;
+                    width: 240px;
                 }
                 .sidebar-collapsed {
-                    width: 80px;
+                    width: 50px;
                 }
                 .sidebar-collapsed .collapse {
                     display: none !important;
+                }
+                .sidebar-collapsed .btn {
+                    padding: 6px 2px !important;
+                    display: flex !important;
+                    justify-content: center !important;
+                    align-items: center !important;
+                }
+                .sidebar-collapsed .nav-link {
+                    padding: 6px 2px !important;
+                    display: flex !important;
+                    justify-content: center !important;
+                    align-items: center !important;
+                }
+                .sidebar-collapsed .d-flex {
+                    justify-content: center !important;
                 }
             `}</style>
         </div>
