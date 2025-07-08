@@ -2,7 +2,9 @@ package org.catastro.sistemafichacatastral.Usuario;
 
 import org.catastro.sistemafichacatastral.Rol.RolEntity;
 import org.catastro.sistemafichacatastral.Rol.RolService;
+import org.catastro.sistemafichacatastral.auth.DTO.ChangeUserPasswordDto;
 import org.catastro.sistemafichacatastral.auth.DTO.UsuarioRegisterDto;
+import org.catastro.sistemafichacatastral.auth.DTO.UsuarioUpdateDto;
 import org.catastro.sistemafichacatastral.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,10 +31,6 @@ public class UsuarioService {
     }
 
     /* FUNCIONES  GET */
-    public Optional<UsuarioEntity> findByRol(RolEntity rol){
-        return  usuarioRepository.findByRol(rol);
-    }
-
     public List<UsuarioEntity> findAll(){
         return usuarioRepository.findAll();
     }
@@ -63,6 +61,37 @@ public class UsuarioService {
         return usuarioRepository.count();
     }
 
+    // Métodos de filtrado
+    public List<UsuarioEntity> findByRolAndNombre(Long rolId, String nombre) {
+        if (rolId != null) {
+            RolEntity rol = rolService.findByIdOrThrow(rolId);
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                return usuarioRepository.findByRolAndNombre(rol, nombre.trim());
+            } else {
+                return usuarioRepository.findByRol(rol);
+            }
+        } else if (nombre != null && !nombre.trim().isEmpty()) {
+            return usuarioRepository.findByNombre(nombre.trim());
+        } else {
+            return findAll();
+        }
+    }
+
+    public List<UsuarioEntity> findByRol(Long rolId) {
+        if (rolId != null) {
+            RolEntity rol = rolService.findByIdOrThrow(rolId);
+            return usuarioRepository.findByRol(rol);
+        }
+        return findAll();
+    }
+
+    public List<UsuarioEntity> findByNombre(String nombre) {
+        if (nombre != null && !nombre.trim().isEmpty()) {
+            return usuarioRepository.findByNombre(nombre.trim());
+        }
+        return findAll();
+    }
+
     /* FUNCIONES POST */
     public UsuarioEntity create(UsuarioRegisterDto usuarioRegisterDto){
         // Verificar si el usuario ya existe por email
@@ -81,6 +110,7 @@ public class UsuarioService {
         usuarioEntity.setDni(usuarioRegisterDto.getDni());
         usuarioEntity.setEmail(usuarioRegisterDto.getEmail());
         usuarioEntity.setPassword(passwordEncoder.encode(usuarioRegisterDto.getPassword()));
+        usuarioEntity.setActivo(true); // Por defecto activo
 
         // Asignar automáticamente el rol de administrador
         Set<RolEntity> roles = new HashSet<>();
@@ -120,6 +150,7 @@ public class UsuarioService {
         usuarioEntity.setDni(usuarioRegisterDto.getDni());
         usuarioEntity.setEmail(usuarioRegisterDto.getEmail());
         usuarioEntity.setPassword(passwordEncoder.encode(usuarioRegisterDto.getPassword()));
+        usuarioEntity.setActivo(true); // Por defecto activo
 
         // Asignar el rol específico por ID
         Set<RolEntity> roles = new HashSet<>();
@@ -148,11 +179,85 @@ public class UsuarioService {
         usuario.setApellidos(usuarioDetails.getApellidos());
         usuario.setDni(usuarioDetails.getDni());
         usuario.setEmail(usuarioDetails.getEmail());
+        usuario.setActivo(usuarioDetails.isActivo());
 
         if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
         }
         
+        return usuarioRepository.save(usuario);
+    }
+
+    // Nuevo método para actualizar con DTO específico
+    public UsuarioEntity updateWithDto(int id, UsuarioUpdateDto usuarioUpdateDto) {
+        UsuarioEntity usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+        
+        // Verificar si el email ya existe en otro usuario
+        if (!usuario.getEmail().equals(usuarioUpdateDto.getEmail()) && 
+            usuarioRepository.findByEmail(usuarioUpdateDto.getEmail()).isPresent()) {
+            throw new RuntimeException("El email ya está en uso por otro usuario");
+        }
+        
+        // Verificar si el DNI ya existe en otro usuario
+        if (!usuario.getDni().equals(usuarioUpdateDto.getDni()) && 
+            usuarioRepository.findByDni(usuarioUpdateDto.getDni()).isPresent()) {
+            throw new RuntimeException("El DNI ya está en uso por otro usuario");
+        }
+        
+        usuario.setNombres(usuarioUpdateDto.getNombres());
+        usuario.setApellidos(usuarioUpdateDto.getApellidos());
+        usuario.setDni(usuarioUpdateDto.getDni());
+        usuario.setEmail(usuarioUpdateDto.getEmail());
+        usuario.setActivo(usuarioUpdateDto.getActivo());
+        
+        return usuarioRepository.save(usuario);
+    }
+
+    // Método para cambiar contraseña
+    public UsuarioEntity changePassword(int id, ChangeUserPasswordDto changePasswordDto) {
+        UsuarioEntity usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+        
+        // Actualizar con la nueva contraseña
+        usuario.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        
+        return usuarioRepository.save(usuario);
+    }
+
+    // Método específico para reset de contraseña (desde AuthService)
+    public UsuarioEntity resetPassword(int id, String newPassword) {
+        UsuarioEntity usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+        
+        // Solo actualizar la contraseña
+        usuario.setPassword(passwordEncoder.encode(newPassword));
+        
+        return usuarioRepository.save(usuario);
+    }
+
+    // Método para activar/desactivar usuario
+    public UsuarioEntity toggleActivo(int id) {
+        UsuarioEntity usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+        
+        usuario.setActivo(!usuario.isActivo());
+        return usuarioRepository.save(usuario);
+    }
+
+    public UsuarioEntity activarUsuario(int id) {
+        UsuarioEntity usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+        
+        usuario.setActivo(true);
+        return usuarioRepository.save(usuario);
+    }
+
+    public UsuarioEntity desactivarUsuario(int id) {
+        UsuarioEntity usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+        
+        usuario.setActivo(false);
         return usuarioRepository.save(usuario);
     }
 

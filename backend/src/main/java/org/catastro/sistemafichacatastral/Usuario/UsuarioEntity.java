@@ -1,5 +1,6 @@
 package org.catastro.sistemafichacatastral.Usuario;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,8 +37,12 @@ public class UsuarioEntity implements UserDetails {
     @Column( length = 150, nullable = false)
     private String email;
 
+    @JsonIgnore
     @Column( length = 150, nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private boolean activo = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -58,6 +63,6 @@ public class UsuarioEntity implements UserDetails {
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled() { return true; }
+    @Override public boolean isEnabled() { return activo; }
 
 }

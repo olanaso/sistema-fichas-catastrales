@@ -1,7 +1,9 @@
 package org.catastro.sistemafichacatastral.Usuario;
 
 import org.catastro.sistemafichacatastral.audit.AuditService;
+import org.catastro.sistemafichacatastral.auth.DTO.ChangeUserPasswordDto;
 import org.catastro.sistemafichacatastral.auth.DTO.UsuarioRegisterDto;
+import org.catastro.sistemafichacatastral.auth.DTO.UsuarioUpdateDto;
 import org.catastro.sistemafichacatastral.dto.ApiResponse;
 import org.catastro.sistemafichacatastral.exception.ResourceNotFoundException;
 import org.catastro.sistemafichacatastral.service.SessionService;
@@ -38,6 +40,19 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/filter")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public ResponseEntity<ApiResponse<List<UsuarioEntity>>> filterUsuarios(
+            @RequestParam(required = false) Long rolId,
+            @RequestParam(required = false) String nombre) {
+        try {
+            List<UsuarioEntity> usuarios = usuarioService.findByRolAndNombre(rolId, nombre);
+            return ResponseEntity.ok(ApiResponse.success("Usuarios filtrados exitosamente", usuarios));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Error al filtrar usuarios: " + e.getMessage()));
+        }
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSPECTOR')")
     public ResponseEntity<ApiResponse<UsuarioEntity>> getUsuarioById(@PathVariable int id) {
@@ -52,54 +67,63 @@ public class UsuarioController {
         }
     }
 
-    @GetMapping("/email/{email}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
-    public ResponseEntity<ApiResponse<UsuarioEntity>> getUsuarioByEmail(@PathVariable String email) {
-        try {
-            UsuarioEntity usuario = usuarioService.findByEmail(email)
-                    .orElseThrow(() -> new ResourceNotFoundException("Usuario", "email", email));
-            return ResponseEntity.ok(ApiResponse.success("Usuario encontrado", usuario));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Error al obtener usuario: " + e.getMessage()));
-        }
-    }
-
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
-    public ResponseEntity<ApiResponse<UsuarioEntity>> updateUsuario(@PathVariable int id, @RequestBody UsuarioEntity usuarioDetails) {
+    public ResponseEntity<ApiResponse<UsuarioEntity>> updateUsuario(@PathVariable int id, @Valid @RequestBody UsuarioUpdateDto usuarioUpdateDto) {
         try {
-            UsuarioEntity updatedUsuario = usuarioService.update(id, usuarioDetails);
+            UsuarioEntity updatedUsuario = usuarioService.updateWithDto(id, usuarioUpdateDto);
+            auditService.logSuccess("ACTUALIZAR_USUARIO", "/usuarios/" + id, 
+                "Usuario actualizado: " + updatedUsuario.getEmail());
             return ResponseEntity.ok(ApiResponse.success("Usuario actualizado exitosamente", updatedUsuario));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            auditService.logError("ACTUALIZAR_USUARIO", "/usuarios/" + id, 
+                "Error al actualizar usuario: " + e.getMessage());
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al actualizar usuario: " + e.getMessage()));
+        } catch (Exception e) {
+            auditService.logError("ACTUALIZAR_USUARIO", "/usuarios/" + id, 
+                "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(500).body(ApiResponse.error("Error interno del servidor: " + e.getMessage()));
         }
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<String>> deleteUsuario(@PathVariable int id) {
+    @PatchMapping("/{id}/change-password")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'INSPECTOR')")
+    public ResponseEntity<ApiResponse<UsuarioEntity>> changePassword(@PathVariable int id, @Valid @RequestBody ChangeUserPasswordDto changePasswordDto) {
         try {
-            usuarioService.deleteById(id);
-            return ResponseEntity.ok(ApiResponse.success("Usuario eliminado exitosamente"));
+            UsuarioEntity usuario = usuarioService.changePassword(id, changePasswordDto);
+            auditService.logSuccess("CAMBIAR_CONTRASEÑA", "/usuarios/" + id + "/change-password", 
+                "Contraseña cambiada para usuario: " + usuario.getEmail());
+            return ResponseEntity.ok(ApiResponse.success("Contraseña cambiada exitosamente", usuario));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (RuntimeException e) {
+            auditService.logError("CAMBIAR_CONTRASEÑA", "/usuarios/" + id + "/change-password", 
+                "Error al cambiar contraseña: " + e.getMessage());
+            return ResponseEntity.badRequest().body(ApiResponse.error("Error al cambiar contraseña: " + e.getMessage()));
+        } catch (Exception e) {
+            auditService.logError("CAMBIAR_CONTRASEÑA", "/usuarios/" + id + "/change-password", 
+                "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(500).body(ApiResponse.error("Error interno del servidor: " + e.getMessage()));
+        }
+    }
+
+    @PatchMapping("/{id}/toggle-activo")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<UsuarioEntity>> toggleActivo(@PathVariable int id) {
+        try {
+            UsuarioEntity usuario = usuarioService.toggleActivo(id);
+            String estado = usuario.isActivo() ? "activado" : "desactivado";
+            auditService.logSuccess("TOGGLE_ACTIVO", "/usuarios/" + id + "/toggle-activo", 
+                "Usuario " + estado + ": " + usuario.getEmail());
+            return ResponseEntity.ok(ApiResponse.success("Usuario " + estado + " exitosamente", usuario));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Error al eliminar usuario: " + e.getMessage()));
-        }
-    }
-
-    @GetMapping("/count")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
-    public ResponseEntity<ApiResponse<Long>> getUsuarioCount() {
-        try {
-            long count = usuarioService.count();
-            return ResponseEntity.ok(ApiResponse.success("Conteo de usuarios obtenido", count));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Error al contar usuarios: " + e.getMessage()));
+            auditService.logError("TOGGLE_ACTIVO", "/usuarios/" + id + "/toggle-activo", 
+                "Error al cambiar estado del usuario: " + e.getMessage());
+            return ResponseEntity.badRequest().body(ApiResponse.error("Error al cambiar estado del usuario: " + e.getMessage()));
         }
     }
 
