@@ -205,11 +205,22 @@ public class UsuarioService {
             throw new RuntimeException("El DNI ya está en uso por otro usuario");
         }
         
+        // Actualizar datos básicos del usuario
         usuario.setNombres(usuarioUpdateDto.getNombres());
         usuario.setApellidos(usuarioUpdateDto.getApellidos());
         usuario.setDni(usuarioUpdateDto.getDni());
         usuario.setEmail(usuarioUpdateDto.getEmail());
         usuario.setActivo(usuarioUpdateDto.getActivo());
+        
+        // Actualizar el rol del usuario
+        try {
+            RolEntity nuevoRol = rolService.findByIdOrThrow(usuarioUpdateDto.getIdRol().longValue());
+            Set<RolEntity> roles = new HashSet<>();
+            roles.add(nuevoRol);
+            usuario.setRol(roles);
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException("El rol con ID '" + usuarioUpdateDto.getIdRol() + "' no existe");
+        }
         
         return usuarioRepository.save(usuario);
     }

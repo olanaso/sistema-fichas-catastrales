@@ -24,4 +24,8 @@ public class UsuarioUpdateDto {
     
     @NotNull(message = "El estado del usuario es obligatorio")
     private Boolean activo;
+    
+    @NotNull(message = "El ID del rol es obligatorio")
+    @Min(value = 1, message = "El ID del rol debe ser mayor a 0")
+    private Integer idRol;
 } 
