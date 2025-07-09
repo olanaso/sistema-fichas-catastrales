@@ -19,3 +19,8 @@ build/
 
 # Ignorar carpeta de caché
 .cache/
+
+
+
+# Ignorar carpeta sici_cusco dentro de extraccion
+extraccion/sici_cusco/
