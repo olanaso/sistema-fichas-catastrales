@@ -1,54 +1,42 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 import { getCurrentUser } from "../actions/auth.actions"
 import { ProfileTabs } from "./profile-tabs"
 import { ProfileForm } from "./profile-form"
 import { PasswordForm } from "./password-form"
+import { UsuarioDto } from "@/models/usuario"
 
 type TabType = "profile" | "password"
 
-interface UserData {
-  id: number
-  nombres: string
-  apellidos: string
-  email: string
-  numero_celular: string | null
-  creado_en: Date
-}
-
 export function ProfileContainer() {
-  const { data: session } = useSession()
   const [activeTab, setActiveTab] = useState<TabType>("profile")
-  const [userData, setUserData] = useState<UserData | null>(null)
+  const [userData, setUserData] = useState<UsuarioDto | null>(null)
   const [loading, setLoading] = useState(false)
 
   // Obtener datos del usuario
   useEffect(() => {
     const fetchUserData = async () => {
-      if (session?.user?.id) {
-        setLoading(true)
-        try {
-          const result = await getCurrentUser(session.user.id)
-          if (result.success && result.user) {
-            setUserData(result.user)
-          } else {
-            toast.error(result.error || "Error al cargar los datos del usuario")
-          }
-        } catch (error) {
-          toast.error("Error al cargar los datos del usuario")
-        } finally {
-          setLoading(false)
+      setLoading(true)
+      try {
+        const result = await getCurrentUser()
+        if (result.success && result.data) {
+          setUserData(result.data)
+        } else {
+          toast.error(result.error || "Error al cargar los datos del usuario")
         }
+      } catch (error) {
+        toast.error("Error al cargar los datos del usuario")
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchUserData()
-  }, [session?.user?.id])
+  }, [])
 
-  const handleUserUpdate = (updatedData: Partial<UserData>) => {
+  const handleUserUpdate = (updatedData: Partial<UsuarioDto>) => {
     if (userData) {
       setUserData({ ...userData, ...updatedData })
     }
@@ -80,11 +68,11 @@ export function ProfileContainer() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 xs:p-4">
+    <div className="min-h-screen xs:p-4">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Configuración de Cuenta</h1>
-          <p className="text-gray-600 mt-2">Administra tu información personal y configuración de seguridad</p>
+          <h1 className="text-3xl font-bold ">Configuración de Cuenta</h1>
+          <p className=" mt-2">Administra tu información personal y configuración de seguridad</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
