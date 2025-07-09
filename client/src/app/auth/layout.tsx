@@ -2,6 +2,7 @@
 
 import { GalleryVerticalEnd } from "lucide-react";
 import { useConfiguracionPublica } from "@/hooks/use-configuracion-publica";
+import { getLogoUrl } from "@/lib/image-utils";
 
 export default function AuthLayout({
   children,
@@ -15,7 +16,20 @@ export default function AuthLayout({
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="/" className="flex items-center gap-2 font-medium">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            {configuracion?.logo ? (
+              <img
+                src={getLogoUrl(configuracion.logo)}
+                alt="Logo del sistema"
+                className="h-6 w-auto object-contain"
+                onError={(e) => {
+                  // Si la imagen no carga, mostrar el ícono por defecto
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <div className="hidden flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <GalleryVerticalEnd className="size-4" />
             </div>
             {isLoading ? (

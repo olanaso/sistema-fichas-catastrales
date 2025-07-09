@@ -2,6 +2,7 @@
 
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { ConfiguracionProvider } from "@/modules/configuracion/context/configuracion-context";
 
 export default function DashboardLayout({
   children,
@@ -10,12 +11,14 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <AppSidebar />
-        <div className="flex-1">
-          <main>{children}</main>
+      <ConfiguracionProvider>
+        <div className="flex min-h-screen w-full">
+          <AppSidebar />
+          <div className="flex-1">
+            <main>{children}</main>
+          </div>
         </div>
-      </div>
+      </ConfiguracionProvider>
     </SidebarProvider>
   );
 }

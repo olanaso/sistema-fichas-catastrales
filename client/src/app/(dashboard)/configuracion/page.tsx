@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/navbar";
-import { Home, Users } from "lucide-react";
-import UsuariosView from "@/modules/usuarios/view/usuarios.view";
-import ConfiguracionView from "@/modules/configuracion/view/configuracion.view";
+import { Home, Settings } from "lucide-react";
+import ConfiguracionTabsView from "@/modules/configuracion/view/configuracion-tabs.view";
 
 export default function ConfiguracionPage() {
   const breadcrumb = [
@@ -11,7 +10,7 @@ export default function ConfiguracionPage() {
       path: "/dashboard",
     },
     {
-      icon: <Users className="h-3 w-3" />,
+      icon: <Settings className="h-3 w-3" />,
       text: "Configuración",
       path: "/configuracion",
     },
@@ -21,12 +20,12 @@ export default function ConfiguracionPage() {
     <>
       <Navbar
         breadcrumb={breadcrumb}
-        title="Gestión de parámetros"
-        description="Crea y administra parámetros en tu aplicación"
+        title="Configuración del Sistema"
+        description="Gestiona los parámetros del sistema divididos en bloques"
       />
       <div className="mx-auto p-8 w-full">
         <div className="grid grid-cols-1 gap-8">
-          <ConfiguracionView />
+          <ConfiguracionTabsView />
         </div>
       </div>
     </>

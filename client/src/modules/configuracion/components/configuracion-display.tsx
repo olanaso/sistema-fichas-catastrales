@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Settings, Mail, Globe, Link, Image, Edit } from "lucide-react";
+import { Settings, Mail, Globe, Link, Edit, Building2, AtSign, Server, Database } from "lucide-react";
 import { ConfiguracionDto } from "@/models/configuracion";
 
 interface ConfiguracionDisplayProps {
@@ -28,16 +28,16 @@ export function ConfiguracionDisplay({ configuracion, onEdit }: ConfiguracionDis
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Información básica */}
-        <Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Grupo 1: Configuración del Sistema y Empresa */}
+        <Card className="md:col-span-2 lg:col-span-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-md">
-              <Settings className="w-5 h-5" />
-              Información del Sistema
+              <Building2 className="w-5 h-5" />
+              Sistema y Empresa
             </CardTitle>
             <CardDescription>
-              Configuración básica del sistema
+              Configuración básica del sistema y datos de la empresa
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -50,15 +50,124 @@ export function ConfiguracionDisplay({ configuracion, onEdit }: ConfiguracionDis
               <label className="text-sm font-medium text-muted-foreground">Nombre del Correo</label>
               <p className="text-md font-semibold text-primary">{configuracion.nombreCorreo}</p>
             </div>
+            {configuracion.ruc && (
+              <>
+                <Separator />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">RUC</label>
+                  <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
+                    {configuracion.ruc}
+                  </p>
+                </div>
+              </>
+            )}
+            {configuracion.razonSocial && (
+              <>
+                <Separator />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Razón Social</label>
+                  <p className="text-sm">{configuracion.razonSocial}</p>
+                </div>
+              </>
+            )}
+            {configuracion.nombreComercial && (
+              <>
+                <Separator />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Nombre Comercial</label>
+                  <p className="text-sm">{configuracion.nombreComercial}</p>
+                </div>
+              </>
+            )}
+            {(configuracion.pais || configuracion.departamento || configuracion.provincia || configuracion.distrito) && (
+              <>
+                <Separator />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Ubicación</label>
+                  <p className="text-sm">
+                    {[configuracion.distrito, configuracion.provincia, configuracion.departamento, configuracion.pais]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </p>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 
-        {/* Conexiones */}
+        {/* Grupo 2: Configuración de Correo */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-md">
-              <Globe className="w-5 h-5" />
-              Conexiones
+              <AtSign className="w-5 h-5" />
+              Configuración de Correo
+            </CardTitle>
+            <CardDescription>
+              Configuración del servidor de correo
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {configuracion.correoSoporte ? (
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Correo de Soporte</label>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
+                    {configuracion.correoSoporte}
+                  </p>
+                  <Badge variant="secondary">Configurado</Badge>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Correo de Soporte</label>
+                <Badge variant="destructive">Sin configurar</Badge>
+              </div>
+            )}
+            
+            {configuracion.hostCorreo && (
+              <>
+                <Separator />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Host del Correo</label>
+                  <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
+                    {configuracion.hostCorreo}
+                  </p>
+                </div>
+              </>
+            )}
+            
+            {configuracion.puertoCorreo && (
+              <>
+                <Separator />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Puerto del Correo</label>
+                  <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
+                    {configuracion.puertoCorreo}
+                  </p>
+                </div>
+              </>
+            )}
+            
+            {configuracion.usuarioCorreo && (
+              <>
+                <Separator />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Usuario del Correo</label>
+                  <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
+                    {configuracion.usuarioCorreo}
+                  </p>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Grupo 3: Conexiones SICI y APIs */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-md">
+              <Server className="w-5 h-5" />
+              Conexiones y APIs
             </CardTitle>
             <CardDescription>
               URLs de conexión a servicios externos
@@ -84,21 +193,7 @@ export function ConfiguracionDisplay({ configuracion, onEdit }: ConfiguracionDis
                 <Badge variant="secondary">Activa</Badge>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* URL del Cliente */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-md">
-              <Link className="w-5 h-5" />
-              URL del Cliente
-            </CardTitle>
-            <CardDescription>
-              URL principal del sistema cliente
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            <Separator />
             <div>
               <label className="text-sm font-medium text-muted-foreground">URL del Cliente</label>
               <div className="flex items-center gap-2">
@@ -112,42 +207,60 @@ export function ConfiguracionDisplay({ configuracion, onEdit }: ConfiguracionDis
                 )}
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Logo */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-md">
-              <Image className="w-5 h-5" />
-              Logo del Sistema
-            </CardTitle>
-            <CardDescription>
-              Logo actual del sistema
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {configuracion.logo ? (
-                <div className="space-y-2">
-                  <img
-                    src={configuracion.logo}
-                    alt="Logo del sistema"
-                    className="max-h-32 mx-auto rounded-lg border"
-                  />
-                  <p className="text-sm text-center text-muted-foreground">
-                    Logo actual del sistema
-                  </p>
+            {configuracion.apiReniecRuc && (
+              <>
+                <Separator />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">API RENIEC/RUC</label>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
+                      {configuracion.apiReniecRuc}
+                    </p>
+                    <Badge variant="secondary">Configurado</Badge>
+                  </div>
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Image className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    No hay logo configurado
-                  </p>
+              </>
+            )}
+            
+            {/* Configuración de Base de Datos */}
+            {(configuracion.hostDb || configuracion.usuarioDb || configuracion.baseDatos) && (
+              <>
+                <Separator />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Database className="w-4 h-4" />
+                    Base de Datos PostgreSQL
+                  </label>
+                  <div className="space-y-2 mt-2">
+                    {configuracion.hostDb && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">Host:</span>
+                        <p className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                          {configuracion.hostDb}
+                        </p>
+                      </div>
+                    )}
+                    {configuracion.usuarioDb && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">Usuario:</span>
+                        <p className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                          {configuracion.usuarioDb}
+                        </p>
+                      </div>
+                    )}
+                    {configuracion.baseDatos && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">Base de datos:</span>
+                        <p className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                          {configuracion.baseDatos}
+                        </p>
+                      </div>
+                    )}
+                    <Badge variant="secondary" className="text-xs">Configurado</Badge>
+                  </div>
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
