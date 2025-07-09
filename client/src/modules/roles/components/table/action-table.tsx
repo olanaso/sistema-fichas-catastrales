@@ -13,8 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { UpdateUsuarioForm } from "../forms/update-usuario";
-import { ChangePasswordForm } from "../forms/change-password";
 import { IconButton } from "@/components/custom/icon-button";
 import { LoadingButton } from "@/components/custom/loading-button";
 import { toast } from "sonner";
@@ -77,20 +75,6 @@ export default function AcctionTable({ usuario }: AcctionTableProps) {
       >
         <Power className="h-4 w-4" />
       </IconButton>
-
-      {/* sheet para actualizar el usuario */}
-      <UpdateUsuarioForm
-        usuario={usuario}
-        isOpen={isOpenUpdate}
-        onOpenChange={setIsOpenUpdate}
-      />
-
-      {/* sheet para cambiar contraseña */}
-      <ChangePasswordForm
-        usuario={usuario}
-        isOpen={isOpenPassword}
-        onOpenChange={setIsOpenPassword}
-      />
 
       {/* modal para cambiar estado del usuario */}
       <Dialog open={isOpenStatus} onOpenChange={setIsOpenStatus}>
