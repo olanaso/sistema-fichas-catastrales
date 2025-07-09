@@ -21,6 +21,8 @@ const DataTable = ({
     selectable = false,
     selectedRows = [],
     onSelectionChange = null,
+    // Filtrar props personalizadas que no deben ir al DOM
+    searchable,
     ...props
 }) => {
     const [currentPage, setCurrentPage] = useState(1)
@@ -204,7 +206,7 @@ const DataTable = ({
                             <thead className="bg-light">
                                 <tr>
                                     {/* Columna de Acciones */}
-                                    <th width="140" className="text-center">Acciones</th>
+                                    {actions.length > 0 ? <th width="140" className="text-center">Acciones</th> : <></>}
 
                                     {/* Checkbox de selección si está habilitado */}
                                     {selectable && (
@@ -241,7 +243,7 @@ const DataTable = ({
                                             className={isSelected ? 'table-primary' : ''}
                                         >
                                             {/* Columna de Acciones */}
-                                            <td className="text-center">
+                                            {actions.length > 0 && <td className="text-center">
                                                 <div className="d-flex gap-1 justify-content-center">
                                                     {actions.map((action, actionIndex) => (
                                                         <Button
@@ -255,11 +257,11 @@ const DataTable = ({
                                                             title={action.title}
                                                             className="px-2"
                                                         >
-                                                            <i className={action.icon}></i>
+                                                            <i className={action.icon || 'fas fa-question'}></i>
                                                         </Button>
                                                     ))}
                                                 </div>
-                                            </td>
+                                            </td>}
 
                                             {/* Checkbox de selección */}
                                             {selectable && (

@@ -16,6 +16,7 @@ export const Paths = {
 
     // Rutas de configuración
     configSistema: '/configuracion/sistema',
+    configRolesUsuarios: '/configuracion/roles-usuarios',
 
     // Rutas de autenticación
     login: '/login',
@@ -33,6 +34,7 @@ export const getRouteIcon = (pathname) => {
         '/usuarios/crear': 'fas fa-user-plus',
         '/reportes/dashboard': 'fas fa-chart-bar',
         '/configuracion/sistema': 'fas fa-cogs',
+        '/configuracion/roles-usuarios': 'fas fa-users-cog',
         '/login': 'fas fa-sign-in-alt',
         '/forgot-password': 'fas fa-key',
         '/reset-password': 'fas fa-unlock'

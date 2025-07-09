@@ -37,6 +37,7 @@ export {
 export { default as CreateModal } from './modals/CreateModal'
 export { default as EditModal } from './modals/EditModal'
 export { default as DeleteModal } from './modals/DeleteModal'
+export { default as PasswordModal } from './modals/PasswordModal'
 
 // 📂 Button Components (Botones de acción)
 export { 

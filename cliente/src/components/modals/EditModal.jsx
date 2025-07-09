@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Modal, Form, Row, Col } from 'react-bootstrap'
+import React, { useState, useEffect, useRef } from 'react'
+import { Modal, Form, Row, Col, InputGroup, Button } from 'react-bootstrap'
 import { SaveButton, CancelButton } from '../buttons/ActionButtons'
 import { useToast, ValidationErrors } from '../feedback/ToastSystem'
 
@@ -22,38 +22,47 @@ const EditModal = ({
     showToastErrors = true,
     ...props
 }) => {
-    const [formData, setFormData] = useState(initialData)
+    const [formData, setFormData] = useState({})
     const [errors, setErrors] = useState({})
     const [touched, setTouched] = useState({})
     const [hasChanges, setHasChanges] = useState(false)
+    const [showPasswords, setShowPasswords] = useState({})
     const { showValidationErrors, showApiError, showSuccess, showWarning } = useToast()
 
-    // Actualizar formData cuando cambie initialData
+    // Usar useRef para almacenar los datos iniciales sin causar re-renders
+    const initialDataRef = useRef({})
+
+    // Actualizar formData cuando se abre el modal
     useEffect(() => {
-        if (show && initialData) {
-            setFormData(initialData)
+        if (show) {
+            const safeInitialData = initialData && typeof initialData === 'object' ? initialData : {}
+            initialDataRef.current = safeInitialData
+            setFormData(safeInitialData)
             setErrors({})
             setTouched({})
             setHasChanges(false)
+            setShowPasswords({})
         }
-    }, [show, initialData])
+    }, [show])
 
-    // Detectar cambios en el formulario
+    // Detectar cambios en el formulario comparando con los datos iniciales guardados
     useEffect(() => {
-        if (initialData) {
-            const changed = Object.keys(formData).some(key => 
-                formData[key] !== initialData[key]
+        if (formData && typeof formData === 'object' && initialDataRef.current) {
+            const changed = Object.keys(formData).some(key =>
+                formData[key] !== initialDataRef.current[key]
             )
             setHasChanges(changed)
+        } else {
+            setHasChanges(false)
         }
-    }, [formData, initialData])
+    }, [formData])
 
     const handleChange = (fieldKey, value) => {
         setFormData(prev => ({
-            ...prev,
+            ...(prev || {}),
             [fieldKey]: value
         }))
-        
+
         // Marcar campo como tocado
         setTouched(prev => ({
             ...prev,
@@ -78,7 +87,8 @@ const EditModal = ({
 
         // Validar al salir del campo
         if (validateField && validationSchema) {
-            const validation = validateField(fieldKey, formData[fieldKey], validationSchema)
+            const safeFormData = formData || {}
+            const validation = validateField(fieldKey, safeFormData[fieldKey], validationSchema)
             setErrors(prev => ({
                 ...prev,
                 [fieldKey]: validation.isValid ? null : validation.error
@@ -86,9 +96,16 @@ const EditModal = ({
         }
     }
 
+    const togglePasswordVisibility = (fieldKey) => {
+        setShowPasswords(prev => ({
+            ...prev,
+            [fieldKey]: !prev[fieldKey]
+        }))
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
-        
+
         // Verificar si hay cambios
         if (!hasChanges) {
             showWarning('No se han realizado cambios')
@@ -105,16 +122,17 @@ const EditModal = ({
         // Validación completa del formulario
         let formErrors = {}
         let isValid = true
+        const safeFormData = formData || {}
 
         if (validateForm && validationSchema) {
-            const validation = validateForm(formData, validationSchema)
+            const validation = validateForm(safeFormData, validationSchema)
             isValid = validation.isValid
             formErrors = validation.errors
             setErrors(formErrors)
         } else {
             // Validación básica sin schema
             fields.forEach(field => {
-                if (field.required && !formData[field.key]) {
+                if (field.required && !safeFormData[field.key]) {
                     formErrors[field.key] = `${field.label} es requerido`
                     isValid = false
                 }
@@ -132,24 +150,25 @@ const EditModal = ({
         try {
             // Crear objeto con solo los campos que cambiaron
             const changedData = {}
-            Object.keys(formData).forEach(key => {
-                if (formData[key] !== initialData[key]) {
-                    changedData[key] = formData[key]
+            const safeFormData = formData || {}
+
+            Object.keys(safeFormData).forEach(key => {
+                if (safeFormData[key] !== initialDataRef.current[key]) {
+                    changedData[key] = safeFormData[key]
                 }
             })
 
             // Incluir ID para la actualización
-            if (initialData.id) {
-                changedData.id = initialData.id
+            if (initialDataRef.current.id) {
+                changedData.id = initialDataRef.current.id
             }
 
             // Llamar función onSave
             if (onSave) {
-                const result = await onSave(changedData, formData)
-                
-                // Si retorna un resultado exitoso, mostrar mensaje y cerrar
-                if (result !== false) {
-                    showSuccess('Elemento actualizado exitosamente')
+                const result = await onSave(changedData, safeFormData)
+
+                // Si retorna un resultado exitoso, cerrar modal
+                if (result && result.success !== false) {
                     handleClose()
                 }
             }
@@ -159,23 +178,19 @@ const EditModal = ({
     }
 
     const handleClose = () => {
-        // Verificar si hay cambios sin guardar
-        if (hasChanges) {
-            const confirmClose = window.confirm(
-                '¿Está seguro de cerrar? Los cambios no guardados se perderán.'
-            )
-            if (!confirmClose) return
-        }
-
-        setFormData(initialData)
+        setFormData({})
         setErrors({})
         setTouched({})
         setHasChanges(false)
+        setShowPasswords({})
+        initialDataRef.current = {}
         onHide && onHide()
     }
 
     const renderField = (field) => {
-        const value = formData[field.key] || ''
+        // Verificar que formData sea un objeto válido
+        const safeFormData = formData && typeof formData === 'object' ? formData : {}
+        const value = safeFormData[field.key] || ''
         const error = errors[field.key]
         const isTouched = touched[field.key]
         const showError = showInlineErrors && error && isTouched
@@ -184,7 +199,6 @@ const EditModal = ({
         switch (field.type) {
             case 'text':
             case 'email':
-            case 'password':
             case 'number':
                 return (
                     <Form.Control
@@ -202,6 +216,38 @@ const EditModal = ({
                         className={isReadOnly ? 'bg-light' : ''}
                     />
                 )
+
+            case 'password':
+                const isPasswordVisible = showPasswords[field.key]
+                const inputElement = (
+                    <Form.Control
+                        type={isPasswordVisible ? 'text' : 'password'}
+                        placeholder={field.placeholder}
+                        value={value}
+                        onChange={(e) => handleChange(field.key, e.target.value)}
+                        onBlur={() => handleBlur(field.key)}
+                        isInvalid={showError}
+                        disabled={field.disabled || loading}
+                        readOnly={isReadOnly}
+                        className={isReadOnly ? 'bg-light' : ''}
+                    />
+                )
+
+                if (field.showToggle) {
+                    return (
+                        <InputGroup>
+                            {inputElement}
+                            <Button
+                                variant="outline-secondary"
+                                onClick={() => togglePasswordVisibility(field.key)}
+                                disabled={field.disabled || loading || isReadOnly}
+                            >
+                                <i className={`fas ${isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                            </Button>
+                        </InputGroup>
+                    )
+                }
+                return inputElement
 
             case 'textarea':
                 return (
@@ -317,8 +363,8 @@ const EditModal = ({
                 <Modal.Body>
                     {/* Mostrar errores de validación como resumen */}
                     {showInlineErrors && errorCount > 0 && (
-                        <ValidationErrors 
-                            errors={errors} 
+                        <ValidationErrors
+                            errors={errors}
                             className="mb-3"
                         />
                     )}
@@ -375,13 +421,13 @@ const EditModal = ({
                             )}
                         </div>
                         <div className="d-flex gap-2">
-                            <CancelButton 
+                            <CancelButton
                                 onClick={handleClose}
                                 disabled={loading}
                             >
                                 Cancelar
                             </CancelButton>
-                            <SaveButton 
+                            <SaveButton
                                 type="submit"
                                 loading={loading}
                                 disabled={loading || !hasChanges || (showInlineErrors && errorCount > 0)}

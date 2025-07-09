@@ -16,6 +16,7 @@ import ResetPassword from '../modules/auth/views/ResetPassword'
 // Vistas de módulos
 import ListaFichas from '../modules/fichas/views/ListaFichas'
 import ListaUsuarios from '../modules/usuarios/views/ListaUsuarios'
+import { RolesYUsuarios } from '../modules/configuracion'
 
 // Componente para páginas 404
 const NotFoundPage = () => (
@@ -107,6 +108,7 @@ function AppRoutes() {
                         ]}
                     />
                 } />
+                <Route path={Paths.configRolesUsuarios} element={<RolesYUsuarios />} />
 
                 {/* Página 404 */}
                 <Route path="*" element={<NotFoundPage />} />
