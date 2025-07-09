@@ -26,7 +26,7 @@ import {
   CheckSquare,
 } from "lucide-react";
 import { LoadingButton } from "@/components/custom/loading-button";
-import { CustomSheet } from "@/components/custom/sheet";
+import { CustomDialog } from "@/components/custom/dialog";
 import { useState, useEffect } from "react";
 import { CustomInputControlled } from "@/components/custom/input-controlled";
 import { toast } from "sonner";
@@ -121,155 +121,168 @@ export function CreateUsuarioForm() {
         Crear usuario
       </Button>
 
-      <CustomSheet
+      <CustomDialog
         open={showSheet}
         onOpenChange={setShowSheet}
         title="Crear usuario"
         description="Completa la información para crear un nuevo usuario en el sistema."
+        size="2xl"
       >
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="px-4 space-y-4"
           >
-            <FormField
-              control={form.control}
-              name="dni"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <CustomInputControlled
-                      type="text"
-                      maxLength={8}
-                      label="DNI"
-                      icon={<CreditCard className="w-4 h-4" />}
-                      allowedCharacters={["numeric"]}
-                      helperText="Ejemplo: 12345678"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="nombres"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <CustomInputControlled
-                      type="text"
-                      maxLength={100}
-                      label="Nombres"
-                      icon={<User className="w-4 h-4" />}
-                      allowedCharacters={["letters", "spaces"]}
-                      textTransform="capitalize"
-                      helperText="Ejemplo: Juan Carlos"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="apellidos"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <CustomInputControlled
-                      type="text"
-                      maxLength={100}
-                      label="Apellidos"
-                      icon={<User className="w-4 h-4" />}
-                      allowedCharacters={["letters", "spaces"]}
-                      textTransform="capitalize"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Primera fila: DNI y Nombres */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="dni"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <CustomInputControlled
+                        type="text"
+                        maxLength={8}
+                        label="DNI"
+                        icon={<CreditCard className="w-4 h-4" />}
+                        allowedCharacters={["numeric"]}
+                        helperText="Ejemplo: 12345678"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="nombres"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <CustomInputControlled
+                        type="text"
+                        maxLength={100}
+                        label="Nombres"
+                        icon={<User className="w-4 h-4" />}
+                        allowedCharacters={["letters", "spaces"]}
+                        textTransform="capitalize"
+                        helperText="Ejemplo: Juan Carlos"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <CustomInputControlled
-                      type="email"
-                      maxLength={100}
-                      label="Correo electrónico"
-                      icon={<Mail className="w-4 h-4" />}
-                      allowedCharacters={["letters", "numeric", "symbols"]}
-                      helperText="Ejemplo: usuario@ejemplo.com"
-                      textTransform="lowercase"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <CustomInputControlled
-                      type="password"
-                      maxLength={20}
-                      label="Contraseña"
-                      icon={<Lock className="w-4 h-4" />}
-                      allowedCharacters={["letters", "numeric", "symbols"]}
-                      helperText="Ejemplo: PASS_$_213"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="idRol"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Rol</Label>
-                      <Select
-                        onValueChange={(value) =>
-                          field.onChange(parseInt(value))
-                        }
-                        value={field.value?.toString()}
-                        disabled={loadingRoles}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Seleccione un rol" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {roles.map((rol) => (
-                            <SelectItem key={rol.id} value={rol.id.toString()}>
-                              <div className="flex items-center gap-2">
-                                <Shield className="w-4 h-4" />
-                                {rol.rol} ({rol.codigo})
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Segunda fila: Apellidos y Email */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="apellidos"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <CustomInputControlled
+                        type="text"
+                        maxLength={100}
+                        label="Apellidos"
+                        icon={<User className="w-4 h-4" />}
+                        allowedCharacters={["letters", "spaces"]}
+                        textTransform="capitalize"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <CustomInputControlled
+                        type="email"
+                        maxLength={100}
+                        label="Correo electrónico"
+                        icon={<Mail className="w-4 h-4" />}
+                        allowedCharacters={["letters", "numeric", "symbols"]}
+                        helperText="Ejemplo: usuario@ejemplo.com"
+                        textTransform="lowercase"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Tercera fila: Contraseña y Rol */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <CustomInputControlled
+                        type="password"
+                        maxLength={20}
+                        label="Contraseña"
+                        icon={<Lock className="w-4 h-4" />}
+                        allowedCharacters={["letters", "numeric", "symbols"]}
+                        helperText="Ejemplo: PASS_$_213"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="idRol"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Rol</Label>
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(parseInt(value))
+                          }
+                          value={field.value?.toString()}
+                          disabled={loadingRoles}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Seleccione un rol" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {roles.map((rol) => (
+                              <SelectItem key={rol.id} value={rol.id.toString()}>
+                                <div className="flex items-center gap-2">
+                                  <Shield className="w-4 h-4" />
+                                  {rol.rol} ({rol.codigo})
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Cuarta fila: Checkbox de activo */}
             <FormField
               control={form.control}
               name="activo"
@@ -283,7 +296,6 @@ export function CreateUsuarioForm() {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <Label className="text-sm font-medium flex items-center gap-2">
-                      
                       Usuario activo
                     </Label>
                     <p className="text-sm text-muted-foreground">
@@ -316,7 +328,7 @@ export function CreateUsuarioForm() {
             </div>
           </form>
         </Form>
-      </CustomSheet>
+      </CustomDialog>
     </>
   );
 }

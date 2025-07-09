@@ -4,10 +4,8 @@ import { UsuarioDto } from "@/models/usuario";
 import { columns } from "./columns";
 import { DataTable } from "@/components/custom/data-table";
 import { DataTableToolbar } from "@/components/custom/data-table-toolbar";
-import { CreateUsuarioForm } from "../../components/forms/create-usuario";
 import { useUsuarios } from "../../context/usuarios-context";
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+
 
 interface TableUsuarioProps {
   usuarios: UsuarioDto[];
@@ -32,7 +30,7 @@ export default function TableUsuario ({ usuarios }: TableUsuarioProps) {
         toolbar={(table) => (
           <DataTableToolbar
             table={table}
-            searchKey="nombres"
+            searchKey="rol"
             searchPlaceholder="Buscar roles..."
           // actions={<CreateUsuarioForm />}
           />

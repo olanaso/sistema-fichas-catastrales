@@ -3,9 +3,8 @@ import { z } from "zod";
 export const passwordResetSchema = z.object({
   email: z
     .string()
-    .min(1, "El correo electrónico es requerido")
-    .email("Formato de correo electrónico inválido")
-    .max(100, "El correo electrónico no puede tener más de 100 caracteres"),
+    .min(1, "El usuario es requerido")
+    .max(100, "El usuario no puede tener más de 100 caracteres"),
 });
 
 export const resetPasswordSchema = z.object({

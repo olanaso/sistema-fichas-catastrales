@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Bell, Info, Monitor, Moon, Sun, User, LogOut, Settings, Link } from "lucide-react"
+import { Info, Monitor, Moon, Sun, User, LogOut } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useAuth } from "@/hooks/use-auth"
 
@@ -20,6 +20,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 import { Avatar, AvatarFallback } from "./ui/avatar"
 import { toast } from "sonner"
+import Link from "next/link"
 
 interface NavbarProps {
   title?: string
@@ -138,7 +139,7 @@ export function Navbar({ title, description, breadcrumb }: NavbarProps) {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <Link href="/cuenta">
+                <Link href="/cuenta" className="flex items-center">
                 <User className="mr-2 h-4 w-4" />
                 <span>Cuenta</span>
                 </Link>

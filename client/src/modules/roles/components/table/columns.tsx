@@ -13,13 +13,7 @@ export const columns: ColumnDef<UsuarioDto>[] = [
   //     return <AcctionTable usuario={row.original} />
   //   },
   // },
-  {
-    id: "id",
-    accessorKey: "id",
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="id" />
-    },
-  },
+
   {
     id: "codigo",
     accessorKey: "codigo",
@@ -31,7 +25,40 @@ export const columns: ColumnDef<UsuarioDto>[] = [
     id: "rol",
     accessorKey: "rol",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="rol" />
+      return <DataTableColumnHeader column={column} title="Nombre del rol" />
+    },
+  },
+  {
+    id: "descripcion",
+    accessorKey: "descripcion",
+    header: ({ column }) => {
+      return <DataTableColumnHeader column={column} title="Descripción" />
+    },
+    cell: ({ row }) => {
+      // Aqui se va a dar la descripcion no esta en abse de datos cree un switch para dar la descripcion en base a la descripcion del rol
+      switch (row.original.id) {
+        case 1:
+          return <div className="text-sm text-gray-500">Administrador maestro del sistema</div>
+        case 2:
+          return <div className="text-sm text-gray-500">Supervisor del personal inspector</div>
+        case 3:
+          return <div className="text-sm text-gray-500">Inspector encargado de completar las fichas catastrales</div>
+        default:
+          return <div className="text-sm text-gray-500">Rol no definido</div>
+
+      }
+    },
+  },
+  {
+    id: "estado",
+    accessorKey: "estado",
+    header: ({ column }) => {
+      return <DataTableColumnHeader column={column} title="Estado" />
+    },
+    cell: ({ row }) => {
+      return <CustomBadge color={true ? "green" : "red"} className="text-xs">
+        {true ? "Activo" : "Inactivo"}
+      </CustomBadge>
     },
   },
 

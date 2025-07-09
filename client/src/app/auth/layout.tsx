@@ -1,12 +1,15 @@
 "use client";
 
 import { GalleryVerticalEnd } from "lucide-react";
+import { useConfiguracionPublica } from "@/hooks/use-configuracion-publica";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { configuracion, isLoading } = useConfiguracionPublica();
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -15,7 +18,13 @@ export default function AuthLayout({
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <GalleryVerticalEnd className="size-4" />
             </div>
-            IDEAS S.A.C.
+            {isLoading ? (
+              <span className="animate-pulse bg-muted rounded px-2 py-1">
+                Cargando...
+              </span>
+            ) : (
+              configuracion?.nombreSistema || "SIS FICHAS"
+            )}
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">

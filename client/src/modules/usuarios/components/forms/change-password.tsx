@@ -16,7 +16,7 @@ import { passwordSchema, PasswordFormValues } from "../../schema/password.schema
 import { changePassword } from "../../action/usuario.actions";
 import { CircleX, Lock, Save } from "lucide-react";
 import { LoadingButton } from "@/components/custom/loading-button";
-import { CustomSheet } from "@/components/custom/sheet";
+import { CustomDialog } from "@/components/custom/dialog";
 import { CustomInputControlled } from "@/components/custom/input-controlled";
 import { toast } from "sonner";
 import { UsuarioDto } from "@/models/usuario";
@@ -66,7 +66,7 @@ export function ChangePasswordForm({
 
   return (
     <>
-      <CustomSheet
+      <CustomDialog
         open={isOpen}
         onOpenChange={onOpenChange}
         title="Cambiar contraseña"
@@ -140,7 +140,7 @@ export function ChangePasswordForm({
             </div>
           </form>
         </Form>
-      </CustomSheet>
+      </CustomDialog>
     </>
   );
 } 

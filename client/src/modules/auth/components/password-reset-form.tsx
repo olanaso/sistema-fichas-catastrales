@@ -3,16 +3,14 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Mail, ArrowLeft } from "lucide-react";
+import { Mail, ArrowLeft, AlertCircle, CheckCircle } from "lucide-react";
 import { passwordResetSchema, type PasswordResetFormData } from "../schema/password-reset.schema";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { CustomInputControlled } from "@/components/custom/input-controlled";
+import { LoadingButton } from "@/components/custom/loading-button";
 
 interface PasswordResetFormProps {
   onSuccess?: () => void;
@@ -58,78 +56,86 @@ export function PasswordResetForm({ onSuccess }: PasswordResetFormProps) {
   };
 
   return (
-    <div className="flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-            Recuperar Contraseña
-          </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
-          </p>
+    <Card className="w-full shadow-xl">
+      <CardHeader className="space-y-2 text-center">
+        <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+          <Mail className="w-6 h-6 text-primary" />
         </div>
-
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Mail className="h-5 w-5" />
-              Recuperación de contraseña
-            </CardTitle>
-            <CardDescription>
-              Te enviaremos un enlace seguro a tu correo electrónico
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {message && (
-                <Alert variant={message.type === "error" ? "destructive" : "default"}>
-                  <AlertDescription>{message.text}</AlertDescription>
-                </Alert>
+        <CardTitle className="text-2xl font-bold">Recuperar Contraseña</CardTitle>
+        <CardDescription>
+          Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Mensajes de error y éxito */}
+          {message && (
+            <div className={`flex items-center gap-2 p-3 text-sm rounded-md ${
+              message.type === "error" 
+                ? "text-red-600 bg-red-50 border border-red-200" 
+                : "text-green-600 bg-green-50 border border-green-200"
+            }`}>
+              {message.type === "error" ? (
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              ) : (
+                <CheckCircle className="w-4 h-4 flex-shrink-0" />
               )}
+              <span>{message.text}</span>
+            </div>
+          )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Correo electrónico</Label>
-                <Input
+          <div className="space-y-2">
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">
+                Correo electrónico
+              </label>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <input
                   id="email"
                   type="email"
                   placeholder="tu@correo.com"
                   {...register("email")}
-                  className={errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-700"}
+                  className={`w-full px-3 py-2 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
                   disabled={isLoading}
                 />
-                {errors.email && (
-                  <p className="text-sm text-red-500 dark:text-red-400">{errors.email.message}</p>
-                )}
               </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-white"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center space-x-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Enviando...</span>
-                  </div>
-                ) : (
-                  "Enviar enlace de recuperación"
-                )}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <Link
-                href="/auth/login"
-                className="flex items-center justify-center gap-2 text-sm text-blue-600 dark:text-blue-200 hover:text-blue-500"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Volver al inicio de sesión
-              </Link>
+              {errors.email && (
+                <p className="text-xs text-red-500">{errors.email.message}</p>
+              )}
+              {!errors.email && (
+                <p className="text-xs text-muted-foreground">
+                  Ingresa tu correo electrónico registrado
+                </p>
+              )}
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          </div>
+
+          <LoadingButton
+            type="submit"
+            className="w-full"
+            isLoading={isLoading}
+            loadingText="Enviando enlace..."
+          >
+            <Mail className="w-4 h-4 mr-2" />
+            Enviar enlace de recuperación
+          </LoadingButton>
+
+          <div className="text-center">
+            <Link
+              href="/auth/login"
+              className="flex items-center justify-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Volver al inicio de sesión
+            </Link>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 } 
