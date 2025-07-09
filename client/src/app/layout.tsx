@@ -6,8 +6,8 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Gestión de Ideas SAC",
-  description: "Sistema de gestión de ideas",
+  title: "SIS FICHAS",
+  description: "Sistema de gestión catastral",
 };
 
 export default function RootLayout({

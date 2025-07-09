@@ -9,17 +9,13 @@ import {
   Package,
   MessageSquare,
   Bubbles,
-  EllipsisVertical,
-  LogOut,
   Calendar,
   Presentation,
   Send,
-  MoveUpRight,
-  User,
+  Shield,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 
 import {
@@ -35,16 +31,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Image from "next/image";
-import { Separator } from "./ui/separator";
 import { toast } from "sonner";
 
 // Datos del menú principal
@@ -54,16 +40,11 @@ const menuInicio = [
     url: "/dashboard",
     icon: Home,
   },
-  {
-    title: "Calendario",
-    url: "/calendario",
-    icon: Calendar,
-  },
 ];
 
 const menuConfiguracion = [
   {
-    title: "Configuración",
+    title: "Parámetros",
     url: "/configuracion",
     icon: Settings,
   },
@@ -72,35 +53,48 @@ const menuConfiguracion = [
     url: "/usuarios",
     icon: Users,
   },
+  {
+    title: "Roles",
+    url: "/roles",
+    icon: Shield,
+  },
 ];
 
 const menuGestion = [
   {
-    title: "Instituciones",
-    url: "/instituciones",
+    title: "Importar",
+    url: "/importar",
     icon: Building2,
   },
   {
-    title: "Servicios",
-    url: "/servicios",
+    title: "Gestión de padrón",
+    url: "/gestion-padron",
     icon: Package,
   },
+];
+
+const menuFichas = [
   {
-    title: "Consultas",
-    url: "/consultas",
-    icon: MessageSquare,
+    title: "Gestión de fichas",
+    url: "/gestion-fichas",
+    icon: Building2,
+  },
+  {
+    title: "Migración SICI",
+    url: "/migracion-sici",
+    icon: Package,
   },
 ];
 
 const menuCapacitacion = [
   {
-    title: "Solicitudes",
-    url: "/solicitudes",
+    title: "Grupos de trabajo",
+    url: "/grupos-trabajo",
     icon: Send,
   },
   {
-    title: "Reuniones",
-    url: "/reuniones",
+    title: "Asignación de carga",
+    url: "/asignacion-carga",
     icon: Presentation,
   },
 ];
@@ -134,7 +128,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 {!isCollapsed && (
                   <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="font-semibold">Gestión de Ideas SAC</span>
+                    <span className="font-semibold">SIS FICHAS</span>
                     <span className="text-xs text-sidebar-foreground/70">
                       v1.0.0
                     </span>
@@ -174,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Gestión</SidebarGroupLabel>
+          <SidebarGroupLabel>Padrón Catastral</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuGestion.map((item) => {
@@ -200,10 +194,36 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Capacitación</SidebarGroupLabel>
+          <SidebarGroupLabel>Equipos y Asignaciones</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuCapacitacion.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.url;
+
+                return (
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.title}
+                      isActive={isActive}
+                    >
+                      <Link href={item.url}>
+                        <Icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Fichas Catastrales</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuFichas.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.url;
 
@@ -256,48 +276,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton tooltip="Usuario">
-                  <Avatar className="h-6 w-6">
-                    <AvatarFallback className="text-xs">
-                      {getInitials()}
-                    </AvatarFallback>
-                  </Avatar>
-                  {!isCollapsed && (
-                    <div className="flex flex-col gap-0.5 leading-none">
-                      <span className="text-sm font-medium">
-                        {user?.nombres} {user?.apellidos}
-                      </span>
-                      <span className="text-xs text-sidebar-foreground/70">
-                        {user?.email}
-                      </span>
-                    </div>
-                  )}
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56"
-                align="end"
-                alignOffset={-4}
-                side="right"
-                sideOffset={8}
-              >
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Perfil</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Configuración</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Cerrar sesión</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

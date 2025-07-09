@@ -1,32 +1,28 @@
 // DTO para configuración
 export interface ConfiguracionDto {
   id: number;
-  nombre_institucion: string;
-  correo: string;
-  correo_secundario: string;
-  numero_celular: string;
-  horario_inicio_atencion: string;
-  horario_fin_atencion: string;
-  horario_break_inicio: string;
-  horario_break_fin: string;
-  permitir_reuniones_feriadas: boolean;
-  correo_notificacion: string;
-  gmail_email: string;
-  gmail_password: string;
+  nombreSistema: string;
+  nombreCorreo: string;
+  conexionSici1: string;
+  conexionSici2: string;
+  logo: string;
+  clienteUrl: string;
 }
 
-// Request para crear/actualizar configuración
+// Request para actualizar configuración
 export interface ConfiguracionRequest {
-  nombre_institucion: string;
-  correo: string;
-  correo_secundario: string;
-  numero_celular: string;
-  horario_inicio_atencion: string;
-  horario_fin_atencion: string;
-  horario_break_inicio: string;
-  horario_break_fin: string;
-  permitir_reuniones_feriadas: boolean;
-  correo_notificacion: string;
-  gmail_email: string;
-  gmail_password: string;
+  nombreSistema: string;
+  nombreCorreo: string;
+  conexionSici1: string;
+  conexionSici2: string;
+  logo?: string;
+  clienteUrl: string;
+}
+
+// Response de la API
+export interface ConfiguracionResponse {
+  success: boolean;
+  message: string;
+  data: ConfiguracionDto;
+  timestamp: string;
 }

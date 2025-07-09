@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Bell, Info, Monitor, Moon, Sun, User, LogOut, Settings } from "lucide-react"
+import { Bell, Info, Monitor, Moon, Sun, User, LogOut, Settings, Link } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useAuth } from "@/hooks/use-auth"
 
@@ -138,12 +138,10 @@ export function Navbar({ title, description, breadcrumb }: NavbarProps) {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
+                <Link href="/cuenta">
                 <User className="mr-2 h-4 w-4" />
-                <span>Perfil</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Configuración</span>
+                <span>Cuenta</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
