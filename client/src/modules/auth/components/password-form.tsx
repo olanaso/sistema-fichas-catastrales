@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { PasswordFormData, passwordSchema } from "../schema"
-import { updateUserProfile } from "../actions/auth.actions"
+import { changeMyPassword } from "@/modules/usuarios/action/usuario.actions"
 
 interface PasswordFormProps {
   userId: number
@@ -25,6 +25,10 @@ export function PasswordForm({ userId }: PasswordFormProps) {
     confirmPassword: "",
   })
 
+  // Validación en tiempo real para las contraseñas
+  const passwordsMatch = formData.newPassword === formData.confirmPassword && formData.confirmPassword !== ""
+  const showPasswordError = formData.confirmPassword !== "" && !passwordsMatch
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -33,7 +37,11 @@ export function PasswordForm({ userId }: PasswordFormProps) {
       // Validar datos
       const validatedData = passwordSchema.parse(formData)
       
-      const result = await updateUserProfile(userId.toString(), validatedData)
+      const result = await changeMyPassword(
+        validatedData.currentPassword,
+        validatedData.newPassword,
+        validatedData.confirmPassword
+      )
       
       if (result.success) {
         toast.success(result.message || "Contraseña actualizada exitosamente")
@@ -44,7 +52,7 @@ export function PasswordForm({ userId }: PasswordFormProps) {
           confirmPassword: "",
         })
       } else {
-        toast.error(result.error || "Error al actualizar la contraseña")
+        toast.error(result.message || result.error || "Error al actualizar la contraseña")
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -109,7 +117,7 @@ export function PasswordForm({ userId }: PasswordFormProps) {
                   {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              <p className="text-xs text-gray-500">La contraseña debe tener al menos 8 caracteres</p>
+              <p className="text-xs text-gray-500">La contraseña debe tener entre 6 y 100 caracteres</p>
             </div>
 
             <div className="space-y-2">
@@ -122,6 +130,7 @@ export function PasswordForm({ userId }: PasswordFormProps) {
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   placeholder="Confirma tu nueva contraseña"
                   required
+                  className={showPasswordError ? "border-red-500 focus:border-red-500" : ""}
                 />
                 <button
                   type="button"
@@ -131,6 +140,12 @@ export function PasswordForm({ userId }: PasswordFormProps) {
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              {showPasswordError && (
+                <p className="text-xs text-red-500">Las contraseñas no coinciden</p>
+              )}
+              {passwordsMatch && formData.confirmPassword !== "" && (
+                <p className="text-xs text-green-500">✓ Las contraseñas coinciden</p>
+              )}
             </div>
           </div>
 
@@ -138,7 +153,7 @@ export function PasswordForm({ userId }: PasswordFormProps) {
           <div className=" border border-blue-200 rounded-lg p-4">
             <h4 className="font-medium text-blue-900 mb-2">Consejos para una contraseña segura:</h4>
             <ul className="text-sm  space-y-1">
-              <li>• Usa al menos 8 caracteres</li>
+              <li>• Usa al menos 6 caracteres</li>
               <li>• Incluye mayúsculas y minúsculas</li>
               <li>• Agrega números y símbolos</li>
               <li>• Evita información personal</li>
@@ -146,7 +161,10 @@ export function PasswordForm({ userId }: PasswordFormProps) {
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button type="submit" disabled={loading}>
+            <Button 
+              type="submit" 
+              disabled={loading || !passwordsMatch || !formData.currentPassword || !formData.newPassword || !formData.confirmPassword}
+            >
               {loading ? "Actualizando..." : "Actualizar contraseña"}
             </Button>
           </div>

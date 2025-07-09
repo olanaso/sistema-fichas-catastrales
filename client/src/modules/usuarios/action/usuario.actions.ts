@@ -108,6 +108,28 @@ export async function changePassword(id: number, password: string) {
   }
 }
 
+// Cambiar mi contraseña (usuario actual)
+export async function changeMyPassword(currentPassword: string, newPassword: string, confirmPassword: string) {
+  try {
+    const response = await apiClient.patch(`/usuarios/change-my-password`, {
+      currentPassword,
+      newPassword,
+      confirmPassword
+    });
+    return {
+      success: true,
+      data: response.data,
+      message: 'Contraseña cambiada exitosamente'
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || 'Error al cambiar contraseña',
+      message: error.response?.data?.message || 'Error al cambiar contraseña'
+    };
+  }
+}
+
 // Actualizar usuario
 export async function updateUsuario(id: number, values: any) {
   try {

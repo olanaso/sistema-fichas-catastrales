@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ConfiguracionTabs } from "../components/configuracion-tabs";
 import { useConfiguracion } from "../context/configuracion-context";
+import { ConfiguracionContainer } from "../components/configuracion-container";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ConfiguracionTabsView() {
@@ -17,55 +16,49 @@ export default function ConfiguracionTabsView() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-6 space-y-6">
-        <div className="space-y-2">
-          <Skeleton className="h-8 w-[300px]" />
-          <Skeleton className="h-4 w-[500px]" />
-        </div>
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-[200px]" />
-            <Skeleton className="h-4 w-[400px]" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
+      <div className="min-h-screen bg-gray-50 xs:p-4">
+        <div className="mx-auto max-w-6xl">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <div className="lg:col-span-1">
+                <div className="h-64 bg-gray-200 rounded"></div>
+              </div>
+              <div className="lg:col-span-3">
+                <div className="h-96 bg-gray-200 rounded"></div>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error || !configuracion) {
     return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardContent className="flex items-center justify-center h-64">
+      <div className="min-h-screen bg-gray-50 xs:p-4">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex items-center justify-center h-64">
             <p className="text-muted-foreground">
               {error || "No se pudo cargar la configuración"}
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Configuración del Sistema</h1>
-        <p className="text-muted-foreground">
-          Gestiona la configuración del sistema dividida en tres bloques principales.
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50 xs:p-4">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Parámetros del Sistema</h1>
+          <p className="mt-2">Administra la configuración del sistema dividida en tres bloques principales</p>
+        </div>
 
-      <div className="space-y-4 p-4">
-        <ConfiguracionTabs configuracion={configuracion} />
+        <ConfiguracionContainer configuracion={configuracion} />
       </div>
-
     </div>
   );
 } 

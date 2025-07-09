@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { toast } from "sonner"
 import { getCurrentUser } from "../actions/auth.actions"
 import { ProfileTabs } from "./profile-tabs"
-import { ProfileForm } from "./profile-form"
+import { AccountInfo } from "./account-info"
 import { PasswordForm } from "./password-form"
 import { UsuarioDto } from "@/models/usuario"
 
@@ -84,7 +84,7 @@ export function ProfileContainer() {
           {/* Contenido principal */}
           <div className="lg:col-span-3">
             {activeTab === "profile" && (
-              <ProfileForm userData={userData} onUpdate={handleUserUpdate} />
+              <AccountInfo userData={userData} />
             )}
 
             {activeTab === "password" && (

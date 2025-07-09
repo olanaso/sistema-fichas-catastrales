@@ -1,51 +1,65 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, AtSign, Server } from "lucide-react";
-import { EmpresaForm } from "./forms/empresa-form";
-import { CorreoForm } from "./forms/correo-form";
-import { SistemasForm } from "./forms/sistemas-form";
-import { ConfiguracionDto } from "@/models/configuracion";
+import { Card } from "@/components/ui/card";
+
+type TabType = "empresa" | "correo" | "sistemas";
 
 interface ConfiguracionTabsProps {
-  configuracion: ConfiguracionDto;
+  activeTab: TabType;
+  onTabChange: (tab: TabType) => void;
 }
 
-export function ConfiguracionTabs({ configuracion }: ConfiguracionTabsProps) {
+const tabs = [
+  {
+    id: "empresa" as TabType,
+    label: "Información de Empresa",
+    icon: Building2,
+  },
+  {
+    id: "correo" as TabType,
+    label: "Configuración de Correo",
+    icon: AtSign,
+  },
+  {
+    id: "sistemas" as TabType,
+    label: "Conexiones a Sistemas",
+    icon: Server,
+  },
+];
+
+export function ConfiguracionTabs({ activeTab, onTabChange }: ConfiguracionTabsProps) {
   return (
-    <Tabs defaultValue="empresa" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="empresa" className="flex items-center gap-2">
-          <Building2 className="w-4 h-4" />
-          Información de Empresa
-        </TabsTrigger>
-        <TabsTrigger value="correo" className="flex items-center gap-2">
-          <AtSign className="w-4 h-4" />
-          Configuración de Correo
-        </TabsTrigger>
-        <TabsTrigger value="sistemas" className="flex items-center gap-2">
-          <Server className="w-4 h-4" />
-          Conexiones a Sistemas
-        </TabsTrigger>
-      </TabsList>
+    <Card className="p-2">
+      <nav className="space-y-1">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
 
-      <TabsContent value="empresa" className="space-y-6">
-        <div className="space-y-4 p-4">
-          <EmpresaForm configuracion={configuracion} />
-        </div>
-      </TabsContent>
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              className={`
+                w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-all duration-200 relative
+                ${
+                  isActive
+                    ? "bg-sidebar-accent text-primary font-medium"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }
+              `}
+            >
+              <Icon className={`h-5 w-5 ${isActive ? "text-primary" : "text-gray-400"}`} />
+              <span className="text-sm">{tab.label}</span>
 
-      <TabsContent value="correo" className="space-y-6">
-        <div className="space-y-4 p-4">
-          <CorreoForm configuracion={configuracion} />
-        </div>
-      </TabsContent>
-
-      <TabsContent value="sistemas" className="space-y-6">
-        <div className="space-y-4 p-4">
-          <SistemasForm configuracion={configuracion} />
-        </div>
-      </TabsContent>
-    </Tabs>
+              {/* Underline personalizado */}
+              {isActive && (
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-l-full" />
+              )}
+            </button>
+          );
+        })}
+      </nav>
+    </Card>
   );
 } 

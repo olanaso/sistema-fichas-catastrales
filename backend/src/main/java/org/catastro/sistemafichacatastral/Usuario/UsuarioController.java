@@ -2,6 +2,7 @@ package org.catastro.sistemafichacatastral.Usuario;
 
 import org.catastro.sistemafichacatastral.audit.AuditService;
 import org.catastro.sistemafichacatastral.auth.DTO.ChangeUserPasswordDto;
+import org.catastro.sistemafichacatastral.auth.DTO.ChangeMyPasswordDto;
 import org.catastro.sistemafichacatastral.auth.DTO.UsuarioRegisterDto;
 import org.catastro.sistemafichacatastral.auth.DTO.UsuarioUpdateDto;
 import org.catastro.sistemafichacatastral.dto.ApiResponse;
@@ -182,6 +183,27 @@ public class UsuarioController {
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al obtener información de sesión: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Cambia la contraseña del usuario logueado
+     * Endpoint: PATCH /usuarios/change-my-password
+     */
+    @PatchMapping("/change-my-password")
+    public ResponseEntity<ApiResponse<UsuarioEntity>> changeMyPassword(@Valid @RequestBody ChangeMyPasswordDto changePasswordDto) {
+        try {
+            UsuarioEntity currentUser = sessionService.getCurrentUser();
+            if (currentUser == null) {
+                return ResponseEntity.status(401).body(ApiResponse.error("Usuario no autenticado"));
+            }
+            
+            UsuarioEntity usuario = usuarioService.changeMyPassword(currentUser, changePasswordDto);
+            return ResponseEntity.ok(ApiResponse.success("Contraseña cambiada exitosamente", usuario));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Error al cambiar contraseña: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(ApiResponse.error("Error interno del servidor: " + e.getMessage()));
         }
     }
 }

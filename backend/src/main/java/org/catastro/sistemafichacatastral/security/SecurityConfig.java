@@ -1,6 +1,8 @@
 package org.catastro.sistemafichacatastral.security;
 
 import org.catastro.sistemafichacatastral.Usuario.UsuarioDetailsServiceImpl;
+import org.catastro.sistemafichacatastral.security.CustomAuthenticationEntryPoint;
+import org.catastro.sistemafichacatastral.security.CustomAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +24,12 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthFilter;
-    @Autowired private UsuarioDetailsServiceImpl userDetailsService;
+    @Autowired 
+    private UsuarioDetailsServiceImpl userDetailsService;
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
@@ -32,27 +39,20 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/test/**").permitAll()
-                        .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/configuracion/public/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/usuarios/register").hasRole("ADMIN")
                         .requestMatchers("/usuarios/**").hasAnyRole("ADMIN", "SUPERVISOR", "INSPECTOR")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                        .accessDeniedHandler(new CustomAccessDeniedHandler())
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .userDetailsService(userDetailsService)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-    // La configuración CORS ahora está en CorsConfig.java
-    // Este método se puede eliminar ya que CorsConfig proporciona la configuración
 
     @Bean
     public PasswordEncoder passwordEncoder() {

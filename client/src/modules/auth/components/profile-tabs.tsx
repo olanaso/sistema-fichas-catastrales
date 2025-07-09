@@ -13,7 +13,7 @@ interface ProfileTabsProps {
 const tabs = [
   {
     id: "profile" as TabType,
-    label: "Editar perfil",
+    label: "Mi cuenta",
     icon: User,
   },
   {

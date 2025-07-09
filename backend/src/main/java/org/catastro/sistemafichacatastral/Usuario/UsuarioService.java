@@ -3,6 +3,7 @@ package org.catastro.sistemafichacatastral.Usuario;
 import org.catastro.sistemafichacatastral.Rol.RolEntity;
 import org.catastro.sistemafichacatastral.Rol.RolService;
 import org.catastro.sistemafichacatastral.auth.DTO.ChangeUserPasswordDto;
+import org.catastro.sistemafichacatastral.auth.DTO.ChangeMyPasswordDto;
 import org.catastro.sistemafichacatastral.auth.DTO.UsuarioRegisterDto;
 import org.catastro.sistemafichacatastral.auth.DTO.UsuarioUpdateDto;
 import org.catastro.sistemafichacatastral.exception.ResourceNotFoundException;
@@ -234,6 +235,28 @@ public class UsuarioService {
         usuario.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
         
         return usuarioRepository.save(usuario);
+    }
+
+    // Método para cambiar contraseña del usuario logueado
+    public UsuarioEntity changeMyPassword(UsuarioEntity currentUser, ChangeMyPasswordDto changePasswordDto) {
+        // Verificar que la contraseña actual sea correcta
+        //buscar usuario por id
+        UsuarioEntity usuario = usuarioRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", currentUser.getId()));
+
+        if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), usuario.getPassword())) {
+            throw new RuntimeException("La contraseña actual es incorrecta");
+        }
+        
+        // Verificar que la nueva contraseña sea diferente a la actual
+        if (passwordEncoder.matches(changePasswordDto.getNewPassword(), currentUser.getPassword())) {
+            throw new RuntimeException("La nueva contraseña debe ser diferente a la actual");
+        }
+        
+        // Actualizar con la nueva contraseña
+        currentUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        
+        return usuarioRepository.save(currentUser);
     }
 
     // Método específico para reset de contraseña (desde AuthService)
