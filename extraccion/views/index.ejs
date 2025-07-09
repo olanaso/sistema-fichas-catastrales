@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Migrar DBF a Base de Datos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-lg">
+    <h2 class="text-2xl font-bold text-blue-700 mb-6 text-center">Migrar DBF a Base de Datos</h2>
+    <div id="mensaje"></div>
+    <form id="formMigracion" enctype="multipart/form-data" method="post" action="/migrar" autocomplete="off">
+      <h3 class="font-semibold text-blue-800 mb-2">Destino</h3>
+      <div class="mb-2">
+        <label class="block text-sm" for="destino_motor">Motor</label>
+        <select name="destino_motor" id="destino_motor" class="w-full rounded-lg border-gray-300" required>
+        
+          <option value="postgresql">PostgreSQL</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="block text-sm" for="destino_host">Host</label>
+        <input type="text" name="destino_host" id="destino_host" class="w-full rounded-lg border-gray-300" required value="localhost">
+      </div>
+      <div class="mb-2">
+        <label class="block text-sm" for="destino_puerto">Puerto</label>
+        <input type="text" name="destino_puerto" value="5432" id="destino_puerto" class="w-full rounded-lg border-gray-300" required placeholder="3306 o 5432">
+      </div>
+      <div class="mb-2">
+        <label class="block text-sm" for="destino_usuario">Usuario</label>
+        <input type="text" value="postgres" name="destino_usuario" id="destino_usuario" class="w-full rounded-lg border-gray-300" required>
+      </div>
+      <div class="mb-2">
+        <label class="block text-sm" for="destino_password">Contraseña</label>
+        <input type="password" name="destino_password" id="destino_password" class="w-full rounded-lg border-gray-300" required>
+      </div>
+      <div class="mb-2">
+        <label class="block text-sm" for="destino_dbname">Base de datos</label>
+        <input type="text" name="destino_dbname" id="destino_dbname" class="w-full rounded-lg border-gray-300" required>
+      </div>
+      <div class="mb-6 mt-4">
+        <label class="block text-sm font-medium mb-2" for="dbf">Seleccionar carpeta</label>
+      <input type="text" name="folderpath" id="folderpath" class="block w-full text-sm text-gray-700"/>
+	  
+
+      </div>
+      <div class="flex gap-2">
+        <button id="btnVerificar" type="button" class="w-1/2 py-3 bg-gray-200 hover:bg-blue-200 text-blue-900 font-bold rounded-xl transition duration-200 shadow-lg flex items-center justify-center gap-2">
+          <span id="spinnerVerificar" class="hidden animate-spin w-5 h-5 border-4 border-blue-400 border-t-transparent rounded-full" ></span>
+          Verificar conexión
+        </button>
+        <button id="btnMigrar" type="button" class="w-1/2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition duration-200 shadow-lg flex items-center justify-center gap-2" >
+          <span id="spinnerMigrar" class="hidden animate-spin w-5 h-5 border-4 border-white border-t-transparent rounded-full"></span>
+          Migrar
+        </button>
+      </div>
+    </form>
+    <script>
+      let conexionOk = false;
+
+      document.getElementById('btnVerificar').onclick = async function () {
+        showSpinner('spinnerVerificar', true);
+        showMensaje('');
+        conexionOk = false;
+        const form = document.getElementById('formMigracion');
+        const formData = new FormData(form);
+        // Solo enviar datos, no archivos
+        formData.delete('dbf');
+        try {
+          const res = await fetch('/verificar', {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+          if(data.ok) {
+            conexionOk = true;
+            showMensaje(`<div class="mb-4 p-4 rounded-lg text-center bg-green-100 text-green-700 border border-green-400"><b>¡Conexión exitosa!</b></div>`);
+
+          } else {
+            showMensaje(`<div class="mb-4 p-4 rounded-lg text-center bg-red-100 text-red-700 border border-red-400"><b>Error:</b> ${data.error}</div>`);
+          }
+        } catch(e) {
+          showMensaje(`<div class="mb-4 p-4 rounded-lg text-center bg-red-100 text-red-700 border border-red-400"><b>Error:</b> ${e.message}</div>`);
+        }
+        showSpinner('spinnerVerificar', false);
+      };
+
+      document.getElementById('btnMigrar').onclick = async function () {
+        if (!conexionOk) {
+          showMensaje(`<div class="mb-4 p-4 rounded-lg text-center bg-yellow-100 text-yellow-700 border border-yellow-400">¡Primero verifica la conexión!</div>`);
+          return;
+        }
+        showSpinner('spinnerMigrar', true);
+        showMensaje('');
+        const form = document.getElementById('formMigracion');
+        const formData = new FormData(form);
+        try {
+          const res = await fetch('/migrar', {
+            method: 'POST',
+            body: formData
+          });
+          const html = await res.text();
+          document.open();
+          document.write(html);
+          document.close();
+        } catch(e) {
+          showMensaje(`<div class="mb-4 p-4 rounded-lg text-center bg-red-100 text-red-700 border border-red-400"><b>Error:</b> ${e.message}</div>`);
+        }
+        showSpinner('spinnerMigrar', false);
+      };
+
+      function showSpinner(id, show) {
+        document.getElementById(id).classList.toggle('hidden', !show);
+      }
+      function showMensaje(msg) {
+        document.getElementById('mensaje').innerHTML = msg;
+      }
+    </script>
+  </div>
+</body>
+</html>
