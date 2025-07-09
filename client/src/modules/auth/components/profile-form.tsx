@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { User, Mail, Phone } from "lucide-react"
+import { User, Mail, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,26 +10,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
 import { ProfileFormData, profileSchema } from "../schema"
 import { updateUserProfile } from "../actions/auth.actions"
-
-interface UserData {
-  id: number
-  nombres: string
-  apellidos: string
-  email: string
-  numero_celular: string | null
-  creado_en: Date
-}
+import { UsuarioDto } from "@/models/usuario"
 
 interface ProfileFormProps {
-  userData: UserData
-  onUpdate: (updatedData: Partial<UserData>) => void
+  userData: UsuarioDto
+  onUpdate: (updatedData: Partial<UsuarioDto>) => void
 }
 
 export function ProfileForm({ userData, onUpdate }: ProfileFormProps) {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<ProfileFormData>({
     email: userData.email,
-    numero_celular: userData.numero_celular || "",
+    dni: userData.dni || "",
   })
 
   // Obtener iniciales para el avatar
@@ -52,7 +44,7 @@ export function ProfileForm({ userData, onUpdate }: ProfileFormProps) {
         // Actualizar datos locales
         onUpdate({
           email: formData.email,
-          numero_celular: formData.numero_celular || null,
+          dni: formData.dni || "",
         })
       } else {
         toast.error(result.error || "Error al actualizar el perfil")
@@ -90,10 +82,10 @@ export function ProfileForm({ userData, onUpdate }: ProfileFormProps) {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="text-xl font-semibold text-gray-900">
+            <h3 className="text-xl font-semibold ">
               {`${userData.nombres} ${userData.apellidos}`}
             </h3>
-            <p className="text-gray-600">Usuario del sistema</p>
+            <p className="">Usuario del sistema</p>
           </div>
         </div>
 
@@ -139,16 +131,17 @@ export function ProfileForm({ userData, onUpdate }: ProfileFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Número de Celular</Label>
+              <Label htmlFor="dni">Número de DNI</Label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.numero_celular}
-                  onChange={(e) => setFormData({ ...formData, numero_celular: e.target.value })}
+                  id="dni"
+                  type="text"
+                  value={formData.dni}
+                  onChange={(e) => setFormData({ ...formData, dni: e.target.value })}
                   className="pl-10"
-                  placeholder="+51 999 999 999"
+                  placeholder="12345678"
+                  maxLength={8}
                 />
               </div>
             </div>
