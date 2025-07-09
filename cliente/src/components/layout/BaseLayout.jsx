@@ -1,21 +1,46 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import AppNavbar from './Navbar'
 import Sidebar from './Sidebar'
 import { useApp } from '../../context/AppContext'
+import useScreenSize from '../../hooks/useScreenSize'
 
 const BaseLayout = ({
     children,
     menuItems = [],
     sidebarProps = {}
 }) => {
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
     const { user } = useApp()
+    const { isMobile, isDesktop } = useScreenSize()
+
+    // Estado inicial del sidebar basado en el tamaño de pantalla
+    const getInitialSidebarState = () => {
+        if (typeof window !== 'undefined') {
+            if (window.innerWidth < 768) return true  // Móvil y tablet
+            return false // Desktop
+        }
+        return false // Fallback para SSR
+    }
+
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(getInitialSidebarState())
+
+    // Efecto para manejar el estado del sidebar según el tamaño de pantalla
+    useEffect(() => {
+        // Solo establecer el estado inicial, no forzar cambios continuos
+        if (isMobile && !sidebarCollapsed) {
+            // En móviles, si no está contraído, contraerlo
+            setSidebarCollapsed(true)
+        } else if (isDesktop && sidebarCollapsed) {
+            // En desktop, si está contraído, expandirlo
+            setSidebarCollapsed(false)
+        }
+        // En tablets, mantener el estado actual del usuario
+    }, [isMobile, isDesktop]) // Removido isTablet para permitir control manual en tablets
 
     const handleToggleSidebar = () => {
         setSidebarCollapsed(!sidebarCollapsed)
     }
 
-    const sidebarWidth = sidebarCollapsed ? 60 : 240
+    const sidebarWidth = sidebarCollapsed ? 60 : 260
 
     return (
         <div className="d-flex" style={{ height: '100vh', overflow: 'hidden' }}>

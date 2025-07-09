@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { Navbar, Container, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../../context/AppContext'
+import useScreenSize from '../../hooks/useScreenSize'
 import { LuLogOut, LuPanelLeft } from "react-icons/lu"
 
 const AppNavbar = ({ onToggleSidebar, sidebarCollapsed }) => {
     const [currentDate, setCurrentDate] = useState(new Date())
     const navigate = useNavigate()
     const { user, logout } = useApp()
+    const { isMobile, isTablet, isDesktop } = useScreenSize()
 
     useEffect(() => {
         // Actualizar fecha cada segundo
@@ -73,40 +75,46 @@ const AppNavbar = ({ onToggleSidebar, sidebarCollapsed }) => {
                             <LuPanelLeft size={18} />
                         </Button>
 
-                        {/* Fecha y hora actual */}
-                        <div className="d-flex flex-column justify-content-center">
-                            <div className="fw-semibold text-dark small">
-                                {formatDate(currentDate).charAt(0).toUpperCase() + formatDate(currentDate).slice(1)}
+                        {/* Fecha y hora actual - Solo visible en desktop y tablet */}
+                        {(isDesktop || isTablet) && (
+                            <div className="d-flex flex-column justify-content-center">
+                                <div className="fw-semibold text-dark small">
+                                    {formatDate(currentDate).charAt(0).toUpperCase() + formatDate(currentDate).slice(1)}
+                                </div>
+                                {/* <div className="text-primary fw-bold">
+                                    {formatTime(currentDate)}
+                                </div> */}
                             </div>
-                            {/* <div className="text-primary fw-bold">
-                                {formatTime(currentDate)}
-                            </div> */}
-                        </div>
+                        )}
                     </div>
 
                     {/* Sección de usuario */}
                     <div className="d-flex align-items-center gap-3">
-                        {/* Saludo al usuario */}
-                        <div className="d-flex align-items-center gap-2">
-                            <div className="text-end">
-                                <div className="fw-semibold text-dark small">
-                                    ¡Bienvenido, {getUserName()}!
+                        {/* Saludo al usuario - Solo visible en desktop y tablet */}
+                        {!isMobile && (
+                            <div className="d-flex align-items-center gap-2">
+                                <div className="text-end">
+                                    <div className="fw-semibold text-dark small">
+                                        ¡Bienvenido, {getUserName()}!
+                                    </div>
+                                    {/* <div className="text-muted small">
+                                        {user?.role || 'Usuario'}
+                                    </div> */}
                                 </div>
-                                {/* <div className="text-muted small">
-                                    {user?.role || 'Usuario'}
-                                </div> */}
                             </div>
-                        </div>
+                        )}
 
-                        {/* Botón de cerrar sesión */}
+                        {/* Botón de cerrar sesión - Texto solo en desktop */}
                         <Button
                             variant="outline-danger"
                             size="sm"
                             rounded={false}
                             onClick={handleLogout}
                             className="d-flex align-items-center gap-2"
+                            title={isMobile ? 'Cerrar sesión' : ''}
                         >
                             <LuLogOut size={18} />
+                            {isDesktop && <span>Cerrar sesión</span>}
                         </Button>
                     </div>
                 </div>

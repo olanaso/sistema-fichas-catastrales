@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import { Nav, Button, Collapse } from 'react-bootstrap'
+import { Nav, Button, Collapse, Overlay, Popover } from 'react-bootstrap'
 import { Link, useLocation } from 'react-router-dom'
 
 const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
     const [expandedItems, setExpandedItems] = useState({})
+    const [showPopover, setShowPopover] = useState(false)
+    const [activePopoverItem, setActivePopoverItem] = useState(null)
+    const [popoverTarget, setPopoverTarget] = useState(null)
     const location = useLocation()
 
     const toggleSubmenu = (itemId) => {
@@ -11,6 +14,22 @@ const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
             ...prev,
             [itemId]: !prev[itemId]
         }))
+    }
+
+    const handlePopoverShow = (item, target) => {
+        if (collapsed && hasSubmenu(item)) {
+            setActivePopoverItem(item)
+            setPopoverTarget(target)
+            setShowPopover(true)
+        } else {
+            toggleSubmenu(item.id)
+        }
+    }
+
+    const handlePopoverHide = () => {
+        setShowPopover(false)
+        setActivePopoverItem(null)
+        setPopoverTarget(null)
     }
 
     const isActive = (path) => {
@@ -58,10 +77,15 @@ const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
                 <div className="position-relative">
                     {hasChildren ? (
                         <Button
+                            ref={(el) => {
+                                if (collapsed && el) {
+                                    el.setAttribute('data-item-id', item.id)
+                                }
+                            }}
                             variant="link"
                             className={`w-100 text-start p-0 border-0 text-decoration-none ${isItemActive ? 'bg-primary text-white' : 'text-dark'
                                 }`}
-                            onClick={() => toggleSubmenu(item.id)}
+                            onClick={(e) => handlePopoverShow(item, e.currentTarget)}
                             style={{ 
                                 paddingLeft: collapsed ? '0px' : `${paddingLeft}px`,
                                 paddingRight: collapsed ? '0px' : '12px'
@@ -110,7 +134,7 @@ const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
                 {/* Submenu */}
                 {hasChildren && !collapsed && (
                     <Collapse in={isExpanded}>
-                        <div className="ms-3">
+                        <div className="ms-3 px-3">
                             {item.children.map(child => renderSubMenuItem(child))}
                         </div>
                     </Collapse>
@@ -150,7 +174,7 @@ const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
                                 }`}
                             style={{ paddingRight: '12px' }}
                         >
-                            <div className="d-flex align-items-center py-1 px-3 text-sm">
+                            <div className="d-flex align-items-center py-1 px-2 text-sm">
                                 <div className="">
                                     <div className="fw-semibold">{item.title}</div>
                                     {item.description && (
@@ -263,7 +287,65 @@ const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
                 .sidebar-collapsed .d-flex {
                     justify-content: center !important;
                 }
+                
+                /* Estilos para el popover del sidebar */
+                .sidebar-popover {
+                    z-index: 1050 !important;
+                }
+                .sidebar-popover .popover-header {
+                    border-bottom: none;
+                    border-radius: 0.375rem 0.375rem 0 0;
+                }
+                .sidebar-popover .popover-body {
+                    border-radius: 0 0 0.375rem 0.375rem;
+                }
+                .sidebar-popover .popover-body a:last-child {
+                    border-bottom: none !important;
+                }
+                .sidebar-popover .popover-body a:hover {
+                    background-color: #f8f9fa !important;
+                }
             `}</style>
+
+            {/* Popover para sidebar contraído */}
+            <Overlay
+                target={popoverTarget}
+                show={showPopover}
+                placement="right"
+                onHide={handlePopoverHide}
+                rootClose
+            >
+                <Popover 
+                    id="sidebar-popover"
+                    className="sidebar-popover"
+                    style={{ 
+                        minWidth: '200px',
+                        maxWidth: '280px'
+                    }}
+                >
+                    <Popover.Header as="h6" className="bg-primary text-white">
+                        {activePopoverItem?.title}
+                    </Popover.Header>
+                    <Popover.Body className="p-0">
+                        {activePopoverItem?.children?.map(child => (
+                            <Link
+                                key={child.id}
+                                to={child.path}
+                                className={`d-block text-decoration-none p-3 border-bottom ${isActive(child.path) 
+                                    ? 'bg-primary text-white' 
+                                    : 'text-dark hover-bg-light'
+                                }`}
+                                onClick={handlePopoverHide}
+                            >
+                                <div className="fw-semibold">{child.title}</div>
+                                {child.description && (
+                                    <small className="opacity-75">{child.description}</small>
+                                )}
+                            </Link>
+                        ))}
+                    </Popover.Body>
+                </Popover>
+            </Overlay>
         </div>
     )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import BaseLayout from './BaseLayout'
-import { LuBarcode, LuHouse } from 'react-icons/lu'
+import { LuBarcode, LuFileChartColumn, LuHouse, LuSettings, LuUsers } from 'react-icons/lu'
 
 const AdminLayout = ({ children, ...props }) => {
     // Menú de administrador
@@ -13,44 +13,29 @@ const AdminLayout = ({ children, ...props }) => {
         },
         {
             id: 'fichas',
-            title: 'Fichas Catastrales',
-            icon: <LuBarcode />,
+            title: 'Fichas catastrales',
+            icon: <LuFileChartColumn />,
             children: [
-                { id: 'fichas-lista', title: 'Lista', path: '/fichas/lista' },
-                { id: 'fichas-crear', title: 'Crear', path: '/fichas/crear' },
-                { id: 'fichas-buscar', title: 'Buscar', path: '/fichas/buscar' }
+                { id: 'fichas-lista', title: 'Gestión de fichas', path: '/fichas/lista' },
+                { id: 'fichas-crear', title: 'Migración SICI', path: '/fichas/crear' },
             ]
         },
         {
-            id: 'usuarios',
-            title: 'Usuarios',
-            icon: <LuBarcode />,
-            roles: ['admin'],
+            id: 'equipos',
+            title: 'Equipos y asignaciones',
+            icon: <LuUsers />,
             children: [
-                { id: 'usuarios-lista', title: 'Lista', path: '/usuarios/lista' },
-                { id: 'usuarios-crear', title: 'Crear', path: '/usuarios/crear' },
-                { id: 'usuarios-roles', title: 'Roles', path: '/usuarios/roles' }
-            ]
-        },
-        {
-            id: 'reportes',
-            title: 'Reportes',
-            icon: <LuBarcode />,
-            children: [
-                { id: 'reportes-dashboard', title: 'Dashboard', path: '/reportes/dashboard' },
-                { id: 'reportes-fichas', title: 'Fichas', path: '/reportes/fichas' },
-                { id: 'reportes-actividad', title: 'Actividad', path: '/reportes/actividad' }
+                { id: 'reportes-dashboard', title: 'Grupos de trabajo', path: '/reportes/dashboard' },
+                { id: 'reportes-fichas', title: 'Asignaciones', path: '/reportes/fichas' },
             ]
         },
         {
             id: 'configuracion',
             title: 'Configuración',
-            icon: <LuBarcode />,
-            roles: ['admin'],
+            icon: <LuSettings  />,
             children: [
-                { id: 'config-sistema', title: 'Sistema', path: '/configuracion/sistema' },
-                { id: 'config-backup', title: 'Backup', path: '/configuracion/backup' },
-                { id: 'config-logs', title: 'Logs', path: '/configuracion/logs' }
+                { id: 'config-sistema', title: 'Parametros', path: '/configuracion/sistema' },
+                { id: 'config-backup', title: 'Usuarios', path: '/configuracion/usuarios' },
             ]
         }
     ]
