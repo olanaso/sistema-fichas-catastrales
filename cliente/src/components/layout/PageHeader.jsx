@@ -15,8 +15,8 @@ const PageHeader = ({ title, breadcrumbItems = [], actions = null }) => {
                                     <Breadcrumb.Item
                                         key={index}
                                         active={index === breadcrumbItems.length - 1}
-                                        as={item.href ? Link : 'span'}
-                                        to={item.href || undefined}
+                                        linkAs={item.href ? Link : undefined}
+                                        linkProps={item.href ? { to: item.href } : {}}
                                     >
                                         {item.label}
                                     </Breadcrumb.Item>

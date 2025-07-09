@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Form, Row, Col } from 'react-bootstrap'
+import { Modal, Form, Row, Col, InputGroup, Button } from 'react-bootstrap'
 import { SaveButton, CancelButton } from '../buttons/ActionButtons'
 import { useToast, ValidationErrors } from '../feedback/ToastSystem'
 
@@ -22,26 +22,28 @@ const CreateModal = ({
     showToastErrors = true,
     ...props
 }) => {
-    const [formData, setFormData] = useState(initialData)
+    const [formData, setFormData] = useState({})
     const [errors, setErrors] = useState({})
     const [touched, setTouched] = useState({})
+    const [showPasswords, setShowPasswords] = useState({})
     const { showValidationErrors, showApiError, showSuccess } = useToast()
 
     // Reset form cuando se abre/cierra el modal
     useEffect(() => {
         if (show) {
-            setFormData(initialData)
+            setFormData(initialData || {})
             setErrors({})
             setTouched({})
+            setShowPasswords({})
         }
-    }, [show, initialData])
+    }, [show])
 
     const handleChange = (fieldKey, value) => {
         setFormData(prev => ({
             ...prev,
             [fieldKey]: value
         }))
-        
+
         // Marcar campo como tocado
         setTouched(prev => ({
             ...prev,
@@ -74,9 +76,16 @@ const CreateModal = ({
         }
     }
 
+    const togglePasswordVisibility = (fieldKey) => {
+        setShowPasswords(prev => ({
+            ...prev,
+            [fieldKey]: !prev[fieldKey]
+        }))
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
-        
+
         // Marcar todos los campos como tocados
         const allTouched = {}
         fields.forEach(field => {
@@ -115,10 +124,9 @@ const CreateModal = ({
             // Llamar función onSave
             if (onSave) {
                 const result = await onSave(formData)
-                
-                // Si retorna un resultado exitoso, mostrar mensaje y cerrar
-                if (result !== false) {
-                    showSuccess('Elemento creado exitosamente')
+
+                // Si retorna un resultado exitoso, cerrar modal
+                if (result && result.success !== false) {
                     handleClose()
                 }
             }
@@ -128,9 +136,10 @@ const CreateModal = ({
     }
 
     const handleClose = () => {
-        setFormData(initialData)
+        setFormData({})
         setErrors({})
         setTouched({})
+        setShowPasswords({})
         onHide && onHide()
     }
 
@@ -143,7 +152,6 @@ const CreateModal = ({
         switch (field.type) {
             case 'text':
             case 'email':
-            case 'password':
             case 'number':
                 return (
                     <Form.Control
@@ -160,6 +168,37 @@ const CreateModal = ({
                         readOnly={field.readOnly}
                     />
                 )
+
+            case 'password':
+                const isPasswordVisible = showPasswords[field.key]
+                const inputElement = (
+                    <Form.Control
+                        type={isPasswordVisible ? 'text' : 'password'}
+                        placeholder={field.placeholder}
+                        value={value}
+                        onChange={(e) => handleChange(field.key, e.target.value)}
+                        onBlur={() => handleBlur(field.key)}
+                        isInvalid={showError}
+                        disabled={field.disabled || loading}
+                        readOnly={field.readOnly}
+                    />
+                )
+
+                if (field.showToggle) {
+                    return (
+                        <InputGroup>
+                            {inputElement}
+                            <Button
+                                variant="outline-secondary"
+                                onClick={() => togglePasswordVisibility(field.key)}
+                                disabled={field.disabled || loading}
+                            >
+                                <i className={`fas ${isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                            </Button>
+                        </InputGroup>
+                    )
+                }
+                return inputElement
 
             case 'textarea':
                 return (
@@ -270,8 +309,8 @@ const CreateModal = ({
                 <Modal.Body>
                     {/* Mostrar errores de validación como resumen */}
                     {showInlineErrors && errorCount > 0 && (
-                        <ValidationErrors 
-                            errors={errors} 
+                        <ValidationErrors
+                            errors={errors}
                             className="mb-3"
                         />
                     )}
@@ -320,13 +359,13 @@ const CreateModal = ({
                             )}
                         </div>
                         <div className="d-flex gap-2">
-                            <CancelButton 
+                            <CancelButton
                                 onClick={handleClose}
                                 disabled={loading}
                             >
                                 Cancelar
                             </CancelButton>
-                            <SaveButton 
+                            <SaveButton
                                 type="submit"
                                 loading={loading}
                                 disabled={loading || (showInlineErrors && errorCount > 0)}
