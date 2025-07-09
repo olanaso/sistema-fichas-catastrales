@@ -111,7 +111,62 @@ const Sidebar = ({ menuItems = [], collapsed = false, userRole = 'user' }) => {
                 {hasChildren && !collapsed && (
                     <Collapse in={isExpanded}>
                         <div className="ms-3">
-                            {item.children.map(child => renderMenuItem(child, level + 1))}
+                            {item.children.map(child => renderSubMenuItem(child))}
+                        </div>
+                    </Collapse>
+                )}
+            </div>
+        )
+    }
+
+    const renderSubMenuItem = (item) => {
+        if (!canAccessMenuItem(item)) return null
+
+        const isItemActive = isActive(item.path)
+        const hasChildren = hasSubmenu(item)
+        const isExpanded = expandedItems[item.id]
+
+        return (
+            <div key={item.id}>
+                <div className="position-relative">
+                    {hasChildren ? (
+                        <Button
+                            variant="link"
+                            className={`w-100 text-start p-0 border-0 text-decoration-none ${isItemActive ? 'bg-primary text-white' : 'text-dark'}`}
+                            onClick={() => toggleSubmenu(item.id)}
+                            style={{ paddingRight: '12px' }}
+                        >
+                            <div className="d-flex align-items-center py-2 px-3">
+                                <span className="flex-grow-1 fw-semibold">{item.title}</span>
+                                <i className={`fas fa-chevron-${isExpanded ? 'down' : 'right'} ms-2`}></i>
+                            </div>
+                        </Button>
+                    ) : (
+                        <Link
+                            to={item.path}
+                            className={`d-flex align-items-center text-decoration-none p-0 m-0 ${isItemActive
+                                    ? 'bg-gray-200 text-primary border-start border-primary border-3 rounded-0'
+                                    : 'text-muted hover-bg-light border-start border-gray-200 border-3 rounded-0'
+                                }`}
+                            style={{ paddingRight: '12px' }}
+                        >
+                            <div className="d-flex align-items-center py-1 px-3 text-sm">
+                                <div className="">
+                                    <div className="fw-semibold">{item.title}</div>
+                                    {item.description && (
+                                        <small className="opacity-75">{item.description}</small>
+                                    )}
+                                </div>
+                            </div>
+                        </Link>
+                    )}
+                </div>
+
+                {/* Sub-submenu */}
+                {hasChildren && (
+                    <Collapse in={isExpanded}>
+                        <div className="ms-3 border-top">
+                            {item.children.map(child => renderSubMenuItem(child))}
                         </div>
                     </Collapse>
                 )}
