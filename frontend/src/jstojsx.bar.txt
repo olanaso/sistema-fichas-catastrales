@@ -1,0 +1,12 @@
+@echo off
+setlocal enabledelayedexpansion
+
+REM Buscar todos los archivos .js en la carpeta actual y subcarpetas
+for /r %%f in (*.js) do (
+    set "archivo=%%~nxf"
+    set "ruta=%%~dpf"
+    ren "%%f" "%%~nf.jsx"
+    echo Renombrado: %%f -> %%~nf.jsx
+)
+
+pause

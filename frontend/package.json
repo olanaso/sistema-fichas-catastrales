@@ -1,54 +1,28 @@
 {
-  "name": "connida-react",
-  "version": "0.1.0",
+  "name": "sis-fichas-catastrales",
   "private": true,
-  "dependencies": {
-    "@adobe/react-spectrum": "^3.14.1",
-    "@react-leaflet/core": ">=1.0.0 <1.1.0 || ^1.1.1",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "alasql": "^1.7.3",
-    "axios": "^0.22.0",
-    "bootstrap": "^5.1.1",
-    "leaflet": "^1.7.1",
-    "material-table": "^1.69.3",
-    "moment": "^2.29.1",
-    "prop-types": "^15.7.2",
-    "query-string": "^7.0.1",
-    "react": "^17.0.2",
-    "react-async-hook": "^4.0.0",
-    "react-authenticate": "^1.0.0",
-    "react-bootstrap": "^2.0.0-rc.0",
-    "react-bootstrap-typeahead": "^5.2.1",
-    "react-click-outside": "github:tj/react-click-outside",
-    "react-confirm-alert": "^2.7.0",
-    "react-dom": "^17.0.2",
-    "react-js-pagination": "^3.0.3",
-    "react-leaflet": "^3.2.2",
-    "react-pro-sidebar": "^0.7.1",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "4.0.3",
-    "react-secure-route": "0.0.2",
-    "react-toast-notifications": "^2.5.1",
-    "styled-components": "^5.3.1",
-    "web-vitals": "^1.1.2"
-  },
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "dependencies": {
+    "dotenv": "^17.1.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
-  ]
+  "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.2",
+    "eslint": "^9.29.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.2.0",
+    "vite": "^7.0.0"
+  }
 }
