@@ -122,4 +122,20 @@ export function isCredentialsNonExpired() {
 
 export function isAccountNonExpired() {
   return AuthService.isAccountNonExpired();
+}
+
+export async function updateUserProfile(userId: string, profileData: any) {
+  try {
+    const response = await AuthService.updateUserProfile(userId, profileData);
+    return {
+      success: true,
+      message: response.message,
+      user: response.user
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || 'Error al actualizar el perfil'
+    };
+  }
 } 

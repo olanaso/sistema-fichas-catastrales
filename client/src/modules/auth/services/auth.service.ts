@@ -192,4 +192,25 @@ export class AuthService {
     const user = this.getCurrentUser();
     return user ? user.accountNonExpired : false;
   }
+
+  // Actualizar perfil de usuario
+  static async updateUserProfile(userId: string, profileData: Partial<UsuarioDto>): Promise<{ success: boolean; message: string; user?: UsuarioDto }> {
+    try {
+      const response = await apiClient.put(`/usuarios/${userId}`, profileData);
+      const { data } = response.data;
+      
+      // Actualizar usuario en localStorage
+      if (data) {
+        setLocalStorageItem(config.auth.userKey, JSON.stringify(data));
+      }
+      
+      return {
+        success: true,
+        message: response.data.message || 'Perfil actualizado exitosamente',
+        user: data
+      };
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Error al actualizar el perfil');
+    }
+  }
 } 
