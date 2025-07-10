@@ -7,7 +7,7 @@ const { DBFFile } = require('dbffile');
 const fs = require('fs');
 
 const app = express();
-const port = 3000;
+const port = 4000;
 
 // EJS
 app.set('view engine', 'ejs');
@@ -90,7 +90,8 @@ app.post('/migrar', upload.none(), async (req, res) => {
 
   // Extrae los parámetros de conexión desde el formulario
   console.log(req.body)
-  const { destino_host, destino_puerto, destino_usuario, destino_password, destino_dbname } = req.body;
+  const { destino_host, destino_puerto, destino_usuario, destino_password, destino_dbname , pathfolder} = req.body;
+  const dbfBasePath = pathfolder;
 
   // Prepara la configuración para pg
  
@@ -207,9 +208,11 @@ async function cargarTodosDBF(pgConfig) {
 
   // 1. Asegúrate de que el schema existe
   await ensureSchema(client, schemaName);
+  console.log("> creando el schema 'migra' en la base de datos")
 
   // 2. Elimina todas las tablas del schema
   await dropAllTablesInSchema(client, schemaName);
+    console.log("> Eliminado todas las tablas del schema 'migra'")
 
   // 3. Migra todos los DBF como siempre
   for (const [nombreTabla, nombreArchivo] of Object.entries(archivosDBF)) {

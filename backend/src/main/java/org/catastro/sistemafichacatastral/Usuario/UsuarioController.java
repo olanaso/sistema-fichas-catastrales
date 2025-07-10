@@ -1,5 +1,6 @@
 package org.catastro.sistemafichacatastral.Usuario;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.catastro.sistemafichacatastral.audit.AuditService;
 import org.catastro.sistemafichacatastral.auth.DTO.ChangeUserPasswordDto;
 import org.catastro.sistemafichacatastral.auth.DTO.ChangeMyPasswordDto;
@@ -29,6 +30,9 @@ public class UsuarioController {
 
     @Autowired
     private AuditService auditService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
@@ -206,4 +210,31 @@ public class UsuarioController {
             return ResponseEntity.status(500).body(ApiResponse.error("Error interno del servidor: " + e.getMessage()));
         }
     }
+
+
+    public boolean isValidJson(String json) {
+        try {
+            objectMapper.readTree(json);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @PostMapping("/saveUsuario")
+    public ResponseEntity<ApiResponse<UsuarioEntity>> saveUsuario(@RequestBody String json) {
+        if (!isValidJson(json)) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("JSON inválido"));
+        }
+        try {
+            UsuarioEntity usuario = usuarioService.upsertUsuarioJson(json);
+            return ResponseEntity.ok(ApiResponse.success("Usuario guardado exitosamente", usuario));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Error: " + e.getMessage()));
+        }
+    }
+
+
+
+
 }

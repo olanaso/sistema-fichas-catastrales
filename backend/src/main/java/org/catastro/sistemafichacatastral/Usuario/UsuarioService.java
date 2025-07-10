@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,13 +24,16 @@ import java.util.Set;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolService rolService;
-    
+    private final EntityManager entityManager;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, RolService rolService) {
+
+    public UsuarioService(UsuarioRepository usuarioRepository, RolService rolService, EntityManager entityManager) {
         this.usuarioRepository = usuarioRepository;
         this.rolService = rolService;
+        this.entityManager = entityManager;
     }
 
     /* FUNCIONES  GET */
@@ -301,4 +306,25 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
         usuarioRepository.delete(usuario);
     }
+
+
+    @Transactional
+    public UsuarioEntity upsertUsuarioJson(String json) {
+        try {
+            Query query = entityManager.createNativeQuery("SELECT insertar_o_actualizar_usuario(?::jsonb)");
+            query.setParameter(1, json);
+
+            Number result = (Number) query.getSingleResult();
+            int usuarioId = result.intValue();
+
+            return usuarioRepository.findById(usuarioId)
+                    .orElseThrow(() -> new RuntimeException("No se encontró el usuario después de la operación."));
+        } catch (Exception e) {
+            throw new RuntimeException("Error al insertar/actualizar usuario: " + e.getMessage());
+        }
+    }
+
+
+
+
 }
