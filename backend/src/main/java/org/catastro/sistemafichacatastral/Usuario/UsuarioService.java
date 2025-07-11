@@ -1,11 +1,13 @@
 package org.catastro.sistemafichacatastral.Usuario;
 
-import org.catastro.sistemafichacatastral.Rol.RolEntity;
-import org.catastro.sistemafichacatastral.Rol.RolService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.PersistenceException;
 import org.catastro.sistemafichacatastral.auth.DTO.ChangeUserPasswordDto;
 import org.catastro.sistemafichacatastral.auth.DTO.ChangeMyPasswordDto;
 import org.catastro.sistemafichacatastral.auth.DTO.UsuarioRegisterDto;
 import org.catastro.sistemafichacatastral.auth.DTO.UsuarioUpdateDto;
+import org.catastro.sistemafichacatastral.dto.InspectorDTO;
 import org.catastro.sistemafichacatastral.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,25 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
-    private final RolService rolService;
     private final EntityManager entityManager;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
 
-    public UsuarioService(UsuarioRepository usuarioRepository, RolService rolService, EntityManager entityManager) {
+    public UsuarioService(UsuarioRepository usuarioRepository, EntityManager entityManager) {
         this.usuarioRepository = usuarioRepository;
-        this.rolService = rolService;
         this.entityManager = entityManager;
     }
 
@@ -67,36 +66,6 @@ public class UsuarioService {
         return usuarioRepository.count();
     }
 
-    // Métodos de filtrado
-    public List<UsuarioEntity> findByRolAndNombre(Long rolId, String nombre) {
-        if (rolId != null) {
-            RolEntity rol = rolService.findByIdOrThrow(rolId);
-            if (nombre != null && !nombre.trim().isEmpty()) {
-                return usuarioRepository.findByRolAndNombre(rol, nombre.trim());
-            } else {
-                return usuarioRepository.findByRol(rol);
-            }
-        } else if (nombre != null && !nombre.trim().isEmpty()) {
-            return usuarioRepository.findByNombre(nombre.trim());
-        } else {
-            return findAll();
-        }
-    }
-
-    public List<UsuarioEntity> findByRol(Long rolId) {
-        if (rolId != null) {
-            RolEntity rol = rolService.findByIdOrThrow(rolId);
-            return usuarioRepository.findByRol(rol);
-        }
-        return findAll();
-    }
-
-    public List<UsuarioEntity> findByNombre(String nombre) {
-        if (nombre != null && !nombre.trim().isEmpty()) {
-            return usuarioRepository.findByNombre(nombre.trim());
-        }
-        return findAll();
-    }
 
     /* FUNCIONES POST */
     public UsuarioEntity create(UsuarioRegisterDto usuarioRegisterDto){
@@ -117,21 +86,6 @@ public class UsuarioService {
         usuarioEntity.setEmail(usuarioRegisterDto.getEmail());
         usuarioEntity.setPassword(passwordEncoder.encode(usuarioRegisterDto.getPassword()));
         usuarioEntity.setActivo(true); // Por defecto activo
-
-        // Asignar automáticamente el rol de administrador
-        Set<RolEntity> roles = new HashSet<>();
-        try {
-            // Buscar el rol de administrador por código
-            RolEntity rolAdmin = rolService.findByCodigoOrThrow("ADMIN");
-            roles.add(rolAdmin);
-        } catch (ResourceNotFoundException e) {
-            // Si no existe el rol de administrador, crearlo
-            RolEntity rolAdmin = rolService.create("Administrador", "ADMIN");
-            roles.add(rolAdmin);
-        }
-        
-        usuarioEntity.setRol(roles);
-
         try {
             return usuarioRepository.save(usuarioEntity);
         }catch (Exception e){
@@ -157,18 +111,6 @@ public class UsuarioService {
         usuarioEntity.setEmail(usuarioRegisterDto.getEmail());
         usuarioEntity.setPassword(passwordEncoder.encode(usuarioRegisterDto.getPassword()));
         usuarioEntity.setActivo(true); // Por defecto activo
-
-        // Asignar el rol específico por ID
-        Set<RolEntity> roles = new HashSet<>();
-        try {
-            RolEntity rol = rolService.findByIdOrThrow(usuarioRegisterDto.getIdRol().longValue());
-            roles.add(rol);
-        } catch (ResourceNotFoundException e) {
-            throw new RuntimeException("El rol con ID '" + usuarioRegisterDto.getIdRol() + "' no existe");
-        }
-        
-        usuarioEntity.setRol(roles);
-
         try {
             return usuarioRepository.save(usuarioEntity);
         }catch (Exception e){
@@ -220,10 +162,6 @@ public class UsuarioService {
         
         // Actualizar el rol del usuario
         try {
-            RolEntity nuevoRol = rolService.findByIdOrThrow(usuarioUpdateDto.getIdRol().longValue());
-            Set<RolEntity> roles = new HashSet<>();
-            roles.add(nuevoRol);
-            usuario.setRol(roles);
         } catch (ResourceNotFoundException e) {
             throw new RuntimeException("El rol con ID '" + usuarioUpdateDto.getIdRol() + "' no existe");
         }
@@ -324,7 +262,28 @@ public class UsuarioService {
         }
     }
 
+    public List<InspectorDTO> obtenerInspectores(int limit, int offset) {
+        try {
+            Query query = entityManager.createNativeQuery(
+                    "SELECT fichacatastral.obtener_inspectores_json(:limit, :offset)"
+            );
+            query.setParameter("limit", limit);
+            query.setParameter("offset", offset);
 
+            Object result = query.getSingleResult();
 
+            if (result != null) {
+                String json = result.toString();
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.readValue(json, new TypeReference<List<InspectorDTO>>() {});
+            }
+
+            return Collections.emptyList();
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Error al obtener inspectores: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al parsear inspectores: " + e.getMessage(), e);
+        }
+    }
 
 }

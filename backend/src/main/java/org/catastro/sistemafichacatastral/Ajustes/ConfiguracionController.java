@@ -1,6 +1,5 @@
 package org.catastro.sistemafichacatastral.Ajustes;
 
-import org.catastro.sistemafichacatastral.audit.AuditService;
 import org.catastro.sistemafichacatastral.auth.DTO.ConfiguracionDto;
 import org.catastro.sistemafichacatastral.auth.DTO.ConfiguracionEmpresaDto;
 import org.catastro.sistemafichacatastral.auth.DTO.ConfiguracionCorreoDto;
@@ -25,23 +24,17 @@ public class ConfiguracionController {
     private ConfiguracionService configuracionService;
 
     @Autowired
-    private AuditService auditService;
-
-    @Autowired
     private FileStorageService fileStorageService;
 
     /**
      * Obtiene la configuración del sistema
      */
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
     public ResponseEntity<ApiResponse<ConfiguracionEntity>> getConfiguracion() {
         try {
             ConfiguracionEntity configuracion = configuracionService.getConfiguracion();
             return ResponseEntity.ok(ApiResponse.success("Configuración obtenida exitosamente", configuracion));
         } catch (Exception e) {
-            auditService.logError("OBTENER_CONFIGURACION", "/configuracion", 
-                "Error al obtener configuración: " + e.getMessage());
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al obtener configuración: " + e.getMessage()));
         }
     }
@@ -50,19 +43,14 @@ public class ConfiguracionController {
      * Actualiza la configuración del sistema (JSON)
      */
     @PutMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ConfiguracionEntity>> updateConfiguracion(@Valid @RequestBody ConfiguracionDto configuracionDto) {
         try {
             ConfiguracionEntity configuracion = configuracionService.updateConfiguracion(configuracionDto);
             
             String accion = configuracionService.existeConfiguracion() ? "actualizada" : "creada";
-            auditService.logSuccess("ACTUALIZAR_CONFIGURACION", "/configuracion", 
-                "Configuración " + accion + " exitosamente");
-            
+
             return ResponseEntity.ok(ApiResponse.success("Configuración " + accion + " exitosamente", configuracion));
         } catch (Exception e) {
-            auditService.logError("ACTUALIZAR_CONFIGURACION", "/configuracion", 
-                "Error al actualizar configuración: " + e.getMessage());
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al actualizar configuración: " + e.getMessage()));
         }
     }
@@ -71,7 +59,6 @@ public class ConfiguracionController {
      * Actualiza la configuración del sistema con archivo multipart
      */
     @PutMapping("/multipart")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ConfiguracionEntity>> updateConfiguracionMultipart(
             // Campos obligatorios
             @RequestParam("nombreSistema") String nombreSistema,
@@ -171,17 +158,13 @@ public class ConfiguracionController {
             ConfiguracionEntity configuracion = configuracionService.updateConfiguracion(configuracionDto);
             
             String accion = configuracionService.existeConfiguracion() ? "actualizada" : "creada";
-            auditService.logSuccess("ACTUALIZAR_CONFIGURACION_MULTIPART", "/configuracion/multipart", 
-                "Configuración " + accion + " exitosamente con archivo");
             
             return ResponseEntity.ok(ApiResponse.success("Configuración " + accion + " exitosamente", configuracion));
         } catch (IllegalArgumentException e) {
-            auditService.logError("ACTUALIZAR_CONFIGURACION_MULTIPART", "/configuracion/multipart", 
-                "Error de validación: " + e.getMessage());
+
             return ResponseEntity.badRequest().body(ApiResponse.error("Error de validación: " + e.getMessage()));
         } catch (Exception e) {
-            auditService.logError("ACTUALIZAR_CONFIGURACION_MULTIPART", "/configuracion/multipart", 
-                "Error al actualizar configuración: " + e.getMessage());
+
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al actualizar configuración: " + e.getMessage()));
         }
     }
@@ -259,19 +242,14 @@ public class ConfiguracionController {
      * Endpoint: PUT /configuracion/empresa
      */
     @PutMapping("/empresa")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ConfiguracionEntity>> updateConfiguracionEmpresa(@Valid @RequestBody ConfiguracionEmpresaDto configuracionDto) {
         try {
             ConfiguracionEntity configuracion = configuracionService.updateConfiguracionEmpresa(configuracionDto);
             
             String accion = configuracionService.existeConfiguracion() ? "actualizada" : "creada";
-            auditService.logSuccess("ACTUALIZAR_CONFIGURACION_EMPRESA", "/configuracion/empresa", 
-                "Configuración de empresa " + accion + " exitosamente");
             
             return ResponseEntity.ok(ApiResponse.success("Configuración de empresa " + accion + " exitosamente", configuracion));
         } catch (Exception e) {
-            auditService.logError("ACTUALIZAR_CONFIGURACION_EMPRESA", "/configuracion/empresa", 
-                "Error al actualizar configuración de empresa: " + e.getMessage());
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al actualizar configuración de empresa: " + e.getMessage()));
         }
     }
@@ -281,19 +259,14 @@ public class ConfiguracionController {
      * Endpoint: PUT /configuracion/correo
      */
     @PutMapping("/correo")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ConfiguracionEntity>> updateConfiguracionCorreo(@Valid @RequestBody ConfiguracionCorreoDto configuracionDto) {
         try {
             ConfiguracionEntity configuracion = configuracionService.updateConfiguracionCorreo(configuracionDto);
             
             String accion = configuracionService.existeConfiguracion() ? "actualizada" : "creada";
-            auditService.logSuccess("ACTUALIZAR_CONFIGURACION_CORREO", "/configuracion/correo", 
-                "Configuración de correo " + accion + " exitosamente");
             
             return ResponseEntity.ok(ApiResponse.success("Configuración de correo " + accion + " exitosamente", configuracion));
         } catch (Exception e) {
-            auditService.logError("ACTUALIZAR_CONFIGURACION_CORREO", "/configuracion/correo", 
-                "Error al actualizar configuración de correo: " + e.getMessage());
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al actualizar configuración de correo: " + e.getMessage()));
         }
     }
@@ -303,19 +276,14 @@ public class ConfiguracionController {
      * Endpoint: PUT /configuracion/sistemas
      */
     @PutMapping("/sistemas")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ConfiguracionEntity>> updateConfiguracionSistemas(@Valid @RequestBody ConfiguracionSistemasDto configuracionDto) {
         try {
             ConfiguracionEntity configuracion = configuracionService.updateConfiguracionSistemas(configuracionDto);
             
             String accion = configuracionService.existeConfiguracion() ? "actualizada" : "creada";
-            auditService.logSuccess("ACTUALIZAR_CONFIGURACION_SISTEMAS", "/configuracion/sistemas", 
-                "Configuración de sistemas " + accion + " exitosamente");
             
             return ResponseEntity.ok(ApiResponse.success("Configuración de sistemas " + accion + " exitosamente", configuracion));
         } catch (Exception e) {
-            auditService.logError("ACTUALIZAR_CONFIGURACION_SISTEMAS", "/configuracion/sistemas", 
-                "Error al actualizar configuración de sistemas: " + e.getMessage());
             return ResponseEntity.badRequest().body(ApiResponse.error("Error al actualizar configuración de sistemas: " + e.getMessage()));
         }
     }

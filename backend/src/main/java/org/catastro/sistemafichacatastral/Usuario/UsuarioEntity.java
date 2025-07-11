@@ -5,17 +5,15 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.catastro.sistemafichacatastral.Rol.RolEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Entity
-@Table( name = "usuario")
+@Table( name = "usuario", schema = "auth")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,19 +42,9 @@ public class UsuarioEntity implements UserDetails {
     @Column(nullable = false)
     private boolean activo = true;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "usuario_rol",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "rol_id")
-    )
-    private Set<RolEntity> rol;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return rol.stream()
-                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getCodigo()))
-                .collect(Collectors.toList());
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override public String getUsername() { return email; }
