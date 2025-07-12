@@ -30,13 +30,14 @@ export function SistemasForm({ configuracion }: SistemasFormProps) {
   const form = useForm<SistemasFormValues>({
     resolver: zodResolver(sistemasSchema),
     defaultValues: {
-      apiReniecRuc: configuracion.apiReniecRuc || "",
-      hostDb: configuracion.hostDb || "",
-      usuarioDb: configuracion.usuarioDb || "",
-      passwordDb: configuracion.passwordDb || "",
-      baseDatos: configuracion.baseDatos || "",
-      conexionSici1: configuracion.conexionSici1,
-      conexionSici2: configuracion.conexionSici2,
+      id: configuracion.id || 1,
+      api_reniec_ruc: configuracion.apiReniecRuc || "",
+      host_db: configuracion.hostDb || "",
+      usuario_db: configuracion.usuarioDb || "",
+      password_db: configuracion.passwordDb || "",
+      base_datos: configuracion.baseDatos || "",
+      conexion_sici1: configuracion.conexionSici1,
+      conexion_sici2: configuracion.conexionSici2,
     },
   });
 
@@ -70,7 +71,7 @@ export function SistemasForm({ configuracion }: SistemasFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="conexionSici1"
+              name="conexion_sici1"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -90,7 +91,7 @@ export function SistemasForm({ configuracion }: SistemasFormProps) {
             />
             <FormField
               control={form.control}
-              name="conexionSici2"
+              name="conexion_sici2"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -113,7 +114,7 @@ export function SistemasForm({ configuracion }: SistemasFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="apiReniecRuc"
+              name="api_reniec_ruc"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -143,7 +144,7 @@ export function SistemasForm({ configuracion }: SistemasFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="hostDb"
+              name="host_db"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -163,7 +164,7 @@ export function SistemasForm({ configuracion }: SistemasFormProps) {
             />
             <FormField
               control={form.control}
-              name="usuarioDb"
+              name="usuario_db"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -186,7 +187,7 @@ export function SistemasForm({ configuracion }: SistemasFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="passwordDb"
+              name="password_db"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -206,7 +207,7 @@ export function SistemasForm({ configuracion }: SistemasFormProps) {
             />
             <FormField
               control={form.control}
-              name="baseDatos"
+              name="base_datos"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>

@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,44 +14,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { usuarioSchema, UsuarioFormValues } from "../../schema/usuario.schema";
-import { createUsuario, getRoles } from "../../action/usuario.actions";
-import {
-  CircleFadingPlus,
-  CircleX,
-  Lock,
-  Mail,
-  Save,
-  User,
-  CreditCard,
-  Shield,
-  CheckSquare,
-} from "lucide-react";
+import { createUsuario } from "../../action/usuario.actions";
+import { CircleX, Mail, Save, User, CreditCard, Shield, Plus } from "lucide-react";
 import { LoadingButton } from "@/components/custom/loading-button";
-import { CustomDialog } from "@/components/custom/dialog";
-import { useState, useEffect } from "react";
+import { CustomSheet } from "@/components/custom/sheet";
 import { CustomInputControlled } from "@/components/custom/input-controlled";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useUsuarios } from "../../context/usuarios-context";
 
-interface Rol {
-  id: number;
-  codigo: string;
-  rol: string;
-}
-
 export function CreateUsuarioForm() {
   const [showSheet, setShowSheet] = useState(false);
-  const [roles, setRoles] = useState<Rol[]>([]);
-  const [loadingRoles, setLoadingRoles] = useState(false);
   const { refreshUsuarios } = useUsuarios();
 
   const form = useForm<UsuarioFormValues>({
@@ -58,36 +34,14 @@ export function CreateUsuarioForm() {
     defaultValues: {
       email: "",
       password: "",
-      nombres: "",
-      apellidos: "",
+      nombre: "",
+      apellidopa: "",
+      apellidoma: "",
       dni: "",
-      idRol: undefined,
+      accesototal: 0,
       activo: true,
     },
   });
-
-  // Cargar roles al abrir el formulario
-  useEffect(() => {
-    if (showSheet && roles.length === 0) {
-      loadRoles();
-    }
-  }, [showSheet]);
-
-  const loadRoles = async () => {
-    setLoadingRoles(true);
-    try {
-      const result = await getRoles();
-      if (result.success) {
-        setRoles(result.data);
-      } else {
-        toast.error("Error al cargar roles");
-      }
-    } catch (error) {
-      toast.error("Error al cargar roles");
-    } finally {
-      setLoadingRoles(false);
-    }
-  };
 
   const isSubmitting = form.formState.isSubmitting;
 
@@ -116,24 +70,26 @@ export function CreateUsuarioForm() {
 
   return (
     <>
-      <Button onClick={() => setShowSheet(true)}>
-        <CircleFadingPlus className="w-4 h-4" />
-        Crear usuario
+      <Button
+        onClick={() => setShowSheet(true)}
+        className="flex items-center gap-2"
+      >
+        <Plus className="w-4 h-4" />
+        Crear Usuario
       </Button>
 
-      <CustomDialog
+      <CustomSheet
         open={showSheet}
         onOpenChange={setShowSheet}
-        title="Crear usuario"
-        description="Completa la información para crear un nuevo usuario en el sistema."
-        size="2xl"
+        title="Crear nuevo usuario"
+        description="Completa la información para crear un nuevo usuario."
       >
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="px-4 space-y-4"
           >
-            {/* Primera fila: DNI y Nombres */}
+            {/* Primera fila: DNI y Nombre */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -141,15 +97,14 @@ export function CreateUsuarioForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <CustomInputControlled
-                        type="text"
-                        maxLength={8}
-                        label="DNI"
-                        icon={<CreditCard className="w-4 h-4" />}
-                        allowedCharacters={["numeric"]}
-                        helperText="Ejemplo: 12345678"
-                        {...field}
-                      />
+                      <CustomInputControlled 
+                      type="text"
+                      maxLength={8}
+                      label="DNI"
+                      icon={<CreditCard className="w-4 h-4" />}
+                      allowedCharacters={["numeric"]}
+                      helperText="Ejemplo: 12345678"
+                      {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -157,20 +112,19 @@ export function CreateUsuarioForm() {
               />
               <FormField
                 control={form.control}
-                name="nombres"
+                name="nombre"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <CustomInputControlled
-                        type="text"
-                        maxLength={100}
-                        label="Nombres"
-                        icon={<User className="w-4 h-4" />}
-                        allowedCharacters={["letters", "spaces"]}
-                        textTransform="capitalize"
-                        helperText="Ejemplo: Juan Carlos"
-                        {...field}
-                      />
+                      <CustomInputControlled 
+                      type="text"
+                      maxLength={100}
+                      label="Nombre"
+                      icon={<User className="w-4 h-4" />}
+                      allowedCharacters={["letters", "spaces"]}
+                      textTransform="capitalize"
+                      helperText="Ejemplo: Juan Carlos"
+                      {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -178,44 +132,84 @@ export function CreateUsuarioForm() {
               />
             </div>
 
-            {/* Segunda fila: Apellidos y Email */}
+            {/* Segunda fila: Apellido Paterno y Apellido Materno */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="apellidos"
+                name="apellidopa"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <CustomInputControlled
-                        type="text"
-                        maxLength={100}
-                        label="Apellidos"
-                        icon={<User className="w-4 h-4" />}
-                        allowedCharacters={["letters", "spaces"]}
-                        textTransform="capitalize"
-                        {...field}
-                      />
+                      <CustomInputControlled 
+                      type="text"
+                      maxLength={100}
+                      label="Apellido Paterno"
+                      icon={<User className="w-4 h-4" />}
+                      allowedCharacters={["letters", "spaces"]}
+                      textTransform="capitalize"
+                      {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="apellidoma"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <CustomInputControlled 
+                      type="text"
+                      maxLength={100}
+                      label="Apellido Materno"
+                      icon={<User className="w-4 h-4" />}
+                      allowedCharacters={["letters", "spaces"]}
+                      textTransform="capitalize"
+                      {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Tercera fila: Email y Contraseña */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <CustomInputControlled
-                        type="email"
-                        maxLength={100}
-                        label="Correo electrónico"
-                        icon={<Mail className="w-4 h-4" />}
-                        allowedCharacters={["letters", "numeric", "symbols"]}
-                        helperText="Ejemplo: usuario@ejemplo.com"
-                        textTransform="lowercase"
-                        {...field}
-                      />
+                      <CustomInputControlled 
+                      type="email"
+                      maxLength={100}
+                      label="Correo electrónico"
+                      icon={<Mail className="w-4 h-4" />}
+                      allowedCharacters={["letters", "numeric", "symbols"]}
+                      helperText="Ejemplo: usuario@ejemplo.com"
+                      textTransform="lowercase"
+                      {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <CustomInputControlled 
+                      type="password"
+                      maxLength={100}
+                      label="Contraseña"
+                      icon={<Shield className="w-4 h-4" />}
+                      allowedCharacters={["letters", "numeric", "symbols"]}
+                      helperText="Mínimo 8 caracteres"
+                      {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -223,55 +217,36 @@ export function CreateUsuarioForm() {
               />
             </div>
 
-            {/* Tercera fila: Contraseña y Rol */}
+            {/* Cuarta fila: Nivel de Acceso y Checkbox de activo */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <CustomInputControlled
-                        type="password"
-                        maxLength={20}
-                        label="Contraseña"
-                        icon={<Lock className="w-4 h-4" />}
-                        allowedCharacters={["letters", "numeric", "symbols"]}
-                        helperText="Ejemplo: PASS_$_213"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="idRol"
+                name="accesototal"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <div className="space-y-2">
-                        <Label className="text-sm font-medium">Rol</Label>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(parseInt(value))
-                          }
+                        <Label className="text-sm font-medium">Nivel de Acceso</Label>
+                        <Select 
+                          onValueChange={(value) => field.onChange(parseInt(value))}
                           value={field.value?.toString()}
-                          disabled={loadingRoles}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Seleccione un rol" />
+                            <SelectValue placeholder="Seleccione el nivel de acceso" />
                           </SelectTrigger>
                           <SelectContent>
-                            {roles.map((rol) => (
-                              <SelectItem key={rol.id} value={rol.id.toString()}>
-                                <div className="flex items-center gap-2">
-                                  <Shield className="w-4 h-4" />
-                                  {rol.rol} ({rol.codigo})
-                                </div>
-                              </SelectItem>
-                            ))}
+                            <SelectItem value="1">
+                              <div className="flex items-center gap-2">
+                                <Shield className="w-4 h-4" />
+                                Acceso Total
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="0">
+                              <div className="flex items-center gap-2">
+                                <Shield className="w-4 h-4" />
+                                Acceso Limitado
+                              </div>
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -280,40 +255,39 @@ export function CreateUsuarioForm() {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="activo"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        Usuario activo
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        El usuario podrá acceder al sistema
+                      </p>
+                    </div>
+                  </FormItem>
+                )}
+              />
             </div>
 
-            {/* Cuarta fila: Checkbox de activo */}
-            <FormField
-              control={form.control}
-              name="activo"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center space-x-4 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <Label className="text-sm font-medium flex items-center gap-2">
-                      Usuario activo
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      El usuario podrá acceder al sistema
-                    </p>
-                  </div>
-                </FormItem>
-              )}
-            />
             <div className="flex justify-between">
               <LoadingButton
                 type="submit"
                 isLoading={isSubmitting}
-                loadingText="Guardando..."
+                loadingText="Creando..."
                 className="w-[49%]"
               >
                 <Save className="w-4 h-4" />
-                Guardar
+                Crear usuario
               </LoadingButton>
               <Button
                 type="button"
@@ -328,7 +302,7 @@ export function CreateUsuarioForm() {
             </div>
           </form>
         </Form>
-      </CustomDialog>
+      </CustomSheet>
     </>
   );
 }

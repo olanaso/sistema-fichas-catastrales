@@ -44,11 +44,11 @@ export default function LoginPage() {
     setSuccess(null);
 
     const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
+    const usuario = formData.get("usuario") as string;
     const password = formData.get("password") as string;
 
     try {
-      const result = await login({ email, password });
+      const result = await login({ usuario, password });
 
       if (result.success) {
         toast.success("Inicio de sesión exitoso");
@@ -87,13 +87,13 @@ export default function LoginPage() {
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
             <CustomInputControlled
-              type="email"
-              name="email"
+              type="text"
+              name="usuario"
               label="Usuario"
               icon={<Mail className="w-4 h-4" />}
-              placeholder="usuario@ejemplo.com"
+              placeholder="usuario"
               allowedCharacters={["letters", "numeric", "symbols"]}
-              helperText="Ingresa tu correo electrónico"
+              helperText="Ingresa tu usuario"
               textTransform="lowercase"
               required
               disabled={isLoading}

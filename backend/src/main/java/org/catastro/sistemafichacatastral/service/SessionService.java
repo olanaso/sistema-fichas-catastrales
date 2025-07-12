@@ -13,32 +13,21 @@ public class SessionService {
     @Autowired
     private UsuarioService usuarioService;
 
-    /**
-     * Obtiene el usuario actualmente autenticado
-     * @return UsuarioEntity del usuario en sesión
-     */
     public UsuarioEntity getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && 
             !authentication.getName().equals("anonymousUser")) {
-            return usuarioService.findByEmailOrThrow(authentication.getName());
+            return usuarioService.findByUsuarioOrThrow(authentication.getName());
         }
         return null;
     }
 
-    /**
-     * Obtiene el ID del usuario actualmente autenticado
-     * @return ID del usuario en sesión
-     */
-    public Integer getCurrentUserId() {
+    public String getCurrentUserId() {
         UsuarioEntity user = getCurrentUser();
-        return user != null ? user.getId() : null;
+        return user != null ? user.getCodusu() : null;
     }
 
-    /**
-     * Obtiene el email del usuario actualmente autenticado
-     * @return Email del usuario en sesión
-     */
+
     public String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() &&

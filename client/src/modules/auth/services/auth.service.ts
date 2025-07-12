@@ -55,6 +55,15 @@ const removeLocalStorageItem = (key: string): void => {
   }
 };
 
+// Configuración de vistas permitidas para usuarios con acceso limitado
+const LIMITED_ACCESS_VIEWS = [
+  'dashboard',
+  'cuenta',
+  'configuracion',
+  'supervisores',
+  'inspectores'
+];
+
 export class AuthService {
   // Login
   static async login(credentials: LoginRequest): Promise<LoginResponse> {
@@ -137,60 +146,85 @@ export class AuthService {
     return getLocalStorageItem('refresh_token');
   }
 
-  // Verificar si el usuario tiene un rol específico
-  static hasRole(roleCode: string): boolean {
+  // Verificar si el usuario tiene acceso total
+  static hasTotalAccess(): boolean {
     const user = this.getCurrentUser();
-    if (!user || !user.rol) return false;
-    
-    return user.rol.some(rol => rol.codigo === roleCode);
+    return user?.accesototal === 1;
   }
 
-  // Verificar si el usuario tiene cualquiera de los roles especificados
-  static hasAnyRole(roleCodes: string[]): boolean {
+  // Verificar si el usuario tiene acceso limitado
+  static hasLimitedAccess(): boolean {
     const user = this.getCurrentUser();
-    if (!user || !user.rol) return false;
-    
-    return user.rol.some(rol => roleCodes.includes(rol.codigo));
+    return user?.accesototal === 0;
   }
 
-  // Verificar si el usuario tiene una autoridad específica (Spring Security)
-  static hasAuthority(authority: string): boolean {
+  // Verificar si el usuario puede acceder a una vista específica
+  static canAccessView(viewName: string): boolean {
     const user = this.getCurrentUser();
-    if (!user || !user.authorities) return false;
+    if (!user) return false;
     
-    return user.authorities.some(auth => auth.authority === authority);
+    // Si tiene acceso total, puede acceder a todo
+    if (user.accesototal === 1) return true;
+    
+    // Si tiene acceso limitado, solo puede acceder a vistas permitidas
+    if (user.accesototal === 0) {
+      return LIMITED_ACCESS_VIEWS.includes(viewName);
+    }
+    
+    return false;
   }
 
-  // Verificar si el usuario tiene cualquiera de las autoridades especificadas
-  static hasAnyAuthority(authorities: string[]): boolean {
+  // Verificar si el usuario puede acceder a cualquiera de las vistas especificadas
+  static canAccessAnyView(viewNames: string[]): boolean {
     const user = this.getCurrentUser();
-    if (!user || !user.authorities) return false;
+    if (!user) return false;
     
-    return user.authorities.some(auth => authorities.includes(auth.authority));
+    // Si tiene acceso total, puede acceder a todo
+    if (user.accesototal === 1) return true;
+    
+    // Si tiene acceso limitado, verificar si puede acceder a alguna de las vistas
+    if (user.accesototal === 0) {
+      return viewNames.some(viewName => LIMITED_ACCESS_VIEWS.includes(viewName));
+    }
+    
+    return false;
+  }
+
+  // Verificar si el usuario puede acceder a todas las vistas especificadas
+  static canAccessAllViews(viewNames: string[]): boolean {
+    const user = this.getCurrentUser();
+    if (!user) return false;
+    
+    // Si tiene acceso total, puede acceder a todo
+    if (user.accesototal === 1) return true;
+    
+    // Si tiene acceso limitado, verificar si puede acceder a todas las vistas
+    if (user.accesototal === 0) {
+      return viewNames.every(viewName => LIMITED_ACCESS_VIEWS.includes(viewName));
+    }
+    
+    return false;
   }
 
   // Verificar si la cuenta está habilitada
   static isAccountEnabled(): boolean {
     const user = this.getCurrentUser();
-    return user ? user.enabled : false;
+    return user ? user.activo : false;
   }
 
-  // Verificar si la cuenta no está bloqueada
+  // Verificar si la cuenta no está bloqueada (siempre true para este sistema)
   static isAccountNonLocked(): boolean {
-    const user = this.getCurrentUser();
-    return user ? user.accountNonLocked : false;
+    return true;
   }
 
-  // Verificar si las credenciales no han expirado
+  // Verificar si las credenciales no han expirado (siempre true para este sistema)
   static isCredentialsNonExpired(): boolean {
-    const user = this.getCurrentUser();
-    return user ? user.credentialsNonExpired : false;
+    return true;
   }
 
-  // Verificar si la cuenta no ha expirado
+  // Verificar si la cuenta no ha expirado (siempre true para este sistema)
   static isAccountNonExpired(): boolean {
-    const user = this.getCurrentUser();
-    return user ? user.accountNonExpired : false;
+    return true;
   }
 
   // Actualizar perfil de usuario
@@ -212,5 +246,34 @@ export class AuthService {
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Error al actualizar el perfil');
     }
+  }
+
+  // Obtener vistas permitidas para el usuario actual
+  static getPermittedViews(): string[] {
+    const user = this.getCurrentUser();
+    if (!user) return [];
+    
+    if (user.accesototal === 1) {
+      // Retornar todas las vistas disponibles
+      return [
+        'dashboard',
+        'cuenta',
+        'configuracion',
+        'supervisores',
+        'inspectores',
+        'importar',
+        'gestion-padron',
+        'gestion-fichas',
+        'migracion-sici',
+        'grupos-trabajo',
+        'asignacion-carga'
+      ];
+    }
+    
+    if (user.accesototal === 0) {
+      return LIMITED_ACCESS_VIEWS;
+    }
+    
+    return [];
   }
 } 

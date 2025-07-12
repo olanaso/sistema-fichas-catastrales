@@ -1,5 +1,9 @@
 package org.catastro.sistemafichacatastral.Ajustes;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Query;
 import org.catastro.sistemafichacatastral.auth.DTO.ConfiguracionDto;
 import org.catastro.sistemafichacatastral.auth.DTO.ConfiguracionEmpresaDto;
 import org.catastro.sistemafichacatastral.auth.DTO.ConfiguracionCorreoDto;
@@ -19,6 +23,9 @@ public class ConfiguracionService {
     
     private final ConfiguracionRepository configuracionRepository;
     private final FileStorageService fileStorageService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public ConfiguracionService(ConfiguracionRepository configuracionRepository, FileStorageService fileStorageService) {
@@ -240,4 +247,21 @@ public class ConfiguracionService {
         
         return configuracionRepository.save(configuracion);
     }
+
+    @Transactional
+    public String actualizarConfiguracionJson(String json) {
+        try {
+            Query query = entityManager.createNativeQuery("SELECT fichacatastral.actualizar_configuracion(?::jsonb)");
+            query.setParameter(1, json);
+
+            return (String) query.getSingleResult();
+        } catch (PersistenceException e) {
+            Throwable cause = e.getCause();
+            if (cause != null && cause.getMessage() != null && cause.getMessage().contains("El campo id es requerido")) {
+                throw new RuntimeException("El campo ID es obligatorio.");
+            }
+            throw new RuntimeException("Error al actualizar configuración: " + e.getMessage());
+        }
+    }
+
 } 

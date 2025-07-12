@@ -30,10 +30,11 @@ export function CorreoForm({ configuracion }: CorreoFormProps) {
   const form = useForm<CorreoFormValues>({
     resolver: zodResolver(correoSchema),
     defaultValues: {
-      hostCorreo: configuracion.hostCorreo || "",
-      passwordCorreo: configuracion.passwordCorreo || "",
-      puertoCorreo: configuracion.puertoCorreo || 587,
-      usuarioCorreo: configuracion.usuarioCorreo || "",
+      id: configuracion.id || 1,
+      host_correo: configuracion.hostCorreo || "",
+      password_correo: configuracion.passwordCorreo || "",
+      puerto_correo: configuracion.puertoCorreo || 587,
+      usuario_correo: configuracion.usuarioCorreo || "soporte@sici.com.pe",
     },
   });
 
@@ -67,7 +68,7 @@ export function CorreoForm({ configuracion }: CorreoFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="hostCorreo"
+              name="host_correo"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -87,7 +88,7 @@ export function CorreoForm({ configuracion }: CorreoFormProps) {
             />
             <FormField
               control={form.control}
-              name="usuarioCorreo"
+              name="usuario_correo"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -110,7 +111,7 @@ export function CorreoForm({ configuracion }: CorreoFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="passwordCorreo"
+              name="password_correo"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -130,7 +131,7 @@ export function CorreoForm({ configuracion }: CorreoFormProps) {
             />
             <FormField
               control={form.control}
-              name="puertoCorreo"
+              name="puerto_correo"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>

@@ -30,17 +30,18 @@ export function EmpresaForm({ configuracion }: EmpresaFormProps) {
   const form = useForm<EmpresaFormValues>({
     resolver: zodResolver(empresaSchema),
     defaultValues: {
-      nombreSistema: configuracion.nombreSistema,
-      nombreCorreo: configuracion.nombreCorreo,
-      clienteUrl: configuracion.clienteUrl,
+      id: configuracion.id,
+      nombre_sistema: configuracion.nombreSistema,
+      nombre_correo: configuracion.nombreCorreo,
+      cliente_url: configuracion.clienteUrl,
       ruc: configuracion.ruc || "",
-      razonSocial: configuracion.razonSocial || "",
+      razon_social: configuracion.razonSocial || "",
       direccion: configuracion.direccion || "",
       pais: configuracion.pais || "",
       departamento: configuracion.departamento || "",
       provincia: configuracion.provincia || "",
       distrito: configuracion.distrito || "",
-      correoSoporte: configuracion.correoSoporte || "",
+      correo_soporte: configuracion.correoSoporte || "",
     },
   });
 
@@ -74,7 +75,7 @@ export function EmpresaForm({ configuracion }: EmpresaFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="nombreSistema"
+              name="nombre_sistema"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -94,7 +95,7 @@ export function EmpresaForm({ configuracion }: EmpresaFormProps) {
             />
             <FormField
               control={form.control}
-              name="nombreCorreo"
+              name="nombre_correo"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -117,7 +118,7 @@ export function EmpresaForm({ configuracion }: EmpresaFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="clienteUrl"
+              name="cliente_url"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -137,7 +138,7 @@ export function EmpresaForm({ configuracion }: EmpresaFormProps) {
             />
             <FormField
               control={form.control}
-              name="correoSoporte"
+              name="correo_soporte"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -187,7 +188,7 @@ export function EmpresaForm({ configuracion }: EmpresaFormProps) {
             />
             <FormField
               control={form.control}
-              name="razonSocial"
+              name="razon_social"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>

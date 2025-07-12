@@ -8,10 +8,9 @@ import lombok.Data;
 @Data
 public class AuthDto {
     
-    @NotBlank(message = "El email es obligatorio")
-    @Email(message = "El formato del email no es válido")
-    @Size(max = 100, message = "El email no puede exceder 100 caracteres")
-    private String email;
+    @NotBlank(message = "El usuario es obligatorio")
+    @Size(max = 100, message = "El usuario no puede exceder 100 caracteres")
+    private String usuario;
     
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 1, message = "La contraseña no puede estar vacía")

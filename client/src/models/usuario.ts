@@ -1,48 +1,75 @@
 export interface Usuario {
-  id: number;
+  codusu: string;
+  usuario: string;
+  apellidopa: string;
+  apellidoma: string;
+  nombre: string;
+  car: string;
   dni: string;
-  nombres: string;
-  apellidos: string;
+  fechaingreso: string;
+  direccion: string;
+  ciudad: string;
   email: string;
-  password?: string; // Solo para envío, no se incluye en respuestas
+  telefono: string;
+  nivel: string;
+  notas: string;
+  estacionactiva: string;
+  estaciondefault: string;
+  nropc: string;
+  codempdefault: string;
+  codsucdefault: string;
+  estareg: number;
+  creador: string;
+  fechareg: string;
+  user_fondo: string;
+  user_avatar: string;
+  ipdefault: string;
+  intranet: number;
+  foto: string;
+  tipouser: string;
+  accesototal: number; // 0 = acceso limitado, 1 = acceso total
+  codinspector: string;
+  codsededefault: string;
   activo: boolean;
-  rol: Rol[];
-  enabled: boolean;
-  credentialsNonExpired: boolean;
-  accountNonExpired: boolean;
-  authorities: Authority[];
-  username: string;
-  accountNonLocked: boolean;
-}
-
-export interface Rol {
-  id: number;
-  codigo: string;
-  rol: string;
-}
-
-export interface Authority {
-  authority: string;
 }
 
 export interface UsuarioDto {
-  id: number;
+  codusu: string;
+  usuario: string;
+  apellidopa: string;
+  apellidoma: string;
+  nombre: string;
+  car: string;
   dni: string;
-  nombres: string;
-  apellidos: string;
+  fechaingreso: string;
+  direccion: string;
+  ciudad: string;
   email: string;
+  telefono: string;
+  nivel: string;
+  notas: string;
+  estacionactiva: string;
+  estaciondefault: string;
+  nropc: string;
+  codempdefault: string;
+  codsucdefault: string;
+  estareg: number;
+  creador: string;
+  fechareg: string;
+  user_fondo: string;
+  user_avatar: string;
+  ipdefault: string;
+  intranet: number;
+  foto: string;
+  tipouser: string;
+  accesototal: number;
+  codinspector: string;
+  codsededefault: string;
   activo: boolean;
-  rol: Rol[];
-  enabled: boolean;
-  credentialsNonExpired: boolean;
-  accountNonExpired: boolean;
-  authorities: Authority[];
-  username: string;
-  accountNonLocked: boolean;
 }
 
 export interface LoginRequest {
-  email: string;
+  usuario: string;
   password: string;
 }
 
@@ -51,9 +78,10 @@ export interface LoginResponse {
   message: string;
   data: {
     accessToken: string;
-    message: string;
+    tokenType: string;
+    expiresIn: number;
     user: UsuarioDto;
-    refreshToken: string;
+    message: string;
   };
   timestamp: string;
 }
@@ -86,3 +114,24 @@ export interface AuthResponse {
   data?: any;
   timestamp?: string;
 }
+
+// Funciones de utilidad para el acceso
+export const hasTotalAccess = (user: UsuarioDto | null): boolean => {
+  return user?.accesototal === 1;
+};
+
+export const hasLimitedAccess = (user: UsuarioDto | null): boolean => {
+  return user?.accesototal === 0;
+};
+
+export const getUserFullName = (user: UsuarioDto | null): string => {
+  if (!user) return "Usuario";
+  return `${user.nombre} ${user.apellidopa} ${user.apellidoma}`.trim();
+};
+
+export const getUserInitials = (user: UsuarioDto | null): string => {
+  if (!user) return "U";
+  const firstName = user.nombre?.charAt(0) || "";
+  const lastName = user.apellidopa?.charAt(0) || "";
+  return `${firstName}${lastName}`.toUpperCase();
+};

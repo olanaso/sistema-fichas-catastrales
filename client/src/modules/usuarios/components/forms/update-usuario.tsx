@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { usuarioSchema, UsuarioFormValues } from "../../schema/usuario.schema";
-import { updateUsuario, getRoles } from "../../action/usuario.actions";
+import { updateUsuario } from "../../action/usuario.actions";
 import { CircleX, Mail, Save, User, CreditCard, Shield, CheckSquare } from "lucide-react";
 import { LoadingButton } from "@/components/custom/loading-button";
 import { CustomDialog } from "@/components/custom/dialog";
@@ -32,66 +32,37 @@ interface UpdateUsuarioFormProps {
   onOpenChange: (open: boolean) => void;
 }
 
-interface Rol {
-  id: number;
-  codigo: string;
-  rol: string;
-}
-
 export function UpdateUsuarioForm({
   usuario,
   isOpen,
   onOpenChange,
 }: UpdateUsuarioFormProps) {
 
-  const [roles, setRoles] = useState<Rol[]>([]);
-  const [loadingRoles, setLoadingRoles] = useState(false);
   const { refreshUsuarios } = useUsuarios();
 
   const form = useForm<UsuarioFormValues>({
     resolver: zodResolver(usuarioSchema),
     defaultValues: {
       email: usuario.email,
-      nombres: usuario.nombres,
-      apellidos: usuario.apellidos,
+      nombre: usuario.nombre,
+      apellidopa: usuario.apellidopa,
+      apellidoma: usuario.apellidoma,
       dni: usuario.dni,
-      idRol: usuario.rol[0]?.id || undefined,
+      accesototal: usuario.accesototal,
       activo: usuario.activo,
     },
   });
-
-  // Cargar roles al abrir el formulario
-  useEffect(() => {
-    if (isOpen && roles.length === 0) {
-      loadRoles();
-    }
-  }, [isOpen]);
-
-  const loadRoles = async () => {
-    setLoadingRoles(true);
-    try {
-      const result = await getRoles();
-      if (result.success) {
-        setRoles(result.data);
-      } else {
-        toast.error("Error al cargar roles");
-      }
-    } catch (error) {
-      toast.error("Error al cargar roles");
-    } finally {
-      setLoadingRoles(false);
-    }
-  };
 
   // Actualizar los valores del formulario cuando cambie el usuario
   useEffect(() => {
     if (isOpen) {
       form.reset({
         email: usuario.email,
-        nombres: usuario.nombres,
-        apellidos: usuario.apellidos,
+        nombre: usuario.nombre,
+        apellidopa: usuario.apellidopa,
+        apellidoma: usuario.apellidoma,
         dni: usuario.dni,
-        idRol: usuario.rol[0]?.id || undefined,
+        accesototal: usuario.accesototal,
         activo: usuario.activo,
       });
     }
@@ -101,7 +72,7 @@ export function UpdateUsuarioForm({
 
   async function onSubmit(values: UsuarioFormValues) {
     try {
-      const result = await updateUsuario(usuario.id, values);
+      const result = await updateUsuario(parseInt(usuario.codusu), values);
       if (result.success) {
         onOpenChange(false);
         form.reset();
@@ -136,7 +107,7 @@ export function UpdateUsuarioForm({
             onSubmit={form.handleSubmit(onSubmit)}
             className="px-4 space-y-4"
           >
-            {/* Primera fila: DNI y Nombres */}
+            {/* Primera fila: DNI y Nombre */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -159,14 +130,14 @@ export function UpdateUsuarioForm({
               />
               <FormField
                 control={form.control}
-                name="nombres"
+                name="nombre"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <CustomInputControlled 
                       type="text"
                       maxLength={100}
-                      label="Nombres"
+                      label="Nombre"
                       icon={<User className="w-4 h-4" />}
                       allowedCharacters={["letters", "spaces"]}
                       textTransform="capitalize"
@@ -179,18 +150,18 @@ export function UpdateUsuarioForm({
               />
             </div>
 
-            {/* Segunda fila: Apellidos y Email */}
+            {/* Segunda fila: Apellido Paterno y Apellido Materno */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="apellidos"
+                name="apellidopa"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <CustomInputControlled 
                       type="text"
                       maxLength={100}
-                      label="Apellidos"
+                      label="Apellido Paterno"
                       icon={<User className="w-4 h-4" />}
                       allowedCharacters={["letters", "spaces"]}
                       textTransform="capitalize"
@@ -200,6 +171,29 @@ export function UpdateUsuarioForm({
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="apellidoma"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <CustomInputControlled 
+                      type="text"
+                      maxLength={100}
+                      label="Apellido Materno"
+                      icon={<User className="w-4 h-4" />}
+                      allowedCharacters={["letters", "spaces"]}
+                      textTransform="capitalize"
+                      {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Tercera fila: Email y Nivel de Acceso */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="email"
@@ -220,35 +214,34 @@ export function UpdateUsuarioForm({
                   </FormItem>
                 )}
               />
-            </div>
-
-            {/* Tercera fila: Rol y Checkbox de activo */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="idRol"
+                name="accesototal"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <div className="space-y-2">
-                        <Label className="text-sm font-medium">Rol</Label>
+                        <Label className="text-sm font-medium">Nivel de Acceso</Label>
                         <Select 
                           onValueChange={(value) => field.onChange(parseInt(value))}
                           value={field.value?.toString()}
-                          disabled={loadingRoles}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Seleccione un rol" />
+                            <SelectValue placeholder="Seleccione el nivel de acceso" />
                           </SelectTrigger>
                           <SelectContent>
-                            {roles.map((rol) => (
-                              <SelectItem key={rol.id} value={rol.id.toString()}>
-                                <div className="flex items-center gap-2">
-                                  <Shield className="w-4 h-4" />
-                                  {rol.rol} ({rol.codigo})
-                                </div>
-                              </SelectItem>
-                            ))}
+                            <SelectItem value="1">
+                              <div className="flex items-center gap-2">
+                                <Shield className="w-4 h-4" />
+                                Acceso Total
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="0">
+                              <div className="flex items-center gap-2">
+                                <Shield className="w-4 h-4" />
+                                Acceso Limitado
+                              </div>
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -257,6 +250,10 @@ export function UpdateUsuarioForm({
                   </FormItem>
                 )}
               />
+            </div>
+
+            {/* Cuarta fila: Checkbox de activo */}
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={form.control}
                 name="activo"
@@ -280,6 +277,7 @@ export function UpdateUsuarioForm({
                 )}
               />
             </div>
+
             <div className="flex justify-between">
               <LoadingButton
                 type="submit"

@@ -6,7 +6,7 @@ import { EmpresaFormValues } from "../schema/empresa.schema";
 // Actualizar información de empresa
 export async function updateEmpresa(values: EmpresaFormValues) {
   try {
-    const response = await apiClient.put(`/configuracion/empresa`, values);
+    const response = await apiClient.post(`/configuracion/actualizar`, values);
     return {
       success: true,
       data: response.data.data,

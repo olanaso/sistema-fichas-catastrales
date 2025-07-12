@@ -1,195 +1,141 @@
-"use client"
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
+import { AuthService } from '@/modules/auth/services/auth.service';
+import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRoles?: string[];
-  requiredAuthorities?: string[];
+  requiredAccess?: 'total' | 'limited' | 'any';
+  allowedViews?: string[];
   fallback?: React.ReactNode;
-  checkAccountStatus?: boolean;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  requiredRoles = [],
-  requiredAuthorities = [],
-  fallback = null,
-  checkAccountStatus = true,
-}) => {
-  const { 
-    isAuthenticated, 
-    isLoading, 
-    user, 
-    hasAnyRole, 
-    hasAnyAuthority,
-    isAccountEnabled,
-    isAccountNonLocked,
-    isCredentialsNonExpired,
-    isAccountNonExpired
-  } = useAuth();
+export function ProtectedRoute({ 
+  children, 
+  requiredAccess = 'any',
+  allowedViews = [],
+  fallback 
+}: ProtectedRouteProps) {
+  const { isAuthenticated, isLoading, user, hasTotalAccess, canAccessView } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/auth/login');
-    }
-  }, [isAuthenticated, isLoading, router]);
+    const checkAccess = async () => {
+      if (isLoading) return;
 
-  // Mostrar loading mientras se verifica la autenticación
-  if (isLoading) {
+      // Si no está autenticado, redirigir al login
+      if (!isAuthenticated) {
+        router.push('/auth/login');
+        return;
+      }
+
+      // Si no hay usuario, redirigir al login
+      if (!user) {
+        AuthService.logout();
+        router.push('/auth/login');
+        return;
+      }
+
+      // Verificar acceso según el tipo requerido
+      let hasAccess = false;
+
+      switch (requiredAccess) {
+        case 'total':
+          hasAccess = hasTotalAccess();
+          break;
+        case 'limited':
+          hasAccess = !hasTotalAccess(); // Acceso limitado = no acceso total
+          break;
+        case 'any':
+        default:
+          hasAccess = true; // Cualquier usuario autenticado
+          break;
+      }
+
+      // Si se especificaron vistas permitidas, verificar acceso a ellas
+      if (allowedViews.length > 0) {
+        const currentView = pathname.replace('/', '');
+        hasAccess = canAccessView(currentView);
+      }
+
+      if (!hasAccess) {
+        // Redirigir a dashboard si no tiene acceso
+        router.push('/dashboard');
+        return;
+      }
+
+      setIsChecking(false);
+    };
+
+    checkAccess();
+  }, [isAuthenticated, isLoading, user, hasTotalAccess, canAccessView, requiredAccess, allowedViews, pathname, router]);
+
+  // Mostrar loading mientras se verifica
+  if (isLoading || isChecking) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <p className="text-muted-foreground">Verificando acceso...</p>
+        </div>
       </div>
     );
   }
 
-  // Si no está autenticado, mostrar fallback o redirigir
-  if (!isAuthenticated) {
-    return fallback || null;
+  // Si no está autenticado, no mostrar nada (ya se redirigió)
+  if (!isAuthenticated || !user) {
+    return null;
   }
 
-  // Verificar estado de la cuenta si está habilitado
-  if (checkAccountStatus) {
-    if (!isAccountEnabled()) {
-      return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">
-              Cuenta Deshabilitada
-            </h1>
-            <p className="text-gray-600 mb-4">
-              Tu cuenta ha sido deshabilitada. Contacta al administrador.
-            </p>
-            <button
-              onClick={() => router.push('/auth/login')}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Volver al Login
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    if (!isAccountNonLocked()) {
-      return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">
-              Cuenta Bloqueada
-            </h1>
-            <p className="text-gray-600 mb-4">
-              Tu cuenta ha sido bloqueada. Contacta al administrador.
-            </p>
-            <button
-              onClick={() => router.push('/auth/login')}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Volver al Login
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    if (!isCredentialsNonExpired()) {
-      return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">
-              Credenciales Expiradas
-            </h1>
-            <p className="text-gray-600 mb-4">
-              Tus credenciales han expirado. Debes cambiar tu contraseña.
-            </p>
-            <button
-              onClick={() => router.push('/auth/login')}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Volver al Login
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    if (!isAccountNonExpired()) {
-      return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">
-              Cuenta Expirada
-            </h1>
-            <p className="text-gray-600 mb-4">
-              Tu cuenta ha expirado. Contacta al administrador.
-            </p>
-            <button
-              onClick={() => router.push('/auth/login')}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Volver al Login
-            </button>
-          </div>
-        </div>
-      );
-    }
-  }
-
-  // Si se requieren roles específicos, verificar permisos
-  if (requiredRoles.length > 0) {
-    const hasRequiredRole = hasAnyRole(requiredRoles);
-    
-    if (!hasRequiredRole) {
-      return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">
-              Acceso Denegado
-            </h1>
-            <p className="text-gray-600 mb-4">
-              No tienes los roles necesarios para acceder a esta página.
-            </p>
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Volver al Dashboard
-            </button>
-          </div>
-        </div>
-      );
-    }
-  }
-
-  // Si se requieren autoridades específicas, verificar permisos
-  if (requiredAuthorities.length > 0) {
-    const hasRequiredAuthority = hasAnyAuthority(requiredAuthorities);
-    
-    if (!hasRequiredAuthority) {
-      return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">
-              Acceso Denegado
-            </h1>
-            <p className="text-gray-600 mb-4">
-              No tienes las autoridades necesarias para acceder a esta página.
-            </p>
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Volver al Dashboard
-            </button>
-          </div>
-        </div>
-      );
+  // Si se especificó un fallback y no tiene acceso, mostrarlo
+  if (fallback && allowedViews.length > 0) {
+    const currentView = pathname.replace('/', '');
+    if (!canAccessView(currentView)) {
+      return <>{fallback}</>;
     }
   }
 
   return <>{children}</>;
-}; 
+}
+
+// Componente de alto orden para proteger páginas
+export function withAccessControl<P extends object>(
+  Component: React.ComponentType<P>,
+  options: {
+    requiredAccess?: 'total' | 'limited' | 'any';
+    allowedViews?: string[];
+    fallback?: React.ReactNode;
+  } = {}
+) {
+  return function ProtectedComponent(props: P) {
+    return (
+      <ProtectedRoute {...options}>
+        <Component {...props} />
+      </ProtectedRoute>
+    );
+  };
+}
+
+// Hook para verificar acceso en componentes
+export function useAccessControl() {
+  const { hasTotalAccess, hasLimitedAccess, canAccessView, canAccessAnyView, canAccessAllViews } = useAuth();
+
+  return {
+    hasTotalAccess,
+    hasLimitedAccess,
+    canAccessView,
+    canAccessAnyView,
+    canAccessAllViews,
+    // Funciones de conveniencia
+    isAdmin: hasTotalAccess,
+    isUser: hasLimitedAccess,
+    canAccess: canAccessView,
+    canAccessAny: canAccessAnyView,
+    canAccessAll: canAccessAllViews,
+  };
+} 

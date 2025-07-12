@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AuthService } from '@/modules/auth/services/auth.service';
-import { UsuarioDto, LoginRequest, ForgotPasswordRequest, ResetPasswordRequest } from '@/models/usuario';
+import { UsuarioDto, LoginRequest, ForgotPasswordRequest, ResetPasswordRequest, hasTotalAccess, hasLimitedAccess } from '@/models/usuario';
 
 interface AuthState {
   user: UsuarioDto | null;
@@ -98,22 +98,29 @@ export const useAuth = () => {
     }
   }, []);
 
-  // Verificar roles
-  const hasRole = useCallback((roleCode: string) => {
-    return AuthService.hasRole(roleCode);
+  // Verificar acceso total
+  const hasTotalAccess = useCallback(() => {
+    return AuthService.hasTotalAccess();
   }, []);
 
-  const hasAnyRole = useCallback((roleCodes: string[]) => {
-    return AuthService.hasAnyRole(roleCodes);
+  // Verificar acceso limitado
+  const hasLimitedAccess = useCallback(() => {
+    return AuthService.hasLimitedAccess();
   }, []);
 
-  // Verificar autoridades (Spring Security)
-  const hasAuthority = useCallback((authority: string) => {
-    return AuthService.hasAuthority(authority);
+  // Verificar si puede acceder a una vista específica
+  const canAccessView = useCallback((viewName: string) => {
+    return AuthService.canAccessView(viewName);
   }, []);
 
-  const hasAnyAuthority = useCallback((authorities: string[]) => {
-    return AuthService.hasAnyAuthority(authorities);
+  // Verificar si puede acceder a múltiples vistas
+  const canAccessAnyView = useCallback((viewNames: string[]) => {
+    return AuthService.canAccessAnyView(viewNames);
+  }, []);
+
+  // Verificar si puede acceder a todas las vistas
+  const canAccessAllViews = useCallback((viewNames: string[]) => {
+    return AuthService.canAccessAllViews(viewNames);
   }, []);
 
   // Verificar estado de la cuenta
@@ -139,10 +146,11 @@ export const useAuth = () => {
     logout,
     forgotPassword,
     resetPassword,
-    hasRole,
-    hasAnyRole,
-    hasAuthority,
-    hasAnyAuthority,
+    hasTotalAccess,
+    hasLimitedAccess,
+    canAccessView,
+    canAccessAnyView,
+    canAccessAllViews,
     isAccountEnabled,
     isAccountNonLocked,
     isCredentialsNonExpired,

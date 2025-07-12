@@ -28,6 +28,7 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 .claim("roles", userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .claim("type", "access")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 86400000)) // 1 día
                 .signWith(getSigningKey())

@@ -2,43 +2,49 @@
 
 import { UsuarioDto } from "@/models/usuario";
 import { columns } from "./columns";
-import { DataTable } from "@/components/custom/data-table";
-import { DataTableToolbar } from "@/components/custom/data-table-toolbar";
+import { BackendTable } from "@/components/table/table";
+import { TableToolbar } from "@/components/table/table-toolbar";
 import { CreateUsuarioForm } from "../../components/forms/create-usuario";
-import { useUsuarios } from "../../context/usuarios-context";
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { PaginatedData } from "@/components/table/table";
 
 interface TableUsuarioProps {
-  usuarios: UsuarioDto[];
+  usuarios: PaginatedData<UsuarioDto>;
+  loading?: boolean;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 }
 
-export default function TableUsuario({ usuarios }: TableUsuarioProps) {
-  const { refreshUsuarios, isLoading } = useUsuarios();
+export default function TableUsuario({ 
+  usuarios, 
+  loading = false,
+  onPageChange,
+  onPageSizeChange 
+}: TableUsuarioProps) {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Usuarios</h2>
-          <p className="text-muted-foreground">
-            Gestiona los usuarios de tu sistema
-          </p>
+      {usuarios.data.length > 0 ? (
+        <BackendTable 
+          columns={columns} 
+          data={usuarios}
+          loading={loading}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+          toolbar={(table) => (
+            <TableToolbar 
+              table={table} 
+              searchKey="nombre"
+              searchPlaceholder="Buscar usuarios..."
+              actions={<CreateUsuarioForm />}
+            />
+          )}
+          pageSize={usuarios.size || 10}
+        />
+      ) : (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No hay usuarios para mostrar</p>
         </div>
-      </div>
-      <DataTable 
-        columns={columns} 
-        data={usuarios} 
-        toolbar={(table) => (
-          <DataTableToolbar 
-            table={table} 
-            searchKey="nombres"
-            searchPlaceholder="Buscar usuarios..."
-            actions={<CreateUsuarioForm />}
-          />
-        )}
-        pageSize={10}
-      />
+      )}
     </>
   );
 }

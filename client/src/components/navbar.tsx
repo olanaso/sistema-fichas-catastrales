@@ -34,7 +34,7 @@ interface NavbarProps {
 
 export function Navbar({ title, description, breadcrumb }: NavbarProps) {
   const { setTheme } = useTheme()
-  const { user, logout, hasRole } = useAuth()
+  const { user, logout, hasTotalAccess } = useAuth()
 
   const handleLogout = () => {
     logout();
@@ -43,17 +43,19 @@ export function Navbar({ title, description, breadcrumb }: NavbarProps) {
 
   const getUserInitials = () => {
     if (!user) return "U";
-    return `${user.nombres.charAt(0)}${user.apellidos.charAt(0)}`.toUpperCase();
+    const firstName = user.nombre?.charAt(0) || "";
+    const lastName = user.apellidopa?.charAt(0) || "";
+    return `${firstName}${lastName}`.toUpperCase();
   };
 
   const getUserFullName = () => {
     if (!user) return "Usuario";
-    return `${user.nombres} ${user.apellidos}`;
+    return `${user.nombre} ${user.apellidopa} ${user.apellidoma}`.trim();
   };
 
-  const getUserRole = () => {
-    if (!user || !user.rol || user.rol.length === 0) return "Usuario";
-    return user.rol[0].rol;
+  const getUserAccessLevel = () => {
+    if (!user) return "Usuario";
+    return user.accesototal === 1 ? "Acceso Total" : "Acceso Limitado";
   };
 
   return (
@@ -133,7 +135,7 @@ export function Navbar({ title, description, breadcrumb }: NavbarProps) {
                     {user?.email}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    {getUserRole()}
+                    {getUserAccessLevel()}
                   </p>
                 </div>
               </DropdownMenuLabel>

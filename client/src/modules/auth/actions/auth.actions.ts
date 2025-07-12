@@ -92,22 +92,6 @@ export function isAuthenticated() {
   return AuthService.isAuthenticated();
 }
 
-export function hasRole(roleCode: string) {
-  return AuthService.hasRole(roleCode);
-}
-
-export function hasAnyRole(roleCodes: string[]) {
-  return AuthService.hasAnyRole(roleCodes);
-}
-
-export function hasAuthority(authority: string) {
-  return AuthService.hasAuthority(authority);
-}
-
-export function hasAnyAuthority(authorities: string[]) {
-  return AuthService.hasAnyAuthority(authorities);
-}
-
 export function isAccountEnabled() {
   return AuthService.isAccountEnabled();
 }

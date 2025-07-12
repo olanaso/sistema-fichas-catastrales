@@ -1,8 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTableColumnHeader } from "@/components/custom/data-table-header-column"
+import { TableHeaderColumn } from "@/components/table/table-header-column"
 import AcctionTable from "./action-table"
 import { UsuarioDto } from "@/models/usuario"
-import { Circle } from "lucide-react"
+import { Circle, Shield, ShieldCheck } from "lucide-react"
 import { CustomBadge } from "@/components/custom/custom-badge"
 
 export const columns: ColumnDef<UsuarioDto>[] = [
@@ -14,42 +14,70 @@ export const columns: ColumnDef<UsuarioDto>[] = [
     },
   },
   {
-    id: "nombres",
-    accessorKey: "nombres",
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Nombres" />
-    },
-  },
-  {
-    id: "apellidos",
-    accessorKey: "apellidos",
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Apellidos" />
-    },
-  },
-  {
     id: "dni",
     accessorKey: "dni",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="DNI" />
+      return <TableHeaderColumn column={column} title="DNI" />
+    },
+  },
+  {
+    id: "nombre",
+    accessorFn: (row) => `${row.nombre} ${row.apellidopa} ${row.apellidoma}`,
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Nombre" />
+    },
+    cell: ({ row }) => {
+      const nombre = row.original.nombre || '';
+      const apellidopa = row.original.apellidopa || '';
+      const apellidoma = row.original.apellidoma || '';
+      return <div className="text-start">
+        {nombre} {apellidopa} {apellidoma}
+      </div>
     },
   },
   {
     id: "email",
     accessorKey: "email",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Email" />
+      return <TableHeaderColumn column={column} title="Email" />
     },
   },
   {
-    id: "rol",
-    accessorKey: "rol",
+    id: "accesototal",
+    accessorKey: "accesototal",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Rol" />
+      return <TableHeaderColumn column={column} title="Nivel de Acceso" />
+    },
+    cell: ({ row }) => {
+      const accesototal = row.original.accesototal;
+      const isAccesoTotal = accesototal === 1;
+      
+      return (
+        <div className="text-start flex items-center gap-2">
+          {isAccesoTotal ? (
+            <ShieldCheck className="w-4 h-4 text-green-600" />
+          ) : (
+            <Shield className="w-4 h-4 text-blue-600" />
+          )}
+          <CustomBadge 
+            color={isAccesoTotal ? "green" : "blue"} 
+            className="text-xs"
+          >
+            {isAccesoTotal ? "Acceso Total" : "Acceso Limitado"}
+          </CustomBadge>
+        </div>
+      );
+    },
+  },
+  {
+    id: "codusu",
+    accessorKey: "codusu",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Código" />
     },
     cell: ({ row }) => {
       return <div className="text-start">
-        <CustomBadge color="purple" className="text-xs">{row.original.rol[0].rol}</CustomBadge>
+        <CustomBadge color="purple" className="text-xs">{row.original.codusu}</CustomBadge>
       </div>
     },
   },
@@ -57,7 +85,7 @@ export const columns: ColumnDef<UsuarioDto>[] = [
     id: "activo",
     accessorKey: "activo",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Estado" />
+      return <TableHeaderColumn column={column} title="Estado" />
     },
     cell: ({ row }) => {
       const activo = row.original.activo

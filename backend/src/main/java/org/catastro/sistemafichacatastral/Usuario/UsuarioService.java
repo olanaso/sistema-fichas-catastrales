@@ -3,10 +3,6 @@ package org.catastro.sistemafichacatastral.Usuario;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.PersistenceException;
-import org.catastro.sistemafichacatastral.auth.DTO.ChangeUserPasswordDto;
-import org.catastro.sistemafichacatastral.auth.DTO.ChangeMyPasswordDto;
-import org.catastro.sistemafichacatastral.auth.DTO.UsuarioRegisterDto;
-import org.catastro.sistemafichacatastral.auth.DTO.UsuarioUpdateDto;
 import org.catastro.sistemafichacatastral.dto.InspectorDTO;
 import org.catastro.sistemafichacatastral.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,192 +53,13 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email);
     }
 
-    public UsuarioEntity findByEmailOrThrow(String email){
-        return usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "email", email));
+    public UsuarioEntity findByUsuarioOrThrow(String usuario){
+        return usuarioRepository.findByUsuario(usuario)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "usuario", usuario));
     }
 
     public long count() {
         return usuarioRepository.count();
-    }
-
-
-    /* FUNCIONES POST */
-    public UsuarioEntity create(UsuarioRegisterDto usuarioRegisterDto){
-        // Verificar si el usuario ya existe por email
-        if(usuarioRepository.findByEmail(usuarioRegisterDto.getEmail()).isPresent()){
-            throw new RuntimeException("El usuario con el correo ya existe");
-        }
-        
-        // Verificar si el usuario ya existe por DNI
-        if(usuarioRepository.findByDni(usuarioRegisterDto.getDni()).isPresent()){
-            throw new RuntimeException("El usuario con el DNI ya existe");
-        }
-
-        UsuarioEntity usuarioEntity = new UsuarioEntity();
-        usuarioEntity.setNombres(usuarioRegisterDto.getNombres());
-        usuarioEntity.setApellidos(usuarioRegisterDto.getApellidos());
-        usuarioEntity.setDni(usuarioRegisterDto.getDni());
-        usuarioEntity.setEmail(usuarioRegisterDto.getEmail());
-        usuarioEntity.setPassword(passwordEncoder.encode(usuarioRegisterDto.getPassword()));
-        usuarioEntity.setActivo(true); // Por defecto activo
-        try {
-            return usuarioRepository.save(usuarioEntity);
-        }catch (Exception e){
-            throw new RuntimeException("Error al guardar el usuario: " + e.getMessage());
-        }
-    }
-
-    public UsuarioEntity createWithSpecificRole(UsuarioRegisterDto usuarioRegisterDto) {
-        // Verificar si el usuario ya existe por email
-        if(usuarioRepository.findByEmail(usuarioRegisterDto.getEmail()).isPresent()){
-            throw new RuntimeException("El usuario con el correo ya existe");
-        }
-        
-        // Verificar si el usuario ya existe por DNI
-        if(usuarioRepository.findByDni(usuarioRegisterDto.getDni()).isPresent()){
-            throw new RuntimeException("El usuario con el DNI ya existe");
-        }
-
-        UsuarioEntity usuarioEntity = new UsuarioEntity();
-        usuarioEntity.setNombres(usuarioRegisterDto.getNombres());
-        usuarioEntity.setApellidos(usuarioRegisterDto.getApellidos());
-        usuarioEntity.setDni(usuarioRegisterDto.getDni());
-        usuarioEntity.setEmail(usuarioRegisterDto.getEmail());
-        usuarioEntity.setPassword(passwordEncoder.encode(usuarioRegisterDto.getPassword()));
-        usuarioEntity.setActivo(true); // Por defecto activo
-        try {
-            return usuarioRepository.save(usuarioEntity);
-        }catch (Exception e){
-            throw new RuntimeException("Error al guardar el usuario: " + e.getMessage());
-        }
-    }
-
-    /* FUNCIONES PUT O PATCH */
-    public UsuarioEntity update(int id, UsuarioEntity usuarioDetails) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-        
-        usuario.setNombres(usuarioDetails.getNombres());
-        usuario.setApellidos(usuarioDetails.getApellidos());
-        usuario.setDni(usuarioDetails.getDni());
-        usuario.setEmail(usuarioDetails.getEmail());
-        usuario.setActivo(usuarioDetails.isActivo());
-
-        if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
-            usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
-        }
-        
-        return usuarioRepository.save(usuario);
-    }
-
-    // Nuevo método para actualizar con DTO específico
-    public UsuarioEntity updateWithDto(int id, UsuarioUpdateDto usuarioUpdateDto) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-        
-        // Verificar si el email ya existe en otro usuario
-        if (!usuario.getEmail().equals(usuarioUpdateDto.getEmail()) && 
-            usuarioRepository.findByEmail(usuarioUpdateDto.getEmail()).isPresent()) {
-            throw new RuntimeException("El email ya está en uso por otro usuario");
-        }
-        
-        // Verificar si el DNI ya existe en otro usuario
-        if (!usuario.getDni().equals(usuarioUpdateDto.getDni()) && 
-            usuarioRepository.findByDni(usuarioUpdateDto.getDni()).isPresent()) {
-            throw new RuntimeException("El DNI ya está en uso por otro usuario");
-        }
-        
-        // Actualizar datos básicos del usuario
-        usuario.setNombres(usuarioUpdateDto.getNombres());
-        usuario.setApellidos(usuarioUpdateDto.getApellidos());
-        usuario.setDni(usuarioUpdateDto.getDni());
-        usuario.setEmail(usuarioUpdateDto.getEmail());
-        usuario.setActivo(usuarioUpdateDto.getActivo());
-        
-        // Actualizar el rol del usuario
-        try {
-        } catch (ResourceNotFoundException e) {
-            throw new RuntimeException("El rol con ID '" + usuarioUpdateDto.getIdRol() + "' no existe");
-        }
-        
-        return usuarioRepository.save(usuario);
-    }
-
-    // Método para cambiar contraseña
-    public UsuarioEntity changePassword(int id, ChangeUserPasswordDto changePasswordDto) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-        
-        // Actualizar con la nueva contraseña
-        usuario.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
-        
-        return usuarioRepository.save(usuario);
-    }
-
-    // Método para cambiar contraseña del usuario logueado
-    public UsuarioEntity changeMyPassword(UsuarioEntity currentUser, ChangeMyPasswordDto changePasswordDto) {
-        // Verificar que la contraseña actual sea correcta
-        //buscar usuario por id
-        UsuarioEntity usuario = usuarioRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", currentUser.getId()));
-
-        if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), usuario.getPassword())) {
-            throw new RuntimeException("La contraseña actual es incorrecta");
-        }
-        
-        // Verificar que la nueva contraseña sea diferente a la actual
-        if (passwordEncoder.matches(changePasswordDto.getNewPassword(), currentUser.getPassword())) {
-            throw new RuntimeException("La nueva contraseña debe ser diferente a la actual");
-        }
-        
-        // Actualizar con la nueva contraseña
-        currentUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
-        
-        return usuarioRepository.save(currentUser);
-    }
-
-    // Método específico para reset de contraseña (desde AuthService)
-    public UsuarioEntity resetPassword(int id, String newPassword) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-        
-        // Solo actualizar la contraseña
-        usuario.setPassword(passwordEncoder.encode(newPassword));
-        
-        return usuarioRepository.save(usuario);
-    }
-
-    // Método para activar/desactivar usuario
-    public UsuarioEntity toggleActivo(int id) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-        
-        usuario.setActivo(!usuario.isActivo());
-        return usuarioRepository.save(usuario);
-    }
-
-    public UsuarioEntity activarUsuario(int id) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-        
-        usuario.setActivo(true);
-        return usuarioRepository.save(usuario);
-    }
-
-    public UsuarioEntity desactivarUsuario(int id) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-        
-        usuario.setActivo(false);
-        return usuarioRepository.save(usuario);
-    }
-
-    /* FUNCIONES DELETE */
-    public void deleteById(int id) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-        usuarioRepository.delete(usuario);
     }
 
 

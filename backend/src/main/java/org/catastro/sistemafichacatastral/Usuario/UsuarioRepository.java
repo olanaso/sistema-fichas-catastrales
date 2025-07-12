@@ -12,10 +12,5 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
     Optional<UsuarioEntity> findByDni(String dni);
     Optional<UsuarioEntity> findByEmail(String email);
-
-    // Método para activar/desactivar usuario
-    @Modifying
-    @Transactional
-    @Query("UPDATE UsuarioEntity u SET u.activo = :activo WHERE u.id = :id")
-    void updateActivoById(@Param("id") int id, @Param("activo") boolean activo);
+    Optional<UsuarioEntity> findByUsuario(String username);
 }

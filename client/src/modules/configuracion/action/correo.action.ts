@@ -6,7 +6,7 @@ import { CorreoFormValues } from "../schema/correo.schema";
 // Actualizar configuración de correo
 export async function updateCorreo(values: CorreoFormValues) {
   try {
-    const response = await apiClient.put(`/configuracion/correo`, values);
+    const response = await apiClient.post(`/configuracion/actualizar`, values);
     return {
       success: true,
       data: response.data.data,

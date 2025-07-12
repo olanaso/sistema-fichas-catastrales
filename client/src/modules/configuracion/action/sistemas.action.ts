@@ -6,7 +6,7 @@ import { SistemasFormValues } from "../schema/sistemas.schema";
 // Actualizar conexiones a sistemas
 export async function updateSistemas(values: SistemasFormValues) {
   try {
-    const response = await apiClient.put(`/configuracion/sistemas`, values);
+    const response = await apiClient.post(`/configuracion/actualizar`, values);
     return {
       success: true,
       data: response.data.data,

@@ -45,7 +45,7 @@ export function ChangePasswordForm({
 
   async function onSubmit(values: PasswordFormValues) {
     try {
-      const result = await changePassword(usuario.id, values.password);
+      const result = await changePassword(parseInt(usuario.codusu), values.password);
       if (result.success) {
         onOpenChange(false);
         form.reset();
@@ -70,7 +70,7 @@ export function ChangePasswordForm({
         open={isOpen}
         onOpenChange={onOpenChange}
         title="Cambiar contraseña"
-        description={`Cambia la contraseña de ${usuario.nombres} ${usuario.apellidos}`}
+        description={`Cambia la contraseña de ${usuario.nombre} ${usuario.apellidopa} ${usuario.apellidoma}`}
       >
         <Form {...form}>
           <form
