@@ -1,8 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { toast } from 'sonner';
-import { getDataPaginada } from '../action/usuario.actions';
+import { getDataPaginada } from '@/service/data.actions';
 import { PaginatedData } from '@/components/table/table';
 
 interface DataContextType<T> {

@@ -50,7 +50,7 @@ export default function ConfiguracionTabsView() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 xs:p-4">
+    <div className="min-h-screen  xs:p-4">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Parámetros del Sistema</h1>
