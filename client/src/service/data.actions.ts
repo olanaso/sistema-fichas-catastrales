@@ -48,10 +48,8 @@ export async function getData(tabla: string) {
 
         return {
             success: true,
-            data: {
-                data: responseData.data || [], // Array de datos
-                total: responseData.total || 0, // Total de elementos
-            },
+            data: responseData,
+            total: responseData.length,
             message: `${tabla} obtenidos exitosamente`
         };
     } catch (error: any) {
@@ -60,10 +58,8 @@ export async function getData(tabla: string) {
             success: false,
             error: error.message || `Error al obtener ${tabla}`,
             message: error.response?.data?.message || `Error al obtener ${tabla}`,
-            data: {
-                data: [],
-                total: 0,
-            }
+            data: [],
+            total: 0
         };
     }
 }
