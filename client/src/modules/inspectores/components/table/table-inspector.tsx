@@ -4,7 +4,7 @@ import { InspectorDto } from "@/models/inspector";
 import { columns } from "./columns";
 import { BackendTable } from "@/components/table/table";
 import { TableToolbar } from "@/components/table/table-toolbar";
-import { CreateInspectorForm } from "../forms/create-inspector";
+import CreateInspectorForm from "../forms/create-inspector";
 import { PaginatedData } from "@/components/table/table";
 
 interface TableInspectorProps {

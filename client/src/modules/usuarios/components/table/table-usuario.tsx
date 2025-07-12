@@ -4,8 +4,8 @@ import { UsuarioDto } from "@/models/usuario";
 import { columns } from "./columns";
 import { BackendTable } from "@/components/table/table";
 import { TableToolbar } from "@/components/table/table-toolbar";
-import { CreateUsuarioForm } from "../../components/forms/create-usuario";
 import { PaginatedData } from "@/components/table/table";
+import CreateUsuarioForm from "../forms/create-usuario";
 
 interface TableUsuarioProps {
   usuarios: PaginatedData<UsuarioDto>;

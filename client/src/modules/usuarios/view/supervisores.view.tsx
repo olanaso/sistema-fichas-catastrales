@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import TableUsuario from "../components/table/table-usuario";
 import { UsuariosProvider, useUsuarios } from "../context/usuarios-context";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -36,6 +36,7 @@ function SupervisoresContent() {
   useEffect(() => {
     console.log('Estado actual:', { usuarios, isLoading, error, pagination });
   }, [usuarios, isLoading, error, pagination]);
+
 
   if (isLoading && usuarios.data.length === 0) {
     return <SupervisoresSkeleton />;

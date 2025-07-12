@@ -20,6 +20,9 @@ interface DataContextType<T> {
   handlePageChange: (page: number) => void;
   handlePageSizeChange: (pageSize: number) => void;
   tableName: string;
+  // Métodos optimizados simplificados
+  refreshCurrentPage: () => Promise<void>;
+  forceRefresh: () => Promise<void>;
 }
 
 interface DataProviderProps<T> {
@@ -87,6 +90,17 @@ export function DataProvider<T>({
     await fetchData(currentPage, currentPageSize);
   }, [fetchData, pagination.page, pagination.pageSize]);
 
+  // Método optimizado para refrescar solo la página actual
+  const refreshCurrentPage = useCallback(async () => {
+    await fetchData(pagination.page, pagination.pageSize);
+  }, [fetchData, pagination.page, pagination.pageSize]);
+
+  // Método para forzar un refresh completo (útil después de operaciones CRUD)
+  const forceRefresh = useCallback(async () => {
+    console.log(`Forzando refresh de ${tableName}...`);
+    await fetchData(pagination.page, pagination.pageSize);
+  }, [fetchData, pagination.page, pagination.pageSize, tableName]);
+
   const handlePageChange = useCallback((newPage: number) => {
     setPagination(prev => ({ ...prev, page: newPage }));
     fetchData(newPage, pagination.pageSize);
@@ -107,6 +121,9 @@ export function DataProvider<T>({
     handlePageChange,
     handlePageSizeChange,
     tableName,
+    // Métodos optimizados simplificados
+    refreshCurrentPage,
+    forceRefresh,
   };
 
   return (

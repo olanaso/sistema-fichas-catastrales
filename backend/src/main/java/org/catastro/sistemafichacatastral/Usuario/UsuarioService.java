@@ -63,22 +63,6 @@ public class UsuarioService {
     }
 
 
-    @Transactional
-    public UsuarioEntity upsertUsuarioJson(String json) {
-        try {
-            Query query = entityManager.createNativeQuery("SELECT insertar_o_actualizar_usuario(?::jsonb)");
-            query.setParameter(1, json);
-
-            Number result = (Number) query.getSingleResult();
-            int usuarioId = result.intValue();
-
-            return usuarioRepository.findById(usuarioId)
-                    .orElseThrow(() -> new RuntimeException("No se encontró el usuario después de la operación."));
-        } catch (Exception e) {
-            throw new RuntimeException("Error al insertar/actualizar usuario: " + e.getMessage());
-        }
-    }
-
     public List<InspectorDTO> obtenerInspectores(int limit, int offset) {
         try {
             Query query = entityManager.createNativeQuery(
@@ -100,6 +84,17 @@ public class UsuarioService {
             throw new RuntimeException("Error al obtener inspectores: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("Error al parsear inspectores: " + e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public String upsertUsuarioJson(String json) {
+        try {
+            Query query = entityManager.createNativeQuery("SELECT fichacatastral.usp_upsert_usersystem(?::jsonb)");
+            query.setParameter(1, json);
+            return (String) query.getSingleResult();
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Error al insertar o actualizar usuario: " + e.getMessage(), e);
         }
     }
 

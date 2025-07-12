@@ -20,6 +20,9 @@ interface UsuariosContextType {
   };
   handlePageChange: (page: number) => void;
   handlePageSizeChange: (pageSize: number) => void;
+  // Métodos optimizados simplificados
+  refreshCurrentPage: () => Promise<void>;
+  forceRefresh: () => Promise<void>;
 }
 
 const UsuariosContext = createContext<UsuariosContextType | undefined>(undefined);
@@ -78,6 +81,17 @@ export function UsuariosProvider({ children }: { children: React.ReactNode }) {
     await fetchUsuarios(currentPage, currentPageSize);
   }, [fetchUsuarios, pagination.page, pagination.pageSize]);
 
+  // Método optimizado para refrescar solo la página actual
+  const refreshCurrentPage = useCallback(async () => {
+    await fetchUsuarios(pagination.page, pagination.pageSize);
+  }, [fetchUsuarios, pagination.page, pagination.pageSize]);
+
+  // Método para forzar un refresh completo (útil después de operaciones CRUD)
+  const forceRefresh = useCallback(async () => {
+    console.log('Forzando refresh de usuarios...');
+    await fetchUsuarios(pagination.page, pagination.pageSize);
+  }, [fetchUsuarios, pagination.page, pagination.pageSize]);
+
   const handlePageChange = useCallback((newPage: number) => {
     setPagination(prev => ({ ...prev, page: newPage }));
     fetchUsuarios(newPage, pagination.pageSize);
@@ -97,6 +111,9 @@ export function UsuariosProvider({ children }: { children: React.ReactNode }) {
     pagination,
     handlePageChange,
     handlePageSizeChange,
+    // Métodos optimizados simplificados
+    refreshCurrentPage,
+    forceRefresh,
   };
 
   return (
