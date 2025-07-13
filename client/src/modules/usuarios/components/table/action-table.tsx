@@ -15,7 +15,6 @@ interface ActionTableProps {
 }
 
 export default function ActionTable({ usuario }: ActionTableProps) {
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { forceRefresh } = useUsuarios();
@@ -34,7 +33,7 @@ export default function ActionTable({ usuario }: ActionTableProps) {
             ? "Usuario desactivado exitosamente"
             : "Usuario activado exitosamente"
         );
-        
+
         // Refrescar la tabla para mostrar los cambios
         await forceRefresh();
       } else {
@@ -52,16 +51,11 @@ export default function ActionTable({ usuario }: ActionTableProps) {
     <>
       <div className="flex items-center gap-1">
         {/* Botón Editar */}
-        <IconButton
-          tooltip="Editar usuario"
-          tooltipIcon={<Edit className="h-3 w-3" />}
-          onClick={() => setShowEditDialog(true)}
-          disabled={isLoading}
-          color="blue"
-          variant="ghost"
-        >
-          <Edit className="h-4 w-4" />
-        </IconButton>
+        <UpdateUsuarioForm
+          usuario={usuario}
+          onSuccess={forceRefresh}
+          onCancel={forceRefresh}
+        />
 
         {/* Botón Cambiar Contraseña */}
         <IconButton
@@ -78,7 +72,13 @@ export default function ActionTable({ usuario }: ActionTableProps) {
         {/* Botón Activar/Desactivar */}
         <IconButton
           tooltip={usuario.activo ? "Desactivar usuario" : "Activar usuario"}
-          tooltipIcon={usuario.activo ? <PowerOff className="h-3 w-3" /> : <Power className="h-3 w-3" />}
+          tooltipIcon={
+            usuario.activo ? (
+              <PowerOff className="h-3 w-3" />
+            ) : (
+              <Power className="h-3 w-3" />
+            )
+          }
           onClick={handleToggleStatus}
           disabled={isLoading}
           color={usuario.activo ? "orange" : "green"}
@@ -91,21 +91,6 @@ export default function ActionTable({ usuario }: ActionTableProps) {
           )}
         </IconButton>
       </div>
-
-      {/* Diálogo de editar usuario */}
-      <CustomDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        title="Editar usuario"
-        description="Modifique los campos que desee actualizar"
-        size="2xl"
-      >
-        <UpdateUsuarioForm
-          usuario={usuario}
-          onSuccess={() => setShowEditDialog(false)}
-          onCancel={() => setShowEditDialog(false)}
-        />
-      </CustomDialog>
 
       {/* Modal de cambiar contraseña */}
       <ChangePasswordModal

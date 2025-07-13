@@ -19,6 +19,7 @@ import { Loader2, User, Edit } from "lucide-react";
 import { CustomDialog } from "@/components/custom/dialog";
 import { CustomInputControlled } from "@/components/custom/input-controlled";
 import { useUsuarios } from "../../context/usuarios-context";
+import { IconButton } from "@/components/custom/icon-button";
 
 interface UpdateUsuarioFormProps {
   usuario: any // Tipo del usuario a editar
@@ -45,6 +46,7 @@ export default function UpdateUsuarioForm({ usuario, onSuccess, onCancel }: Upda
       creador: "system",
       activo: true,
       password: "",
+      accesototal: 0,
     },
   });
 
@@ -63,6 +65,7 @@ export default function UpdateUsuarioForm({ usuario, onSuccess, onCancel }: Upda
         creador: usuario.creador || "system",
         activo: usuario.activo ?? true,
         password: usuario.password || "",
+        accesototal: usuario.accesototal || 0,
       });
     }
   }, [usuario, form]);
@@ -113,15 +116,16 @@ export default function UpdateUsuarioForm({ usuario, onSuccess, onCancel }: Upda
 
   return (
     <>
-      <Button
-        onClick={handleEdit}
-        variant="outline"
-        size="sm"
-        className="flex items-center gap-2"
-      >
-        <Edit className="w-4 h-4" />
-        Editar
-      </Button>
+      <IconButton
+          tooltip="Editar usuario"
+          tooltipIcon={<Edit className="h-3 w-3" />}
+          onClick={handleEdit}
+          disabled={isLoading}
+          color="blue"
+          variant="ghost"
+        >
+          <Edit className="h-4 w-4" />
+        </IconButton>
 
       <CustomDialog
         open={showDialog}
@@ -322,6 +326,28 @@ export default function UpdateUsuarioForm({ usuario, onSuccess, onCancel }: Upda
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="accesototal"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <div className="text-base font-medium">
+                        Acceso total
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        El usuario podrá acceder a todas las funcionalidades del sistema.
+                      </div>
+                    </div>
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value === 1}
+                        onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
                       />
                     </FormControl>
                   </FormItem>

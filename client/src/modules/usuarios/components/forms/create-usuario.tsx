@@ -43,6 +43,7 @@ export default function CreateUsuarioForm() {
       password: "",
       creador: user ? `${user.nombre} ${user.apellidopa}` : "system",
       activo: true,
+      accesototal: 0,
     },
   });
 
@@ -114,7 +115,7 @@ export default function CreateUsuarioForm() {
                           placeholder="Ej: admin01"
                           required
                           maxLength={20}
-                          textTransform="lowercase"
+                          textTransform="original"
                           {...field}
                         />
                       </FormControl>
@@ -266,12 +267,12 @@ export default function CreateUsuarioForm() {
             </div>
 
             {/* Estado del usuario */}
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col col-span-2">
               <FormField
                 control={form.control}
                 name="activo"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 w-full">
                     <div className="space-y-0.5">
                       <div className="text-base font-medium">
                         Usuario activo
@@ -284,6 +285,28 @@ export default function CreateUsuarioForm() {
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="accesototal"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 w-full">
+                    <div className="space-y-0.5">
+                      <div className="text-base font-medium">
+                        Acceso total
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        El usuario podrá acceder a todas las funcionalidades del sistema.
+                      </div>
+                    </div>
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value === 1}
+                        onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
                       />
                     </FormControl>
                   </FormItem>

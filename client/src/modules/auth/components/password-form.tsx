@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { PasswordFormData, passwordSchema } from "../schema"
-import { changeMyPassword } from "@/modules/usuarios/action/usuario.actions"
+// import { changeMyPassword } from "@/modules/usuarios/action/usuario.actions"
 
 interface PasswordFormProps {
   userId: number
@@ -37,23 +37,23 @@ export function PasswordForm({ userId }: PasswordFormProps) {
       // Validar datos
       const validatedData = passwordSchema.parse(formData)
       
-      const result = await changeMyPassword(
-        validatedData.currentPassword,
-        validatedData.newPassword,
-        validatedData.confirmPassword
-      )
+      // const result = await changeMyPassword(
+      //   validatedData.currentPassword,
+      //   validatedData.newPassword,
+      //   validatedData.confirmPassword
+      // )
       
-      if (result.success) {
-        toast.success(result.message || "Contraseña actualizada exitosamente")
-        // Limpiar formulario
-        setFormData({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        })
-      } else {
-        toast.error(result.message || result.error || "Error al actualizar la contraseña")
-      }
+      // if (result.success) {
+      //   toast.success(result.message || "Contraseña actualizada exitosamente")
+      //   // Limpiar formulario
+      //   setFormData({
+      //     currentPassword: "",
+      //     newPassword: "",
+      //     confirmPassword: "",
+      //   })
+      // } else {
+      //   toast.error(result.message || result.error || "Error al actualizar la contraseña")
+      // }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message)

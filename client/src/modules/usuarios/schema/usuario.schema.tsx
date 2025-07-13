@@ -32,6 +32,7 @@ export const createUsuarioSchema = z.object({
     message: "El creador es requerido.",
   }),
   activo: z.boolean(),
+  accesototal: z.number()
 })
 
 // Esquema para editar usuario (sin password)
@@ -69,6 +70,7 @@ export const updateUsuarioSchema = z.object({
   password: z.string().min(8, {
     message: "La contraseña debe tener al menos 8 caracteres.",
   }),
+  accesototal: z.number()
 })
 
 // Esquema para cambiar contraseña
@@ -106,6 +108,7 @@ export const changePasswordSchema = z.object({
   password: z.string().min(8, {
     message: "La contraseña debe tener al menos 8 caracteres.",
   }),
+  accesototal: z.number()
 })
 
 // Esquema para cambiar estado (activo/inactivo)
