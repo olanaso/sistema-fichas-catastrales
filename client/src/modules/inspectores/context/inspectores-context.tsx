@@ -1,7 +1,7 @@
 "use client";
 
 import { InspectorDto } from "@/models/inspector";
-import { DataProvider, useData } from "../../usuarios/context/data-context";
+import { DataPaginatedProvider, useDataPaginated } from "@/context/data-paginated-context";
 
 interface InspectoresProviderProps {
   children: React.ReactNode;
@@ -9,15 +9,15 @@ interface InspectoresProviderProps {
 
 export function InspectoresProvider({ children }: InspectoresProviderProps) {
   return (
-    <DataProvider<InspectorDto> 
-      tableName="inspectores" 
+    <DataPaginatedProvider<InspectorDto>
+      tableName="inspectores"
       initialPageSize={10}
     >
       {children}
-    </DataProvider>
+    </DataPaginatedProvider>
   );
 }
 
 export function useInspectores() {
-  return useData<InspectorDto>();
+  return useDataPaginated<InspectorDto>();
 } 

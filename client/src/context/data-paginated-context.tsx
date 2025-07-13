@@ -1,8 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { toast } from 'sonner';
-import { getDataPaginada } from '../action/usuario.actions';
+import { getDataPaginada } from '@/service/data.actions';
 import { PaginatedData } from '@/components/table/table';
 
 interface DataContextType<T> {
@@ -25,7 +24,7 @@ interface DataContextType<T> {
   forceRefresh: () => Promise<void>;
 }
 
-interface DataProviderProps<T> {
+interface DataPaginatedProviderProps<T> {
   children: React.ReactNode;
   tableName: string;
   initialPageSize?: number;
@@ -33,11 +32,11 @@ interface DataProviderProps<T> {
 
 const DataContext = createContext<DataContextType<any> | undefined>(undefined);
 
-export function DataProvider<T>({ 
+export function DataPaginatedProvider<T>({ 
   children, 
   tableName, 
   initialPageSize = 10 
-}: DataProviderProps<T>) {
+}: DataPaginatedProviderProps<T>) {
   const [data, setData] = useState<PaginatedData<T>>({
     data: [],
     total: 0,
@@ -133,10 +132,10 @@ export function DataProvider<T>({
   );
 }
 
-export function useData<T>() {
+export function useDataPaginated<T>() {
   const context = useContext(DataContext);
   if (context === undefined) {
-    throw new Error('useData must be used within a DataProvider');
+    throw new Error('useData must be used within a DataPaginatedProvider');
   }
   return context as DataContextType<T>;
 } 
