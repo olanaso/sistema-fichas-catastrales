@@ -40,19 +40,19 @@ public class TiposService {
         }
     }
 
-    public String insertarEnTabla(String tabla, String jsonb) {
+    public String buscarPorColumna(String tabla, String columna, String valor) {
         try {
             Query query = entityManager.createNativeQuery(
-                    "SELECT fichacatastral.insertar_en_tabla(?1, ?2::jsonb)"
+                    "SELECT fichacatastral.usp_buscar_por_columna(?1, ?2, ?3)"
             );
-
             query.setParameter(1, tabla);
-            query.setParameter(2, jsonb);
+            query.setParameter(2, columna);
+            query.setParameter(3, valor);
 
-            return (String) query.getSingleResult();
-
+            Object result = query.getSingleResult();
+            return result != null ? result.toString() : "[]";
         } catch (Exception e) {
-            throw new RuntimeException("Error al insertar en tabla: " + e.getMessage(), e);
+            throw new RuntimeException("Error al buscar en la tabla: " + e.getMessage(), e);
         }
     }
 

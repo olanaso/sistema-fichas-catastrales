@@ -5,12 +5,14 @@ import {
   Home,
   Users,
   Settings,
-  Building2,
-  Package,
   Bubbles,
-  Presentation,
-  Send,
   UserCog,
+  Group,
+  Import,
+  ClipboardList,
+  Ticket,
+  ArrowRightCircle,
+  Layers,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -62,12 +64,12 @@ const menuGestion = [
   {
     title: "Importar",
     url: "/importar",
-    icon: Building2,
+    icon: Import,
   },
   {
     title: "Gestión de padrón",
     url: "/gestion-padron",
-    icon: Package,
+    icon: ClipboardList,
   },
 ];
 
@@ -75,12 +77,12 @@ const menuFichas = [
   {
     title: "Gestión de fichas",
     url: "/gestion-fichas",
-    icon: Building2,
+    icon: Ticket,
   },
   {
     title: "Migración SICI",
     url: "/migracion-sici",
-    icon: Package,
+    icon: ArrowRightCircle,
   },
 ];
 
@@ -88,12 +90,12 @@ const menuCapacitacion = [
   {
     title: "Grupos de trabajo",
     url: "/grupos-trabajo",
-    icon: Send,
+    icon: Group,
   },
   {
     title: "Asignación de carga",
     url: "/asignacion-carga",
-    icon: Presentation,
+    icon: Layers,
   },
 ];
 

@@ -29,12 +29,10 @@ function InspectoresContent() {
   } = useInspectores();
 
   useEffect(() => {
-    console.log('InspectoresContent montado, iniciando refreshData');
     refreshData();
   }, [refreshData]);
 
   useEffect(() => {
-    console.log('Estado actual:', { inspectores, isLoading, error, pagination });
   }, [inspectores, isLoading, error, pagination]);
 
   if (isLoading && inspectores.data.length === 0) {

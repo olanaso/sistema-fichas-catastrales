@@ -28,7 +28,7 @@ export const ComboboxControlled = forwardRef<HTMLButtonElement, ComboboxControll
       disabled = false,
       loading = false,
       className,
-      width = "w-[93vw] sm:w-[350px]",
+      width = "w-full min-w-0",
       label,
       description,
       error,
@@ -59,7 +59,7 @@ export const ComboboxControlled = forwardRef<HTMLButtonElement, ComboboxControll
       : options.filter((option) => option.label.toLowerCase().includes(searchValue.toLowerCase()))
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 w-full">
         {label && (
           <Label className={cn(required && "after:content-['*'] after:text-red-500 after:ml-1")}>{label}</Label>
         )}
@@ -74,24 +74,30 @@ export const ComboboxControlled = forwardRef<HTMLButtonElement, ComboboxControll
               disabled={disabled || loading}
               onBlur={onBlur}
               className={cn(
-                "justify-between",
-                width,
+                "justify-between w-full min-w-0",
                 !value && "text-muted-foreground",
                 error && "border-red-500 focus-visible:ring-red-500",
                 className,
               )}
               {...props}
             >
-              <div className="flex items-center gap-2">
-                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {selectedOption?.icon}
-                <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                {loading && <Loader2 className="h-4 w-4 animate-spin shrink-0" />}
+                {selectedOption?.icon && <span className="shrink-0">{selectedOption.icon}</span>}
+                <span className="truncate text-left">{selectedOption ? selectedOption.label : placeholder}</span>
               </div>
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent className={cn("p-0 max-w-[93vw] md:max-w-[350px]", width)} align="start">
+          <PopoverContent 
+            className={cn(
+              "p-0 w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-2rem)] sm:max-w-[400px]",
+              "min-w-[200px]"
+            )} 
+            align="start"
+            sideOffset={4}
+          >
             <Command>
               <CommandInput
                 placeholder={searchPlaceholder}
@@ -99,7 +105,7 @@ export const ComboboxControlled = forwardRef<HTMLButtonElement, ComboboxControll
                 onValueChange={handleSearch}
                 className="h-9"
               />
-              <CommandList>
+              <CommandList className="max-h-[200px]">
                 <CommandEmpty>{emptyMessage}</CommandEmpty>
                 <CommandGroup>
                   {filteredOptions.map((option) => (
@@ -110,11 +116,11 @@ export const ComboboxControlled = forwardRef<HTMLButtonElement, ComboboxControll
                       onSelect={() => handleSelect(option.value)}
                       className="cursor-pointer"
                     >
-                      <div className="flex items-center gap-2 flex-1">
-                        {option.icon}
-                        <span>{option.label}</span>
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        {option.icon && <span className="shrink-0">{option.icon}</span>}
+                        <span className="truncate">{option.label}</span>
                       </div>
-                      <Check className={cn("ml-auto h-4 w-4", option.value === value ? "opacity-100" : "opacity-0")} />
+                      <Check className={cn("ml-auto h-4 w-4 shrink-0", option.value === value ? "opacity-100" : "opacity-0")} />
                     </CommandItem>
                   ))}
                 </CommandGroup>

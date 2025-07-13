@@ -1,17 +1,18 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { UsuarioDto } from '@/models/usuario';
+import { GrupoTrabajoDto } from '@/models/grupotrabajo';
 import { toast } from 'sonner';
-import { getSupervisoresYAdministradores } from '../action/usuario.actions';
+import { getPadronClientes } from '../action/gestionpadron.actions';
 import { PaginatedData } from '@/components/table/table';
+import { ClienteDto } from '@/models/cliente';
 
-interface UsuariosContextType {
-  usuarios: PaginatedData<UsuarioDto>;
+interface PadronClientesContextType {
+  padronClientes: PaginatedData<ClienteDto>;
   isLoading: boolean;
   error: string | null;
-  refreshUsuarios: (page?: number, pageSize?: number) => Promise<void>;
-  setUsuarios: (usuarios: PaginatedData<UsuarioDto>) => void;
+  refreshPadronClientes: (page?: number, pageSize?: number) => Promise<void>;
+  setPadronClientes: (padronClientes: PaginatedData<ClienteDto>) => void;
   pagination: {
     page: number;
     pageSize: number;
@@ -25,10 +26,10 @@ interface UsuariosContextType {
   forceRefresh: () => Promise<void>;
 }
 
-const UsuariosContext = createContext<UsuariosContextType | undefined>(undefined);
+const PadronClientesContext = createContext<PadronClientesContextType | undefined>(undefined);
 
-export function UsuariosProvider({ children }: { children: React.ReactNode }) {
-  const [usuarios, setUsuarios] = useState<PaginatedData<UsuarioDto>>({
+export function PadronClientesProvider({ children }: { children: React.ReactNode }) {
+  const [padronClientes, setPadronClientes] = useState<PaginatedData<ClienteDto>>({
     data: [],
     total: 0,
     page: 0,
@@ -44,15 +45,13 @@ export function UsuariosProvider({ children }: { children: React.ReactNode }) {
     totalPages: 0,
   });
 
-  const fetchUsuarios = useCallback(async (page: number, pageSize: number) => {
+  const fetchPadronClientes = useCallback(async (page: number, pageSize: number) => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const result = await getSupervisoresYAdministradores(page, pageSize, 'usersystema');
-      
+      const result = await getPadronClientes(page, pageSize);
       if (result.success) {
-        setUsuarios(result.data);
+        setPadronClientes(result.data);
         setPagination({
           page: result.data.page,
           pageSize: result.data.size,
@@ -61,49 +60,49 @@ export function UsuariosProvider({ children }: { children: React.ReactNode }) {
         });
       } else {
         console.error('Error en la respuesta:', result.message);
-        setError(result.message || 'Error al cargar usuarios');
+        setError(result.message || 'Error al cargar grupos de trabajo');
       }
     } catch (err) {
-      console.error('Error loading usuarios:', err);
-      setError('Error al cargar los usuarios');
-      toast.error('Error al cargar los usuarios');
+      console.error('Error loading grupos de trabajo:', err);
+      setError('Error al cargar los grupos de trabajo');
+      toast.error('Error al cargar los grupos de trabajo');
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const refreshUsuarios = useCallback(async (page?: number, pageSize?: number) => {
+  const refreshPadronClientes = useCallback(async (page?: number, pageSize?: number) => {
     const currentPage = page ?? pagination.page;
     const currentPageSize = pageSize ?? pagination.pageSize;
-    await fetchUsuarios(currentPage, currentPageSize);
-  }, [fetchUsuarios, pagination.page, pagination.pageSize]);
+    await fetchPadronClientes(currentPage, currentPageSize);
+  }, [fetchPadronClientes, pagination.page, pagination.pageSize]);
 
   // Método optimizado para refrescar solo la página actual
   const refreshCurrentPage = useCallback(async () => {
-    await fetchUsuarios(pagination.page, pagination.pageSize);
-  }, [fetchUsuarios, pagination.page, pagination.pageSize]);
+    await fetchPadronClientes(pagination.page, pagination.pageSize);
+  }, [fetchPadronClientes, pagination.page, pagination.pageSize]);
 
   // Método para forzar un refresh completo (útil después de operaciones CRUD)
   const forceRefresh = useCallback(async () => {
-    await fetchUsuarios(pagination.page, pagination.pageSize);
-  }, [fetchUsuarios, pagination.page, pagination.pageSize]);
+    await fetchPadronClientes(pagination.page, pagination.pageSize);
+  }, [fetchPadronClientes, pagination.page, pagination.pageSize]);
 
   const handlePageChange = useCallback((newPage: number) => {
     setPagination(prev => ({ ...prev, page: newPage }));
-    fetchUsuarios(newPage, pagination.pageSize);
-  }, [fetchUsuarios, pagination.pageSize]);
+    fetchPadronClientes(newPage, pagination.pageSize);
+  }, [fetchPadronClientes, pagination.pageSize]);
 
   const handlePageSizeChange = useCallback((newPageSize: number) => {
     setPagination(prev => ({ ...prev, page: 0, pageSize: newPageSize }));
-    fetchUsuarios(0, newPageSize);
-  }, [fetchUsuarios]);
+    fetchPadronClientes(0, newPageSize);
+  }, [fetchPadronClientes]);
 
   const value = {
-    usuarios,
+    padronClientes,
     isLoading,
     error,
-    refreshUsuarios,
-    setUsuarios,
+    refreshPadronClientes,
+    setPadronClientes,
     pagination,
     handlePageChange,
     handlePageSizeChange,
@@ -113,16 +112,16 @@ export function UsuariosProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <UsuariosContext.Provider value={value}>
+    <PadronClientesContext.Provider value={value}>
       {children}
-    </UsuariosContext.Provider>
+    </PadronClientesContext.Provider>
   );
 }
 
-export function useUsuarios() {
-  const context = useContext(UsuariosContext);
+export function usePadronClientes() {
+  const context = useContext(PadronClientesContext);
   if (context === undefined) {
-    throw new Error('useUsuarios must be used within a UsuariosProvider');
+    throw new Error('usePadronClientes must be used within a PadronClientesProvider');
   }
   return context;
 } 

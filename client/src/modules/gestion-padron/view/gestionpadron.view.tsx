@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TableUsuario from "../components/table/table-usuario";
-import { UsuariosProvider, useUsuarios } from "../context/usuarios-context";
+import TableGrupoTrabajo from "../components/table/table-grupotrabajo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { Usuario } from "@/models/usuario";
+import { Inspector } from "@/models/inspector";
+import { PadronClientesProvider, usePadronClientes } from "../context/grupotrabajo-context";
+import TableGestionPadron from "../components/table/table-grupotrabajo";
 
 // Componente de carga
-function SupervisoresSkeleton() {
+function PadronClientesSkeleton() {
   return (
     <div className="space-y-6">
       <Skeleton className="h-[600px] w-full" />
@@ -17,27 +20,23 @@ function SupervisoresSkeleton() {
 }
 
 // Componente interno que usa el contexto
-function SupervisoresContent() {
+function PadronClientesContent() {
   const { 
-    usuarios, 
+    padronClientes, 
     isLoading, 
     error, 
-    refreshUsuarios,
+    refreshPadronClientes,
     pagination,
     handlePageChange,
     handlePageSizeChange
-  } = useUsuarios();
+  } = usePadronClientes();
 
   useEffect(() => {
-    refreshUsuarios();
-  }, [refreshUsuarios]);
+    refreshPadronClientes();
+  }, [refreshPadronClientes]);
 
-  useEffect(() => {
-  }, [usuarios, isLoading, error, pagination]);
-
-
-  if (isLoading && usuarios.data.length === 0) {
-    return <SupervisoresSkeleton />;
+  if (isLoading && padronClientes.data.length === 0) {
+    return <PadronClientesSkeleton />;
   }
 
   if (error) {
@@ -46,7 +45,7 @@ function SupervisoresContent() {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            <p className="font-semibold">Error al cargar usuarios:</p>
+            <p className="font-semibold">Error al cargar padrón de clientes:</p>
             <p>{error}</p>
             <p className="text-sm text-muted-foreground mt-2">
               Por favor, intente recargar la página
@@ -61,23 +60,23 @@ function SupervisoresContent() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Supervisores</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Padrón de Clientes</h2>
           <p className="text-muted-foreground">
-            Gestiona los supervisores del sistema
+            Gestiona el padrón de clientes
           </p>
         </div>
       </div>
       
-      {usuarios.data.length === 0 && !isLoading ? (
+      {padronClientes.data.length === 0 && !isLoading ? (
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            No se encontraron usuarios. Verifique la conexión con la base de datos.
+            No se encontraron grupos de trabajo. Verifique la conexión con la base de datos.
           </AlertDescription>
         </Alert>
       ) : (
-        <TableUsuario 
-          usuarios={usuarios}
+        <TableGestionPadron 
+          padronClientes={padronClientes}
           loading={isLoading}
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
@@ -88,10 +87,10 @@ function SupervisoresContent() {
 }
 
 // Componente principal que envuelve con el provider
-export default function SupervisoresView() {
+export default function PadronClientesView() {
   return (
-    <UsuariosProvider>
-      <SupervisoresContent />
-    </UsuariosProvider>
+    <PadronClientesProvider>
+      <PadronClientesContent />
+    </PadronClientesProvider>
   );
-}
+} 

@@ -35,13 +35,10 @@ export function DataProvider<T>({
         try {
             setIsLoading(true);
             setError(null);
-            console.log(`Iniciando carga de ${tableName}...`);
 
             const result = await getData(tableName);
-            console.log(`Resultado de la API para ${tableName}:`, result);
 
             if (result.success) {
-                console.log(`Datos recibidos para ${tableName}:`, result.data);
                 setData(result.data);
                 setTotal(result.total);
             } else {

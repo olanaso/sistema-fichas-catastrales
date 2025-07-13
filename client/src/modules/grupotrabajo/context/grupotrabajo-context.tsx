@@ -1,17 +1,17 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { UsuarioDto } from '@/models/usuario';
+import { GrupoTrabajoDto } from '@/models/grupotrabajo';
 import { toast } from 'sonner';
-import { getSupervisoresYAdministradores } from '../action/usuario.actions';
+import { getGruposTrabajoPaginados } from '../action/grupotrabajo.actions';
 import { PaginatedData } from '@/components/table/table';
 
-interface UsuariosContextType {
-  usuarios: PaginatedData<UsuarioDto>;
+interface GrupoTrabajoContextType {
+  gruposTrabajo: PaginatedData<GrupoTrabajoDto>;
   isLoading: boolean;
   error: string | null;
-  refreshUsuarios: (page?: number, pageSize?: number) => Promise<void>;
-  setUsuarios: (usuarios: PaginatedData<UsuarioDto>) => void;
+  refreshGruposTrabajo: (page?: number, pageSize?: number) => Promise<void>;
+  setGruposTrabajo: (gruposTrabajo: PaginatedData<GrupoTrabajoDto>) => void;
   pagination: {
     page: number;
     pageSize: number;
@@ -25,10 +25,10 @@ interface UsuariosContextType {
   forceRefresh: () => Promise<void>;
 }
 
-const UsuariosContext = createContext<UsuariosContextType | undefined>(undefined);
+const GrupoTrabajoContext = createContext<GrupoTrabajoContextType | undefined>(undefined);
 
-export function UsuariosProvider({ children }: { children: React.ReactNode }) {
-  const [usuarios, setUsuarios] = useState<PaginatedData<UsuarioDto>>({
+export function GrupoTrabajoProvider({ children }: { children: React.ReactNode }) {
+  const [gruposTrabajo, setGruposTrabajo] = useState<PaginatedData<GrupoTrabajoDto>>({
     data: [],
     total: 0,
     page: 0,
@@ -44,15 +44,13 @@ export function UsuariosProvider({ children }: { children: React.ReactNode }) {
     totalPages: 0,
   });
 
-  const fetchUsuarios = useCallback(async (page: number, pageSize: number) => {
+  const fetchGruposTrabajo = useCallback(async (page: number, pageSize: number) => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const result = await getSupervisoresYAdministradores(page, pageSize, 'usersystema');
-      
+      const result = await getGruposTrabajoPaginados(page, pageSize);
       if (result.success) {
-        setUsuarios(result.data);
+        setGruposTrabajo(result.data);
         setPagination({
           page: result.data.page,
           pageSize: result.data.size,
@@ -61,49 +59,49 @@ export function UsuariosProvider({ children }: { children: React.ReactNode }) {
         });
       } else {
         console.error('Error en la respuesta:', result.message);
-        setError(result.message || 'Error al cargar usuarios');
+        setError(result.message || 'Error al cargar grupos de trabajo');
       }
     } catch (err) {
-      console.error('Error loading usuarios:', err);
-      setError('Error al cargar los usuarios');
-      toast.error('Error al cargar los usuarios');
+      console.error('Error loading grupos de trabajo:', err);
+      setError('Error al cargar los grupos de trabajo');
+      toast.error('Error al cargar los grupos de trabajo');
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const refreshUsuarios = useCallback(async (page?: number, pageSize?: number) => {
+  const refreshGruposTrabajo = useCallback(async (page?: number, pageSize?: number) => {
     const currentPage = page ?? pagination.page;
     const currentPageSize = pageSize ?? pagination.pageSize;
-    await fetchUsuarios(currentPage, currentPageSize);
-  }, [fetchUsuarios, pagination.page, pagination.pageSize]);
+    await fetchGruposTrabajo(currentPage, currentPageSize);
+  }, [fetchGruposTrabajo, pagination.page, pagination.pageSize]);
 
   // Método optimizado para refrescar solo la página actual
   const refreshCurrentPage = useCallback(async () => {
-    await fetchUsuarios(pagination.page, pagination.pageSize);
-  }, [fetchUsuarios, pagination.page, pagination.pageSize]);
+    await fetchGruposTrabajo(pagination.page, pagination.pageSize);
+  }, [fetchGruposTrabajo, pagination.page, pagination.pageSize]);
 
   // Método para forzar un refresh completo (útil después de operaciones CRUD)
   const forceRefresh = useCallback(async () => {
-    await fetchUsuarios(pagination.page, pagination.pageSize);
-  }, [fetchUsuarios, pagination.page, pagination.pageSize]);
+    await fetchGruposTrabajo(pagination.page, pagination.pageSize);
+  }, [fetchGruposTrabajo, pagination.page, pagination.pageSize]);
 
   const handlePageChange = useCallback((newPage: number) => {
     setPagination(prev => ({ ...prev, page: newPage }));
-    fetchUsuarios(newPage, pagination.pageSize);
-  }, [fetchUsuarios, pagination.pageSize]);
+    fetchGruposTrabajo(newPage, pagination.pageSize);
+  }, [fetchGruposTrabajo, pagination.pageSize]);
 
   const handlePageSizeChange = useCallback((newPageSize: number) => {
     setPagination(prev => ({ ...prev, page: 0, pageSize: newPageSize }));
-    fetchUsuarios(0, newPageSize);
-  }, [fetchUsuarios]);
+    fetchGruposTrabajo(0, newPageSize);
+  }, [fetchGruposTrabajo]);
 
   const value = {
-    usuarios,
+    gruposTrabajo,
     isLoading,
     error,
-    refreshUsuarios,
-    setUsuarios,
+    refreshGruposTrabajo,
+    setGruposTrabajo,
     pagination,
     handlePageChange,
     handlePageSizeChange,
@@ -113,16 +111,16 @@ export function UsuariosProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <UsuariosContext.Provider value={value}>
+    <GrupoTrabajoContext.Provider value={value}>
       {children}
-    </UsuariosContext.Provider>
+    </GrupoTrabajoContext.Provider>
   );
 }
 
-export function useUsuarios() {
-  const context = useContext(UsuariosContext);
+export function useGrupoTrabajo() {
+  const context = useContext(GrupoTrabajoContext);
   if (context === undefined) {
-    throw new Error('useUsuarios must be used within a UsuariosProvider');
+    throw new Error('useGrupoTrabajo must be used within a GrupoTrabajoProvider');
   }
   return context;
 } 

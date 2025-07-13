@@ -16,14 +16,15 @@ public class TiposController {
         this.tiposService = tiposService;
     }
 
-    @PostMapping("/insertar")
-    public ResponseEntity<?> insertar(
+    @GetMapping("/buscar")
+    public ResponseEntity<?> buscarPorColumna(
             @RequestParam String tabla,
-            @RequestBody String data
+            @RequestParam String columna,
+            @RequestParam String valor
     ) {
         try {
-            String resultado = tiposService.insertarEnTabla(tabla, data);
-            return ResponseEntity.ok().body(Map.of("success", true, "message", resultado));
+            String resultado = tiposService.buscarPorColumna(tabla, columna, valor);
+            return ResponseEntity.ok(resultado);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
         }

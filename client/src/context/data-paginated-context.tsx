@@ -57,13 +57,10 @@ export function DataPaginatedProvider<T>({
     try {
       setIsLoading(true);
       setError(null);
-      console.log(`Iniciando carga de ${tableName}...`, { page, pageSize });
       
       const result = await getDataPaginada(page, pageSize, tableName);
-      console.log(`Resultado de la API para ${tableName}:`, result);
       
       if (result.success) {
-        console.log(`Datos recibidos para ${tableName}:`, result.data);
         setData(result.data);
         setPagination({
           page: result.data.page,
@@ -96,7 +93,6 @@ export function DataPaginatedProvider<T>({
 
   // Método para forzar un refresh completo (útil después de operaciones CRUD)
   const forceRefresh = useCallback(async () => {
-    console.log(`Forzando refresh de ${tableName}...`);
     await fetchData(pagination.page, pagination.pageSize);
   }, [fetchData, pagination.page, pagination.pageSize, tableName]);
 
