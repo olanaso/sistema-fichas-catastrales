@@ -35,7 +35,7 @@ export const columns: ColumnDef<FichaCatastroDto>[] = [
         cell: ({ row }) => {
             const ficha = row.original;
             const codigo = [
-                ficha.codprov,
+                ficha.codsuc,
                 ficha.codsector_new,
                 ficha.codmza_new,
                 ficha.nrolote_new,

@@ -5,26 +5,41 @@ import { TableToolbar } from "@/components/table/table-toolbar";
 import { PaginatedData } from "@/components/table/table";
 import { ClienteDto } from "@/models/cliente";
 import { columns } from "./columns";
+import { Calle, Manzana, Sector, TipoCalle, TipoServicio } from "@/models/tipos";
 
 interface TableGestionPadronProps {
   padronClientes: PaginatedData<ClienteDto>;
   loading?: boolean;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
+  tiposData?: {
+    sectores: Sector[];
+    manzanas: Manzana[];
+    calles: Calle[];
+    tiposervicios: TipoServicio[];
+    tipocalle: TipoCalle[];
+  };
 }
 
 export default function TableGestionPadron({ 
   padronClientes, 
   loading = false,
   onPageChange,
-  onPageSizeChange 
+  onPageSizeChange,
+  tiposData
 }: TableGestionPadronProps) {
 
   return (
     <>
       {padronClientes.data.length > 0 ? (
         <BackendTable 
-          columns={columns()}
+          columns={columns(tiposData || {
+            sectores: [],
+            manzanas: [],
+            calles: [],
+            tiposervicios: [],
+            tipocalle: []
+          })}
           data={padronClientes}
           loading={loading}
           onPageChange={onPageChange}
