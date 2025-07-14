@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TableGrupoTrabajo from "../components/table/table-grupotrabajo";
+import TableGrupoTrabajo from "../components/table/table-gestionpadron";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Usuario } from "@/models/usuario";
 import { Inspector } from "@/models/inspector";
-import { PadronClientesProvider, usePadronClientes } from "../context/grupotrabajo-context";
-import TableGestionPadron from "../components/table/table-grupotrabajo";
+import { PadronClientesProvider, usePadronClientes } from "../context/gestionpadron-context";
+import TableGestionPadron from "../components/table/table-gestionpadron";
 
 // Componente de carga
 function PadronClientesSkeleton() {
@@ -60,7 +60,7 @@ function PadronClientesContent() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Padrón de Clientes</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Padrón de clientes</h2>
           <p className="text-muted-foreground">
             Gestiona el padrón de clientes
           </p>

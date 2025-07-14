@@ -32,8 +32,8 @@ export default function TableGestionPadron({
           toolbar={(table) => (
             <TableToolbar 
               table={table} 
-              searchKey="nombre"
-              searchPlaceholder="Buscar clientes..."
+              searchKey="propietario"
+              searchPlaceholder="Buscar propietario..."
             />
           )}
           pageSize={padronClientes.size || 10}

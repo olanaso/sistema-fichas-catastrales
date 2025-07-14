@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Edit, Power, PowerOff, Trash } from "lucide-react";
+import { Edit, FileText, Power, PowerOff, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { IconButton } from "@/components/custom/icon-button";
 import { Usuario } from "@/models/usuario";
 import { Inspector } from "@/models/inspector";
-import { usePadronClientes } from "../../context/grupotrabajo-context";
+import { usePadronClientes } from "../../context/gestionpadron-context";
 import { ClienteDto } from "@/models/cliente";
 
 interface ActionTableProps {
@@ -36,27 +36,7 @@ export default function ActionTable({ cliente }: ActionTableProps) {
 
   return (
     <div className="flex items-center gap-1">
-      {/* Botón Activar/Desactivar */}
-      <IconButton
-        tooltip={cliente.estadoregistro === 1 ? "Desactivar grupo" : "Activar grupo"}
-        tooltipIcon={
-          cliente.estadoregistro === 1 ? (
-            <PowerOff className="h-3 w-3" />
-          ) : (
-            <Power className="h-3 w-3" />
-          )
-        }
-        onClick={handleToggleStatus}
-        disabled={isLoading}
-        color={cliente.estadoregistro === 1 ? "orange" : "green"}
-        variant="ghost"
-      >
-        {cliente.estadoregistro === 1 ? (
-          <PowerOff className="h-4 w-4" />
-        ) : (
-          <Power className="h-4 w-4" />
-        )}
-      </IconButton>
+      
       <IconButton
         tooltip="Editar"
         tooltipIcon={<Edit className="h-3 w-3" />}
@@ -76,6 +56,19 @@ export default function ActionTable({ cliente }: ActionTableProps) {
         variant="ghost"
       >
         <Trash className="h-4 w-4" />
+      </IconButton>
+      {/* Botón para levantar ficha */}
+      <IconButton
+        tooltip="Levantar ficha"
+        tooltipIcon={
+          <FileText className="h-3 w-3" />
+        }
+        onClick={handleToggleStatus}
+        disabled={isLoading}
+        color="green"
+        variant="ghost"
+      >
+        <FileText className="h-4 w-4" />
       </IconButton>
     </div>
   );
