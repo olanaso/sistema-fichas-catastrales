@@ -1,0 +1,150 @@
+package com.servicio.datos.model.Fcatastro;
+
+
+
+import java.util.List;
+
+import lombok.Data;
+@Data
+public class FichaCatastralCuscoResponse {
+
+
+	String region;
+	String sucursal;
+	String sector;
+	String mzna;
+	String lote;
+	String sublote;
+	String suministro;
+	String calle;
+	String cuadra;
+	String nromuni;
+	String mzmuni;
+	String ltmuni;
+	String urbanizacion;
+	String tipoconstruccion;
+	String nropisos;
+	String tiposervicio_campo;
+	String abastecimiento;
+	String piscina;
+	String almacenaje;
+	String tipousuario;
+	String apellidosnombre_campo;
+	String dni;
+	String habitantes;
+	String tiporesponsable;
+	String telefono;
+	String nrocontrato;
+	String reservorio;
+	String sectabastecimiento;
+	String categoriascampo;
+	String actividades;
+	String razonsocial;
+	String estservicio_a;
+	String pavimento_a;
+	String vereda_a;
+	String diametrocampo_a;
+	String materialtubo_a;
+	String tipoingreso_a;
+	String caja_a;//falta 
+	String materialcaja_a;
+	String localizacion_a;
+	String estadocaja_a;
+	String tapa_a;//falta
+	String materialtapa_a;
+	String estadotapa_a;
+	String posicionmedidor;
+	String tipocorte_a;
+	String razoncorte;
+	String fugas_a;
+	String tipocajaobserv_a;
+	String tienemedidor;//falta
+	String medidorcampo;
+	String modelomedidor;
+	String anio;
+	String lecturamedidor;
+	String fechainstalacion;
+	String marcamedidor;
+	String diametromedidor;
+	String lectura;
+	String tipofacturacion;
+	String tipolectura;
+	String estadomedidor;
+	String medidoroperativo;
+	String estservicio_d;
+	String diametrocampo_d;
+	String materialtubo_d;
+	String caja_d;
+	String materialcaja_d;//falta
+	String localizacion_d;
+	String estadocaja_d;
+	String tapa_d;//falta
+	String tipotapa_d;//falta
+	String estadotapa_d;
+	String fugas_d;
+	String horasxdia;
+	String diasxsemana;
+	String presionagu;
+	String nrolavatorios;
+	String estadolavatorios;
+	String nrolavadoras;
+	String estadolavadoras;
+	String nrowater;
+	String estadowater;
+	String nroduchas;
+	String estadoduchas;
+	String nrourinarios;
+	String estadourinarios;
+	String nrogrifos;
+	String estadogrifos;
+	String nropiscina;
+	String estadopiscina;
+	String nrotanquecisterna;
+	String estadotanquecisterna;
+	String nrotanqueelevado;
+	String estadotanqueelevado;
+	String observacion;
+	String fichaincompleta;
+	String tipoacccomercial;
+	String encuestador;
+	String fecencuestador;
+	String calidad;
+	String feccalidad;
+	String supervisor;
+	String fecsupervisor;
+	String supervision;
+	String fecsupervision;
+	String objectID;
+	String posicionx;
+	String posiciony;
+	String usermodificador;
+	String fechamodificacion;
+	String codcatastral;
+	String coddist;
+	String codsector_new;
+	String codmza_new;
+	String nrolote_new;
+	String nrosublote_new;
+	String propietario;
+	String fecha;
+	String fotofachada;
+	String fotocajaagua;
+	String fotocajadesague;
+	String llaves; 
+	String nromed_sistema;
+	String medidalotefrente;
+	String medidaejeagua;
+	String medidaejedesague;
+	int fichaaprobada;
+	String fechaaprobacion ;
+	String desactividad;
+	String descatetar;
+	String unidades_uso;
+	int codcalle;
+	String codurbaso;
+	String fotodetalle4;
+	String fotodetalle5;
+	
+
+	
+}
