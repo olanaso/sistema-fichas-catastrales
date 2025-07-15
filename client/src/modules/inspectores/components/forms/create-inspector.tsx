@@ -22,8 +22,15 @@ import { CustomDialog } from "@/components/custom/dialog";
 import { useAuth } from "@/hooks/use-auth";
 import { CustomInputControlled } from "@/components/custom/input-controlled";
 import { useInspectores } from "../../context/inspectores-context";
+import { GrupoTrabajo } from "@/models/grupotrabajo";
+import { DataCombobox } from "@/components/custom/data-combobox";
 
-export default function CreateInspectorForm() {
+interface CreateInspectorFormProps {
+  gruposDeTrabajo: GrupoTrabajo[];
+}
+
+
+export default function CreateInspectorForm({ gruposDeTrabajo }: CreateInspectorFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const { user } = useAuth();
@@ -192,12 +199,13 @@ export default function CreateInspectorForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <CustomInputControlled
-                          label="Código de brigada *"
-                          placeholder="Ej: 003"
-                          required
-                          maxLength={10}
-                          textTransform="uppercase"
+                        <DataCombobox
+                          options={gruposDeTrabajo.map(grupo => ({
+                            label: grupo.nombre,
+                            value: grupo.codgrupo
+                          }))}
+                          label="Grupo de trabajo *"
+                          placeholder="Selecciona un grupo de trabajo"
                           {...field}
                         />
                       </FormControl>

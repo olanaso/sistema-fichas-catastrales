@@ -24,7 +24,6 @@ import { IconButton } from "@/components/custom/icon-button";
 import { Usuario } from "@/models/usuario";
 import { Inspector } from "@/models/inspector";
 import { DataCombobox } from "@/components/custom/data-combobox";
-import { Badge } from "@/components/ui/badge";
 
 interface UpdateGrupoTrabajoFormProps {
   grupoTrabajo: any // Tipo del grupo de trabajo a editar
@@ -43,8 +42,6 @@ export default function UpdateGrupoTrabajoForm({
 }: UpdateGrupoTrabajoFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const [selectedInspectors, setSelectedInspectors] = useState<Inspector[]>([]);
-  const [selectedInspectorId, setSelectedInspectorId] = useState<string>("");
   const { forceRefresh } = useGrupoTrabajo();
 
   const form = useForm<UpdateGrupoTrabajoFormValues>({
@@ -54,58 +51,21 @@ export default function UpdateGrupoTrabajoForm({
       nombre: "",
       activo: true,
       codlider: "",
-      inspectores: "",
     },
   });
 
   // Actualizar valores del formulario cuando cambie el grupo de trabajo
   useEffect(() => {
     if (grupoTrabajo) {
-      // Convertir el array de inspectores a string separado por comas
-      const inspectoresString = Array.isArray(grupoTrabajo.inspectores) 
-        ? grupoTrabajo.inspectores.join(',') 
-        : grupoTrabajo.inspectores || '';
 
       form.reset({
         codgrupo: grupoTrabajo.codgrupo || "",
         nombre: grupoTrabajo.nombre || "",
         activo: grupoTrabajo.activo ?? true,
         codlider: grupoTrabajo.codlider || "",
-        inspectores: inspectoresString,
       });
-
-      // Cargar inspectores seleccionados
-      if (inspectoresString) {
-        const inspectorCodes = inspectoresString.split(',').map((code: string) => code.trim());
-        const selectedInspectorsList = inspectores.filter(ins => 
-          inspectorCodes.includes(ins.codinspector)
-        );
-        setSelectedInspectors(selectedInspectorsList);
-      } else {
-        setSelectedInspectors([]);
-      }
     }
-  }, [grupoTrabajo, form, inspectores]);
-
-  // Actualizar el campo inspectores cuando cambie la lista seleccionada
-  useEffect(() => {
-    const inspectorCodes = selectedInspectors.map(inspector => inspector.codinspector).join(',');
-    form.setValue("inspectores", inspectorCodes);
-  }, [selectedInspectors, form]);
-
-  const addInspector = () => {
-    if (!selectedInspectorId) return;
-    
-    const inspector = inspectores.find(ins => ins.codinspector === selectedInspectorId);
-    if (inspector && !selectedInspectors.find(ins => ins.codinspector === inspector.codinspector)) {
-      setSelectedInspectors(prev => [...prev, inspector]);
-      setSelectedInspectorId("");
-    }
-  };
-
-  const removeInspector = (codinspector: string) => {
-    setSelectedInspectors(prev => prev.filter(ins => ins.codinspector !== codinspector));
-  };
+  }, [grupoTrabajo, form]);
 
   async function onSubmit(values: UpdateGrupoTrabajoFormValues) {
     setIsLoading(true);
@@ -133,8 +93,6 @@ export default function UpdateGrupoTrabajoForm({
 
   const handleCancel = () => {
     form.reset();
-    setSelectedInspectors([]);
-    setSelectedInspectorId("");
     setShowDialog(false);
     onCancel?.();
   };
@@ -222,81 +180,6 @@ export default function UpdateGrupoTrabajoForm({
               </div>
             </div>
 
-            {/* Bloque 2: Selección de Inspectores */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Selección de Inspectores</h3>
-              
-              {/* Selector de inspector */}
-              <div className="flex flex-col sm:flex-row gap-2">
-                <div className="flex-1 min-w-0">
-                  <DataCombobox
-                    placeholder="Seleccione un inspector para agregar"
-                    options={inspectores
-                      .filter(ins => !selectedInspectors.find(selected => selected.codinspector === ins.codinspector))
-                      .map((inspector) => ({
-                        value: inspector.codinspector,
-                        label: `${inspector.nombres} (${inspector.codinspector})`,
-                        icon: <UserPlus className="w-4 h-4" />,
-                      }))}
-                    value={selectedInspectorId}
-                    onChange={(value) => setSelectedInspectorId(value as string)}
-                  />
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={addInspector}
-                  disabled={!selectedInspectorId}
-                  className="flex items-center gap-2 sm:w-auto w-full"
-                >
-                  <Plus className="w-4 h-4" />
-                  Agregar
-                </Button>
-              </div>
-
-              {/* Lista de inspectores seleccionados */}
-              {selectedInspectors.length > 0 && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Inspectores seleccionados ({selectedInspectors.length})</label>
-                  <div className="flex flex-wrap gap-2 p-3 border rounded-lg bg-gray-50">
-                    {selectedInspectors.map((inspector) => (
-                      <Badge
-                        key={inspector.codinspector}
-                        variant="secondary"
-                        className="flex items-center gap-1 px-3 py-1 max-w-full"
-                      >
-                        <User className="w-3 h-3 shrink-0" />
-                        <span className="truncate">{inspector.nombres} ({inspector.codinspector})</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeInspector(inspector.codinspector)}
-                          className="h-auto p-0 ml-1 hover:bg-transparent shrink-0"
-                        >
-                          <X className="w-3 h-3" />
-                        </Button>
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Campo oculto para el formulario */}
-              <FormField
-                control={form.control}
-                name="inspectores"
-                render={({ field }) => (
-                  <FormItem className="hidden">
-                    <FormControl>
-                      <input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
             {/* Estado del grupo */}
             <div className="space-y-4">
               <FormField
@@ -336,7 +219,7 @@ export default function UpdateGrupoTrabajoForm({
               </Button>
               <Button 
                 type="submit" 
-                disabled={isLoading || selectedInspectors.length === 0}
+                disabled={isLoading}
                 className="w-full sm:w-auto"
               >
                 {isLoading ? (

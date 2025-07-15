@@ -6,8 +6,10 @@ import { BackendTable } from "@/components/table/table";
 import { TableToolbar } from "@/components/table/table-toolbar";
 import CreateInspectorForm from "../forms/create-inspector";
 import { PaginatedData } from "@/components/table/table";
+import { GrupoTrabajo } from "@/models/grupotrabajo";
 
 interface TableInspectorProps {
+  gruposDeTrabajo: GrupoTrabajo[];
   inspectores: PaginatedData<InspectorDto>;
   loading?: boolean;
   onPageChange?: (page: number) => void;
@@ -15,6 +17,7 @@ interface TableInspectorProps {
 }
 
 export default function TableInspector({ 
+  gruposDeTrabajo,
   inspectores, 
   loading = false,
   onPageChange,
@@ -25,7 +28,7 @@ export default function TableInspector({
     <>
       {inspectores.data.length > 0 ? (
         <BackendTable 
-          columns={columns} 
+          columns={columns(gruposDeTrabajo)} 
           data={inspectores}
           loading={loading}
           onPageChange={onPageChange}
@@ -35,7 +38,7 @@ export default function TableInspector({
               table={table} 
               searchKey="nombres"
               searchPlaceholder="Buscar inspectores..."
-              actions={<CreateInspectorForm />}
+              actions={<CreateInspectorForm gruposDeTrabajo={gruposDeTrabajo} />}
             />
           )}
           pageSize={inspectores.size || 10}

@@ -78,7 +78,7 @@ export const createColumns = ({ supervisores, inspectores }: ColumnsProps): Colu
     },
     cell: ({ row }) => {
       const inspectores = row.original.inspectores;
-      const count = Array.isArray(inspectores) ? inspectores.length : 0;
+      const count = inspectores;
       
       return (
         <div className="text-start">

@@ -19,14 +19,17 @@ import { CustomDialog } from "@/components/custom/dialog";
 import { CustomInputControlled } from "@/components/custom/input-controlled";
 import { useInspectores } from "../../context/inspectores-context";
 import { IconButton } from "@/components/custom/icon-button";
+import { GrupoTrabajo } from "@/models/grupotrabajo";
+import { DataCombobox } from "@/components/custom/data-combobox";
 
 interface UpdateInspectorFormProps {
   inspector: any // Tipo del inspector a editar
   onSuccess?: () => void
   onCancel?: () => void
+  gruposDeTrabajo: GrupoTrabajo[];
 }
 
-export default function UpdateInspectorForm({ inspector, onSuccess, onCancel }: UpdateInspectorFormProps) {
+export default function UpdateInspectorForm({ inspector, onSuccess, onCancel, gruposDeTrabajo }: UpdateInspectorFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const { forceRefresh } = useInspectores();
@@ -197,12 +200,14 @@ export default function UpdateInspectorForm({ inspector, onSuccess, onCancel }: 
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <CustomInputControlled
-                          label="Código de brigada *"
-                          placeholder="Ej: 003"
+                        <DataCombobox
+                          label="Grupo de trabajo *"
+                          placeholder="Selecciona un grupo de trabajo"
                           required
-                          maxLength={10}
-                          textTransform="uppercase"
+                          options={gruposDeTrabajo.map(grupo => ({
+                            label: grupo.nombre,
+                            value: grupo.codgrupo
+                          }))}
                           {...field}
                         />
                       </FormControl>

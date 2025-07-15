@@ -2,16 +2,17 @@ import { ColumnDef } from "@tanstack/react-table"
 import { TableHeaderColumn } from "@/components/table/table-header-column"
 // import InspectorActionTable from "./action-table"
 import { InspectorDto } from "@/models/inspector"
-import { Circle, Shield, ShieldCheck, User, Building, MapPin } from "lucide-react"
+import { Circle, Shield, ShieldCheck, User, Building, MapPin, Group } from "lucide-react"
 import { CustomBadge } from "@/components/custom/custom-badge"
 import InspectorActionTable from "./action-table"
+import { GrupoTrabajo } from "@/models/grupotrabajo"
 
-export const columns: ColumnDef<InspectorDto>[] = [
+export const columns = (gruposDeTrabajo: GrupoTrabajo[]): ColumnDef<InspectorDto>[] => [
   {
     id: "actions",
     header: "Acciones",
     cell: ({ row }) => {
-      return <InspectorActionTable inspector={row.original} />
+      return <InspectorActionTable inspector={row.original} gruposDeTrabajo={gruposDeTrabajo} />
     },
   },
   {
@@ -51,36 +52,6 @@ export const columns: ColumnDef<InspectorDto>[] = [
       return <TableHeaderColumn column={column} title="DNI" />
     },
   },
-//   {
-//     id: "codoficina",
-//     accessorKey: "codoficina",
-//     header: ({ column }) => {
-//       return <TableHeaderColumn column={column} title="Oficina" />
-//     },
-//     cell: ({ row }) => {
-//       return (
-//         <div className="text-start flex items-center gap-2">
-//           <Building className="w-4 h-4 text-gray-600" />
-//           {row.original.codoficina || "Sin oficina"}
-//         </div>
-//       );
-//     },
-//   },
-//   {
-//     id: "codbrigada",
-//     accessorKey: "codbrigada",
-//     header: ({ column }) => {
-//       return <TableHeaderColumn column={column} title="Brigada" />
-//     },
-//     cell: ({ row }) => {
-//       return (
-//         <div className="text-start flex items-center gap-2">
-//           <MapPin className="w-4 h-4 text-green-600" />
-//           {row.original.codbrigada || "Sin brigada"}
-//         </div>
-//       );
-//     },
-//   },
   {
     id: "supervisor",
     accessorKey: "supervisor",
@@ -108,58 +79,22 @@ export const columns: ColumnDef<InspectorDto>[] = [
       );
     },
   },
-//   {
-//     id: "estareg",
-//     accessorKey: "estareg",
-//     header: ({ column }) => {
-//       return <TableHeaderColumn column={column} title="Estado" />
-//     },
-//     cell: ({ row }) => {
-//       const estareg = row.original.estareg;
-//       const isActive = estareg === 1;
-      
-//       let icon = <Circle />
-//       if (isActive) {
-//         icon = <Circle className="text-green-500 bg-green-500/10 p-1 rounded-full" />
-//       } else {
-//         icon = <Circle className="text-red-500 bg-red-500/10 p-1 rounded-full" />
-//       }
-//       return <div className="text-start flex items-center gap-2">{icon} {isActive ? "Activo" : "Inactivo"}</div>
-//     },
-//   },
   {
-    id: "asignaciones",
+    id: "grupotrabajo",
+    accessorKey: "grupotrabajo",
     header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Asignaciones" />
+      return <TableHeaderColumn column={column} title="Grupo de trabajo" />
     },
     cell: ({ row }) => {
-      const inspector = row.original;
-      const asignaciones = [
-        inspector.asignadoareclamos,
-        inspector.asignadoalectura,
-        inspector.asignadoacalibradormed,
-        inspector.asignadoacortes,
-        inspector.asignadoconsultas,
-        inspector.asignadocatastro,
-        inspector.asignadoinspecciones,
-        inspector.asignadoareapertura,
-        inspector.asignadoanotificaciones,
-        inspector.asignadoparquemedidores,
-        inspector.asignadofactibilidad,
-        inspector.asignadoincidenciacampo,
-        inspector.asignadoordendepago,
-        inspector.asignadoentregarecibo,
-        inspector.asignadoalcencegeneral,
-        inspector.asignadocatastroreal,
-      ].filter(assignment => assignment === 1).length;
-
+      const grupotrabajo = gruposDeTrabajo.find(grupo => grupo.codgrupo === row.original.codbrigada);
       return (
-        <div className="text-start">
-          <CustomBadge color="orange" className="text-xs">
-            {asignaciones} asignaciones
+        <div className="text-start flex items-center gap-2">
+          <Group className="w-4 h-4 text-green-600" />
+          <CustomBadge color="green" className="text-xs">
+            {grupotrabajo?.nombre || "Sin grupo de trabajo"}
           </CustomBadge>
         </div>
-      );
+      )
     },
   }
 ] 

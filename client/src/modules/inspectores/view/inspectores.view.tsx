@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import TableInspector from "../components/table/table-inspector";
 import { InspectoresProvider, useInspectores } from "../context/inspectores-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { getData } from "@/service/data.actions";
+import { GrupoTrabajo } from "@/models/grupotrabajo";
+import { obtenerDataDinamico } from "@/service/obtener-data-dinamico";
 
 // Componente de carga
 function InspectoresSkeleton() {
@@ -23,17 +26,21 @@ function InspectoresContent() {
     isLoading, 
     error, 
     refreshData,
-    pagination,
     handlePageChange,
     handlePageSizeChange
   } = useInspectores();
+  const [gruposDeTrabajo, setGruposDeTrabajo] = useState<GrupoTrabajo[]>([]);
 
   useEffect(() => {
     refreshData();
   }, [refreshData]);
 
   useEffect(() => {
-  }, [inspectores, isLoading, error, pagination]);
+    //obtener data de la tabla de grupos de trabajo
+    obtenerDataDinamico("usp_grupotrabajo").then((data) => {
+      setGruposDeTrabajo(data);
+    });
+  }, []);
 
   if (isLoading && inspectores.data.length === 0) {
     return <InspectoresSkeleton />;
@@ -76,6 +83,7 @@ function InspectoresContent() {
         </Alert>
       ) : (
         <TableInspector 
+          gruposDeTrabajo={gruposDeTrabajo}
           inspectores={inspectores}
           loading={isLoading}
           onPageChange={handlePageChange}

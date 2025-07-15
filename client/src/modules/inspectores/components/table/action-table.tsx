@@ -17,12 +17,14 @@ import { LoadingButton } from "@/components/custom/loading-button";
 import { toast } from "sonner";
 import { InspectorDto } from "@/models/inspector";
 import { useInspectores } from "../../context/inspectores-context";
+import { GrupoTrabajo } from "@/models/grupotrabajo";
 
 interface InspectorActionTableProps {
   inspector: InspectorDto;
+  gruposDeTrabajo: GrupoTrabajo[];
 }
 
-export default function InspectorActionTable({ inspector }: InspectorActionTableProps) {
+export default function InspectorActionTable({ inspector, gruposDeTrabajo }: InspectorActionTableProps) {
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [isOpenStatus, setIsOpenStatus] = useState(false);
   const { refreshData, pagination } = useInspectores();
@@ -38,6 +40,7 @@ export default function InspectorActionTable({ inspector }: InspectorActionTable
 
       {/* Dialog para actualizar el inspector */}
       <UpdateInspectorForm
+        gruposDeTrabajo={gruposDeTrabajo}
         inspector={inspector}
         onSuccess={handleUpdateSuccess}
         onCancel={() => setIsOpenUpdate(false)}
