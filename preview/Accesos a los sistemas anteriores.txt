@@ -1,0 +1,3 @@
+URL: http://161.132.56.57/appCatastro/#/seguridad/login?return=%2Fpages%2FCatastro%2FReporteCusco
+Usuario:OTIC25
+Pass: @2025@
