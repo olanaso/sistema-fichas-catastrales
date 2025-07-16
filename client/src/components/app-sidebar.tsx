@@ -13,6 +13,8 @@ import {
   Ticket,
   ArrowRightCircle,
   Layers,
+  Component,
+  Puzzle,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -99,6 +101,19 @@ const menuCapacitacion = [
   },
 ];
 
+const menuModulos = [
+  {
+    title: "Modulos",
+    url: "/modulos",
+    icon: Component,
+  },
+  {
+    title: "Tipos de datos",
+    url: "/tipos-datos",
+    icon: Puzzle,
+  },
+];
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const { state } = useSidebar();
@@ -140,6 +155,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const filteredMenuGestion = getFilteredMenu(menuGestion);
   const filteredMenuFichas = getFilteredMenu(menuFichas);
   const filteredMenuCapacitacion = getFilteredMenu(menuCapacitacion);
+  const filteredMenuModulos = getFilteredMenu(menuModulos);
 
   // No renderizar nada hasta que se monte en el cliente
   if (!isMounted) {
@@ -338,6 +354,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         )}
 
+        {/* Solo mostrar si el usuario tiene acceso total o puede acceder a estas vistas */}
+        {(hasTotalAccess() || filteredMenuModulos.length > 0) && (
+          <SidebarGroup>
+          <SidebarGroupLabel>Modulos</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {filteredMenuModulos.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.url;
+
+                return (
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.title}
+                      isActive={isActive}
+                    >
+                      <Link href={item.url}>
+                        <Icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        )}
         {/* Solo mostrar si el usuario tiene acceso total o puede acceder a estas vistas */}
         {(hasTotalAccess() || filteredMenuConfiguracion.length > 0) && (
           <SidebarGroup>

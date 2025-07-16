@@ -61,3 +61,28 @@ export interface TipoServicio {
   descripcion2?: string | null;
   orden?: number | null;
 }
+
+// src/models/tipopavimento.ts
+export interface TipoPavimento {
+  codemp: string;
+  pavconagu: string;
+  descripcion?: string | null;
+  estareg: number;
+  creador: string;
+  fechareg: string | null; // timestamp en string ISO o null
+  tipocon?: string | null;
+  orden?: number | null;
+}
+
+// src/models/tipovereda.ts
+export interface TipoVereda {
+  codemp: string;
+  vereda: string;
+  descripcion?: string | null;
+  estareg: number;
+  creador: string;
+  fechareg: string | null; // timestamp en string ISO o null
+  tipocon?: string | null;
+  orden?: number | null;
+  codequivalencia?: string | null;
+}

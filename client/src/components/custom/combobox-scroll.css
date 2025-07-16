@@ -1,0 +1,82 @@
+/* Estilos para mejorar el scroll en combobox */
+.combobox-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+.combobox-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.combobox-scroll-container::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.combobox-scroll-container::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.combobox-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Asegurar que el scroll funcione en dispositivos táctiles */
+.combobox-scroll-container {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mejorar el comportamiento del scroll en Firefox */
+.combobox-scroll-container {
+  scroll-behavior: smooth;
+}
+
+/* Forzar el scroll en el contenedor */
+.combobox-scroll-container {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Asegurar que los items no interfieran con el scroll */
+.combobox-item {
+  pointer-events: auto;
+  user-select: none;
+}
+
+/* Prevenir que el scroll se propague al contenedor padre */
+.combobox-scroll-container {
+  isolation: isolate;
+}
+
+/* Estilos específicos para el contenedor de scroll del combobox */
+[data-slot="popover-content"] .overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+[data-slot="popover-content"] .overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-slot="popover-content"] .overflow-y-auto::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+[data-slot="popover-content"] .overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+[data-slot="popover-content"] .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+} 

@@ -26,7 +26,7 @@ public class GrupoTrabajoService {
             throw new RuntimeException("Error al insertar o actualizar grupo de trabajo: " + e.getMessage(), e);
         }
     }
-    
+
     public String getDataGrupoInspectoresPaginado(int limit, int offset) {
         try {
             Query query = entityManager.createNativeQuery(
