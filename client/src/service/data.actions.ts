@@ -63,3 +63,62 @@ export async function getData(tabla: string) {
         };
     }
 }
+
+//buscar datos exactos en columnas específicas de una tabla
+export async function buscarExacto(tabla: string, columnas: string[], valores: string[]) {
+    try {
+        // Construir los parámetros de consulta para las listas
+        const columnasParam = columnas.map(col => `columnas=${encodeURIComponent(col)}`).join('&');
+        const valoresParam = valores.map(val => `valores=${encodeURIComponent(val)}`).join('&');
+        
+        const response = await apiClient.get(`/tipos/buscar-exacto?tabla=${tabla}&${columnasParam}&${valoresParam}`);
+
+        // El backend devuelve un string JSON, necesitamos parsearlo
+        const responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+
+        return {
+            success: true,
+            data: responseData,
+            total: Array.isArray(responseData) ? responseData.length : 0,
+            message: `Búsqueda exacta en ${tabla} realizada exitosamente`
+        };
+    } catch (error: any) {
+        console.error(`Error en buscarExacto para tabla ${tabla}:`, error);
+        return {
+            success: false,
+            error: error.message || `Error al buscar en ${tabla}`,
+            message: error.response?.data?.message || `Error al buscar en ${tabla}`,
+            data: [],
+            total: 0
+        };
+    }
+}
+
+//buscar datos por coincidencia en múltiples columnas de una tabla
+export async function buscarCoincidencia(tabla: string, columnas: string[], termino: string) {
+    try {
+        // Construir los parámetros de consulta para las columnas
+        const columnasParam = columnas.map(col => `columnas=${encodeURIComponent(col)}`).join('&');
+        
+        const response = await apiClient.get(`/tipos/buscar-coincidencia?tabla=${tabla}&${columnasParam}&termino=${encodeURIComponent(termino)}`);
+
+        // El backend devuelve un string JSON, necesitamos parsearlo
+        const responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+
+        return {
+            success: true,
+            data: responseData,
+            total: Array.isArray(responseData) ? responseData.length : 0,
+            message: `Búsqueda por coincidencia en ${tabla} realizada exitosamente`
+        };
+    } catch (error: any) {
+        console.error(`Error en buscarCoincidencia para tabla ${tabla}:`, error);
+        return {
+            success: false,
+            error: error.message || `Error al buscar en ${tabla}`,
+            message: error.response?.data?.message || `Error al buscar en ${tabla}`,
+            data: [],
+            total: 0
+        };
+    }
+}

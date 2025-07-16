@@ -4,6 +4,7 @@ import org.catastro.sistemafichacatastral.dto.JsonInsertRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,6 +30,35 @@ public class TiposController {
             return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
         }
     }
+
+    @GetMapping("/buscar-exacto")
+    public ResponseEntity<?> buscarPorCamposExactos(
+            @RequestParam String tabla,
+            @RequestParam List<String> columnas,
+            @RequestParam List<String> valores
+    ) {
+        try {
+            String resultado = tiposService.buscarPorCamposExactos(tabla, columnas, valores);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/buscar-coincidencia")
+    public ResponseEntity<?> buscarPorCoincidencia(
+            @RequestParam String tabla,
+            @RequestParam List<String> columnas,
+            @RequestParam String termino
+    ) {
+        try {
+            String resultado = tiposService.buscarPorCoincidencia(tabla, columnas, termino);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
+
 
     @GetMapping("/obtener")
     public ResponseEntity<?> obtenerTablaJson(@RequestParam String tabla) {

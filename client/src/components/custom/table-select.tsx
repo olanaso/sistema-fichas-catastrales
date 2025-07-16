@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   type ColumnDef,
   type ColumnFiltersState,
   type SortingState,
   type VisibilityState,
+  type RowSelectionState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -21,23 +21,32 @@ import { DataTablePagination } from "@/components/custom/data-table-pagination"
 import { DataTableSkeleton } from "@/components/custom/data-table-skeleton"
 import { useIsMobile } from "@/hooks/use-mobile"
 
-interface DataTableProps<TData, TValue> {
+interface TableSelectProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   toolbar?: (table: ReturnType<typeof useReactTable>) => React.ReactNode
   pagination?: boolean
   pageSize?: number
   pageSizeOptions?: number[]
+  // Props para manejo de selección externa
+  onSelectionChange?: (selectedIds: number[]) => void
+  selectedIds?: number[]
+  idField?: string // Campo que contiene el ID único de cada fila
+  loading?: boolean
 }
 
-export function DataTable<TData, TValue>({
+export function TableSelect<TData, TValue>({
   columns,
   data,
   toolbar,
   pagination = true,
   pageSize = 10,
   pageSizeOptions = [5, 10, 20, 50],
-}: DataTableProps<TData, TValue>) {
+  onSelectionChange,
+  selectedIds = [],
+  idField = "id",
+  loading = false,
+}: TableSelectProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -57,6 +66,51 @@ export function DataTable<TData, TValue>({
     }
   }, [isMobile])
 
+  // Función para sincronizar la selección externa con la selección interna de la tabla
+  const syncExternalSelection = useCallback(() => {
+    if (!onSelectionChange) return
+
+    const newRowSelection: Record<string, boolean> = {}
+    
+    data.forEach((row, index) => {
+      const rowId = (row as any)[idField]
+      if (selectedIds.includes(rowId)) {
+        newRowSelection[index.toString()] = true
+      }
+    })
+
+
+    setRowSelection(newRowSelection)
+  }, [data, selectedIds, idField, onSelectionChange])
+
+  // Sincronizar selección cuando cambien los datos o IDs seleccionados
+  useEffect(() => {
+    syncExternalSelection()
+  }, [syncExternalSelection])
+
+  // Función para manejar cambios en la selección de filas
+  const handleRowSelectionChange = useCallback((updaterOrValue: RowSelectionState | ((old: RowSelectionState) => RowSelectionState)) => {
+    const newRowSelection = typeof updaterOrValue === 'function' ? updaterOrValue(rowSelection) : updaterOrValue
+    setRowSelection(newRowSelection)
+
+    // Convertir la selección de la tabla a IDs y notificar al componente padre
+    if (onSelectionChange) {
+      const selectedRowIds: number[] = []
+      
+      Object.keys(newRowSelection).forEach((rowIndex) => {
+        if (newRowSelection[rowIndex]) {
+          const row = data[parseInt(rowIndex)]
+          const rowId = (row as any)[idField]
+          if (rowId !== undefined) {
+            selectedRowIds.push(rowId)
+          }
+        }
+      })
+
+      onSelectionChange(selectedRowIds)
+    }
+  }, [data, idField, onSelectionChange, rowSelection])
+
   const table = useReactTable({
     data,
     columns,
@@ -67,7 +121,7 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: handleRowSelectionChange,
     state: {
       sorting,
       columnFilters,
@@ -88,6 +142,11 @@ export function DataTable<TData, TValue>({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // Ejecutar solo una vez al montar el componente
+
+  // Mostrar skeleton si está cargando
+  if (loading) {
+    return <DataTableSkeleton columns={columns.length} rows={pageSize} />
+  }
 
   return (
     <div className="space-y-4">
@@ -137,4 +196,4 @@ export function DataTable<TData, TValue>({
       {pagination && <DataTablePagination table={table} pageSizeOptions={pageSizeOptions} />}
     </div>
   )
-}
+} 

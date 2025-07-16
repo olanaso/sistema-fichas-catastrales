@@ -6,6 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -13,7 +14,6 @@ public class TiposService {
 
     @PersistenceContext
     private EntityManager entityManager;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public String obtenerDataComoJson(String nombreTabla) {
         try {
@@ -53,6 +53,38 @@ public class TiposService {
             return result != null ? result.toString() : "[]";
         } catch (Exception e) {
             throw new RuntimeException("Error al buscar en la tabla: " + e.getMessage(), e);
+        }
+    }
+
+    public String buscarPorCamposExactos(String tabla, List<String> columnas, List<String> valores) {
+        try {
+            Query query = entityManager.createNativeQuery(
+                    "SELECT fichacatastral.usp_buscar_por_campos_exactos(?1, ?2, ?3)"
+            );
+            query.setParameter(1, tabla);
+            query.setParameter(2, columnas.toArray(new String[0]));
+            query.setParameter(3, valores.toArray(new String[0]));
+
+            Object result = query.getSingleResult();
+            return result != null ? result.toString() : "[]";
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar por campos exactos: " + e.getMessage(), e);
+        }
+    }
+
+    public String buscarPorCoincidencia(String tabla, List<String> columnas, String termino) {
+        try {
+            Query query = entityManager.createNativeQuery(
+                    "SELECT fichacatastral.usp_buscar_por_coincidencia(?1, ?2, ?3)"
+            );
+            query.setParameter(1, tabla);
+            query.setParameter(2, columnas.toArray(new String[0]));
+            query.setParameter(3, termino);
+
+            Object result = query.getSingleResult();
+            return result != null ? result.toString() : "[]";
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar por coincidencia: " + e.getMessage(), e);
         }
     }
 

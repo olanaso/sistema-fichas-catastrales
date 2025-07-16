@@ -86,3 +86,40 @@ export interface TipoVereda {
   orden?: number | null;
   codequivalencia?: string | null;
 }
+
+// src/models/sucursal.ts
+export interface Sucursal {
+  codemp: string;
+  codsuc: string;
+  nombre: string;
+  telefono?: string | null;
+  direccion: string;
+  administrador: string;
+  notas?: string | null;
+  intmora?: number | null;
+  alcanta?: number | null;
+  mora: number;
+  inidefault: number;
+  codcta?: string | null;
+  estareg: number;
+  creador: string;
+  fechareg: string | null; // timestamp en string ISO o null
+  destarifarecibo?: string | null;
+  flaginterescerrados: number;
+  flagmesconsumo: number;
+  usoigv?: number | null;
+  latitud?: number | null;
+  longitud?: number | null;
+  provincia?: string | null;
+  distrito?: string | null;
+  coddist?: string | null;
+  codprov?: string | null;
+  coddpto?: string | null;
+  viviendas?: number | null;
+  densidad?: number | null;
+  codsicap?: string | null;
+  seleccionar: number;
+  loginjefatura?: string | null;
+  idotass?: string | null;
+}
+

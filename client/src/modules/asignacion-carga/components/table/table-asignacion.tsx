@@ -1,69 +1,67 @@
 "use client";
 
-import { FichaCatastroDto } from "@/models/fichacatastro";
-import { PaginatedData } from "@/components/table/table";
-import { BackendTable } from "@/components/table/table-select";
+import { FichaCatastro } from "@/models/fichacatastro";
 import { columns } from "./columns";
 import { Card, CardContent } from "@/components/ui/card";
 import { CustomBadge } from "@/components/custom/custom-badge";
-import { asignarFichaIndividual } from "../../action/asignacion-carga.actions";
 import {
-    CheckCircle,
-    AlertCircle,
-    Clock,
-    Info
+    Info,
+    Circle,
+    CheckSquare
 } from "lucide-react";
+import { TableSelect } from "@/components/custom/table-select";
+import { ComboboxOption } from "@/types/combobox";
+import { Inspector } from "@/models/inspector";
+
+// Tipo específico para opciones de inspectores
+interface InspectorOption extends ComboboxOption {
+    codbrigada?: string;
+}
 
 interface TableAsignacionProps {
-    fichas: PaginatedData<FichaCatastroDto>;
-    loading?: boolean;
-    onPageChange?: (page: number) => void;
-    onPageSizeChange?: (pageSize: number) => void;
+    fichas: FichaCatastro[];
+    inspectores: Inspector[];
     onSelectionChange?: (selectedIds: number[]) => void;
     selectedFichas?: number[]; // IDs de fichas seleccionadas externamente
+    loading?: boolean;
+    onAsignacionCompleta?: () => void; // Callback para recargar datos después de asignación
 }
 
 export default function TableAsignacion({
     fichas,
-    loading = false,
-    onPageChange,
-    onPageSizeChange,
+    inspectores,
     onSelectionChange,
-    selectedFichas = []
+    selectedFichas = [],
+    loading = false,
+    onAsignacionCompleta
 }: TableAsignacionProps) {
-    const handleAsignarFicha = async (ficha: FichaCatastroDto) => {
-        try {
-            // Por ahora, simular asignación individual
-            await asignarFichaIndividual(ficha.idficha, "INSPECTOR_TEMP");
-        } catch (error) {
-            console.error('Error al asignar ficha:', error);
-        }
-    };
-
-    // Función para manejar cambios en la selección desde la tabla
-    const handleTableSelectionChange = (table: any) => {
-        const selectedRowModel = table.getSelectedRowModel();
-        const selectedIds = selectedRowModel.rows.map((row: any) => row.original.idficha);
-
-        if (onSelectionChange) {
-            onSelectionChange(selectedIds);
-        }
-    };
-
     return (
         <div className="space-y-4">
+            {/* Indicador de selección */}
+            {selectedFichas.length > 0 && (
+                <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-950/20 dark:border-blue-800">
+                    <CheckSquare className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                        {selectedFichas.length} {selectedFichas.length === 1 ? 'ficha seleccionada' : 'fichas seleccionadas'}
+                    </span>
+                    <CustomBadge color="blue" className="text-xs">
+                        {selectedFichas.length}
+                    </CustomBadge>
+                </div>
+            )}
+
             {/* Tabla */}
-            {fichas.data.length > 0 ? (
-                <BackendTable
-                    columns={columns(handleAsignarFicha)}
+            {fichas.length > 0 ? (
+                <TableSelect
+                    columns={columns(inspectores, onAsignacionCompleta)}
                     data={fichas}
+                    onSelectionChange={onSelectionChange}
+                    selectedIds={selectedFichas}
+                    idField="idficha"
                     loading={loading}
-                    onPageChange={onPageChange}
-                    onPageSizeChange={onPageSizeChange}
-                    pageSize={fichas.size || 10}
-                    selectedRowIds={selectedFichas}
-                    onSelectionChange={handleTableSelectionChange}
-                    rowIdAccessor="idficha"
+                    pagination={true}
+                    pageSize={10}
+                    pageSizeOptions={[5, 10, 20, 50]}
                 />
             ) : (
                 <div className="text-center py-8">
@@ -82,7 +80,7 @@ export default function TableAsignacion({
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-gray-600" />
+                            <Circle className="w-4 h-4 text-gray-600" />
                             <CustomBadge color="dark" className="text-xs">
                                 PENDIENTE
                             </CustomBadge>
@@ -91,7 +89,7 @@ export default function TableAsignacion({
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4 text-blue-600" />
+                            <Circle className="w-4 h-4 text-blue-600" />
                             <CustomBadge color="blue" className="text-xs">
                                 PROCESO
                             </CustomBadge>
@@ -100,7 +98,7 @@ export default function TableAsignacion({
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            <Circle className="w-4 h-4 text-green-600" />
                             <CustomBadge color="green" className="text-xs">
                                 FINALIZADO
                             </CustomBadge>

@@ -56,7 +56,10 @@ export const ComboboxControlled = forwardRef<HTMLButtonElement, ComboboxControll
 
     const filteredOptions = onSearch
       ? options
-      : options.filter((option) => option.label.toLowerCase().includes(searchValue.toLowerCase()))
+      : options.filter((option) => {
+          const label = option.label || '';
+          return label.toLowerCase().includes(searchValue.toLowerCase())
+        })
 
     return (
       <div className="space-y-2 w-full">

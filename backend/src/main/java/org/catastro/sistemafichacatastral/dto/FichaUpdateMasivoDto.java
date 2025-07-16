@@ -3,10 +3,11 @@ package org.catastro.sistemafichacatastral.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
-public class FichaUpdateDto {
-    private Integer idficha;
+public class FichaUpdateMasivoDto {
+    private List<Integer> idfichas;
     private String inspector;
     private String encuestador;
     private LocalDate fechaVisita;

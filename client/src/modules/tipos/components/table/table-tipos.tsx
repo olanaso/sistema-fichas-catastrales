@@ -1,10 +1,6 @@
 "use client";
 
-import { UsuarioDto } from "@/models/usuario";
-import { BackendTable } from "@/components/table/table";
 import { TableToolbar } from "@/components/table/table-toolbar";
-import { PaginatedData } from "@/components/table/table";
-import { columns } from "@/modules/usuarios/components/table/columns";
 import { DataTable } from "@/components/custom/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 
