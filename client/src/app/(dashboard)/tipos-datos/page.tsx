@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { DynamicTabbedLayout, TabItem } from "@/components/custom/dynamic-tabbed-layout";
 import {
-  LayoutDashboard,
   Map,
   Plug,
   Droplet,
@@ -11,7 +10,6 @@ import {
   PackageSearch,
   FileWarning,
   Users,
-  UserCog,
   Link,
   Wrench,
   BookOpen,
@@ -21,13 +19,28 @@ import {
   FileSearch,
   ShieldCheck,
   Zap,
-  Key,
-  Settings,
   Home,
   Puzzle,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
+
+// Importar todas las vistas
 import TipoCalleContent from "@/modules/tipos/views/tipo-calles-view";
+import TipoConexionesContent from "@/modules/tipos/views/tipo-conexiones-view";
+import TipoLecturasContent from "@/modules/tipos/views/tipo-lecturas-view";
+import TipoMedidoresContent from "@/modules/tipos/views/tipo-medidores-view";
+import TipoInfraestructuraContent from "@/modules/tipos/views/tipo-infraestructura-view";
+import TipoAccesoriosContent from "@/modules/tipos/views/tipo-accesorios-view";
+import TipoMaterialesContent from "@/modules/tipos/views/tipo-materiales-view";
+import TipoCajasContent from "@/modules/tipos/views/tipo-cajas-view";
+import TipoTapasContent from "@/modules/tipos/views/tipo-tapas-view";
+import TipoServiciosContent from "@/modules/tipos/views/tipo-servicios-view";
+import TipoUsuariosContent from "@/modules/tipos/views/tipo-usuarios-view";
+import TipoObservacionesContent from "@/modules/tipos/views/tipo-observaciones-view";
+import TipoFichasContent from "@/modules/tipos/views/tipo-fichas-view";
+import TipoCortesContent from "@/modules/tipos/views/tipo-cortes-view";
+import TipoFacturacionContent from "@/modules/tipos/views/tipo-facturacion-view";
+import TipoAccionesContent from "@/modules/tipos/views/tipo-acciones-view";
 
 // Definición explícita de los tabs
 const tabs: TabItem[] = [
@@ -87,11 +100,6 @@ const tabs: TabItem[] = [
     icon: Users,
   },
   {
-    id: "responsables",
-    title: "Responsables",
-    icon: UserCog,
-  },
-  {
     id: "observaciones",
     title: "Observaciones",
     icon: FileWarning,
@@ -115,20 +123,27 @@ const tabs: TabItem[] = [
     id: "acciones",
     title: "Acciones Comerciales",
     icon: ClipboardList,
-  },
-  {
-    id: "llaves",
-    title: "Llave Medidor",
-    icon: Key,
   }
 ];
 
-// Mapeo de vistas
+// Mapeo de vistas actualizadas
 const viewComponents = {
   ubicacion: TipoCalleContent,
-  conexiones: TipoCalleContent,
-  medidores: TipoCalleContent,
-  cajas: TipoCalleContent,
+  conexiones: TipoConexionesContent,
+  lecturas: TipoLecturasContent,
+  medidores: TipoMedidoresContent,
+  infraestructura: TipoInfraestructuraContent,
+  accesorios: TipoAccesoriosContent,
+  materiales: TipoMaterialesContent,
+  cajas: TipoCajasContent,
+  tapas: TipoTapasContent,
+  servicios: TipoServiciosContent,
+  usuarios: TipoUsuariosContent,
+  observaciones: TipoObservacionesContent,
+  fichas: TipoFichasContent,
+  cortes: TipoCortesContent,
+  facturacion: TipoFacturacionContent,
+  acciones: TipoAccionesContent,
 };
 
 export default function TiposDatosPage() {
@@ -152,19 +167,19 @@ export default function TiposDatosPage() {
 
   return (
     <>
-    <Navbar 
-      breadcrumb={breadcrumb}
-      title="Tipos de datos"
-      description="Gestión de tipos de datos"
-    />
-    <DynamicTabbedLayout
-      tabs={tabs}
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-    >
-      {/* Renderizar la vista activa */}
-      {ActiveView && <ActiveView />}
-    </DynamicTabbedLayout>
+      <Navbar
+        breadcrumb={breadcrumb}
+        title="Tipos de datos"
+        description="Gestión de tipos de datos"
+      />
+      <DynamicTabbedLayout
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      >
+        {/* Renderizar la vista activa */}
+        {ActiveView && <ActiveView />}
+      </DynamicTabbedLayout>
     </>
   );
 }

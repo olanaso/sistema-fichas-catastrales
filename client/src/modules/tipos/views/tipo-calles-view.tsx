@@ -1,13 +1,13 @@
 "use client";
 
 import TableTipos from "../components/table/table-tipos";
-import { columnsTipoCalle } from "../components/table/column-tipocalle";
+import { columnsTipoCalle } from "../components/ubicacion-columns/column-tipocalle";
 import { TipoCalle, TipoPavimento, TipoVereda } from "@/models/tipos";
 import { useEffect, useState } from "react";
 import { getData } from "@/service/data.actions";
 import TitlePage from "@/components/custom/title-page";
-import { ColumnsTipoVereda } from "../components/table/column-tipovereda";
-import { ColumnsTipoPavimento } from "../components/table/column-tipopavimento";
+import { ColumnsTipoVereda } from "../components/ubicacion-columns/column-tipovereda";
+import { ColumnsTipoPavimento } from "../components/ubicacion-columns/column-tipopavimento";
 
 
 // Componente interno que usa el contexto
