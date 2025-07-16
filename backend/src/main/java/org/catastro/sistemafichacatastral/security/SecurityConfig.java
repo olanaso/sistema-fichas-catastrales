@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/configuracion/public/**").permitAll()
                         .requestMatchers("/usuarios/**").permitAll()
+                        .requestMatchers("/ficha-catastral/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
