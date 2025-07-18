@@ -6,10 +6,11 @@ import {
   Printer,
   ArrowRightLeft,
   CheckCircle,
+  Download,
 } from "lucide-react";
 import { IconButton } from "@/components/custom/icon-button";
 import { FichaCatastro } from "@/models/fichacatastro";
-import { imprimirFicha, migrarFicha, aprobarFicha } from "../../action/gestion-fichas.actions";
+import { imprimirFicha, migrarFicha, aprobarFicha, descargarFichaDoc } from "../../action/gestion-fichas.actions";
 import { useRouter } from "next/navigation";
 
 interface GestionFichasActionTableProps {
@@ -48,6 +49,12 @@ export default function GestionFichasActionTable({
     });
   };
 
+  const handleDescargarFicha = () => {
+    startTransition(async () => {
+      await descargarFichaDoc(ficha.codcliente);
+    });
+  };
+
   const isAprobada = ficha.estadoficha === "F";
   const isParcial = ficha.estadoficha === "P";
 
@@ -75,6 +82,18 @@ export default function GestionFichasActionTable({
         variant="ghost"
       >
         <Printer className="h-4 w-4" />
+      </IconButton>
+
+      {/* Botón Descargar */}
+      <IconButton
+        tooltip="Descargar ficha en Word"
+        tooltipIcon={<Download className="h-3 w-3" />}
+        onClick={handleDescargarFicha}
+        disabled={!isAprobada}
+        color="blue"
+        variant="ghost"
+      >
+        <Download className="h-4 w-4" />
       </IconButton>
 
       {/* Botón Migrar */}

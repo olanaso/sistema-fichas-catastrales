@@ -1,5 +1,9 @@
 package org.catastro.sistemafichacatastral.fichacatastral;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.catastro.sistemafichacatastral.FichasCatastrales.FichasService;
+import org.catastro.sistemafichacatastral.dto.DetalleFichaClienteDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,9 +32,11 @@ import java.util.Map;
 public class FichaCatastralController {
 
     private final FichaCatastralService fichaCatastralService;
+    private final FichasService fichasService;
 
-    public FichaCatastralController(FichaCatastralService fichaCatastralService) {
+    public FichaCatastralController(FichaCatastralService fichaCatastralService,  FichasService fichasService) {
         this.fichaCatastralService = fichaCatastralService;
+        this.fichasService = fichasService;
     }
 
 
@@ -90,7 +96,15 @@ public class FichaCatastralController {
     }
 
     @GetMapping("/docx")
-    public ResponseEntity<byte[]> generarWord() {
+    public ResponseEntity<byte[]> generarWord(
+            @RequestParam Integer codcliente
+    ) throws JsonProcessingException {
+
+        // Obtener la información completa de la ficha
+        String fichaDetalle = this.fichasService.obtenerDataCompletaFichaCatastro(codcliente);
+        // Convertir el JSON a Map
+        ObjectMapper mapper = new ObjectMapper();
+        DetalleFichaClienteDto ficha = mapper.readValue(fichaDetalle, DetalleFichaClienteDto.class);
 
         try (InputStream plantillaStream = getClass().getClassLoader().getResourceAsStream("plantillaficha.docx")) {
 
@@ -109,10 +123,15 @@ public class FichaCatastralController {
             }
 
             IContext context = report.createContext();
-            context.put("region", "Juan Pérez");
-            context.put("codigo", "XYZ123");
-            context.put("direccion", "ayacucho lima");
-            context.put("edad", "25");
+            context.put("region", ficha.getRegion().toString());
+            context.put("sucursal", ficha.getSucursal().toString());
+            context.put("sector", ficha.getSector().toString());
+            context.put("mzna", ficha.getMzna().toString());
+            context.put("lote", ficha.getLote().toString());
+            context.put("sublote", ficha.getSublote().toString());
+            context.put("suministro", ficha.getSuministro().toString());
+
+
 
             ByteArrayOutputStream docxOut = new ByteArrayOutputStream();
             report.process(context, docxOut);
