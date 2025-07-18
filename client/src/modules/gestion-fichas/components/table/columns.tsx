@@ -1,277 +1,295 @@
+"use client";
+
 import { ColumnDef } from "@tanstack/react-table";
 import { TableHeaderColumn } from "@/components/table/table-header-column";
-import { FichaCatastroDto } from "@/models/fichacatastro";
-import {
-    FileText,
-    User,
-    MapPin,
-    Calendar,
-    CheckCircle,
-    XCircle,
-    Clock,
-    AlertCircle,
-    Home,
-    Droplets,
-    Gauge,
-    Shield
-} from "lucide-react";
+import { FichaCatastro } from "@/models/fichacatastro";
 import { CustomBadge } from "@/components/custom/custom-badge";
-import { formatCodigoCatastral, getEstadoFichaLabel } from "@/models/fichacatastro";
+import {
+  UserPlus,
+  User,
+  Calendar,
+  XCircle,
+  Home,
+  Building,
+  Layers,
+  Wrench,
+  Zap,
+  Waves,
+  FileText,
+  Circle,
+} from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import GestionFichasActionTable from "./action-table";
+import { IconButton } from "@/components/custom/icon-button";
 
-export const columns: ColumnDef<FichaCatastroDto>[] = [
-    {
-        id: "actions",
-        header: "Acciones",
-        cell: ({ row }) => {
-            return <GestionFichasActionTable ficha={row.original} />;
-        },
+// Función para crear columnas con función de refresh
+export const createColumns = (
+  onRefresh?: () => void
+): ColumnDef<FichaCatastro>[] => [
+  {
+    id: "actions",
+    header: "Acciones",
+    cell: ({ row }) => {
+      return (
+        <GestionFichasActionTable
+          ficha={row.original}
+          onRefresh={onRefresh}
+        />
+      );
     },
-    {
-        id: "codigo_catastral",
-        header: ({ column }) => {
-            return <TableHeaderColumn column={column} title="Código Catastral" />;
-        },
-        cell: ({ row }) => {
-            const ficha = row.original;
-            const codigo = [
-                ficha.codsuc,
-                ficha.codsector_new,
-                ficha.codmza_new,
-                ficha.nrolote_new,
-                ficha.nrosublote_new
-            ].filter(Boolean).join('-') || 'Sin código';
+  },
+  {
+    id: "estado",
+    header: " ",
+    cell: ({ row }) => {
+      const ficha = row.original;
 
-            return (
-                <div className="text-start">
-                    <CustomBadge color="purple" className="text-xs font-mono">
-                        {codigo}
-                    </CustomBadge>
-                </div>
-            );
-        },
+      //obtener el estado de la ficha
+      const estado = ficha.estadoficha;
+      //designar el color y el texto del estado
+      const color = estado === "F" ? "green" : estado === "P" ? "blue" : "dark";
+      const texto =
+        estado === "F"
+          ? "Ficha completada"
+          : estado === "P"
+          ? "Ficha parcial"
+          : "Ficha pendiente";
+
+      return (
+        <div className="flex items-center gap-1">
+          <IconButton
+            tooltip={texto}
+            tooltipIcon={<Circle className="h-3 w-3" />}
+            color={color}
+            variant="ghost"
+          >
+            <Circle className="h-4 w-4" />
+          </IconButton>
+        </div>
+      );
     },
-    {
-        id: "estado_ficha",
-        header: ({ column }) => {
-            return <TableHeaderColumn column={column} title="Estado" />;
-        },
-        cell: ({ row }) => {
-            const ficha = row.original;
-            const estado = ficha.estadoficha;
-            const aprobada = ficha.fichaaprobada === 1;
-
-            let color: "green" | "red" | "amber" | "blue" | "purple" | "orange" | "dark" = "dark";
-            let icon = <Clock className="w-4 h-4" />;
-
-            if (aprobada) {
-                color = "green";
-                icon = <CheckCircle className="w-4 h-4" />;
-            } else if (estado === 'R') {
-                color = "red";
-                icon = <XCircle className="w-4 h-4" />;
-            } else if (estado === 'P') {
-                color = "amber";
-                icon = <AlertCircle className="w-4 h-4" />;
-            } else if (estado === 'E') {
-                color = "blue";
-                icon = <Clock className="w-4 h-4" />;
-            }
-
-            return (
-                <div className="text-start flex items-center gap-2">
-                    {icon}
-                    <CustomBadge color={color} className="text-xs">
-                        {aprobada ? "Aprobada" : getEstadoFichaLabel(estado)}
-                    </CustomBadge>
-                </div>
-            );
-        },
+    size: 20,
+  },
+  {
+    id: "inspector",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Inspector" />;
     },
-    {
-        id: "propietario",
-        accessorKey: "propietario",
-        header: ({ column }) => {
-            return <TableHeaderColumn column={column} title="Propietario" />;
-        },
-        cell: ({ row }) => {
-            const ficha = row.original;
-            return (
-                <div className="text-start flex items-center gap-2">
-                    <User className="w-4 h-4 text-blue-600" />
-                    <div>
-                        <div className="font-medium">{ficha.propietario || "Sin propietario"}</div>
-                        {ficha.dni && (
-                            <div className="text-xs text-muted-foreground">
-                                DNI: {ficha.dni}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        },
-    },
-    {
-        id: "direccion",
-        header: ({ column }) => {
-            return <TableHeaderColumn column={column} title="Dirección" />;
-        },
-        cell: ({ row }) => {
-            const ficha = row.original;
-            return (
-                <div className="text-start flex items-center gap-2">
-                    <Home className="w-4 h-4 text-green-600" />
-                    <div className="max-w-xs truncate">
-                        {ficha.direccion_completa || "Sin dirección"}
-                    </div>
-                </div>
-            );
-        },
-    },
-    {
-        id: "servicios",
-        header: ({ column }) => {
-            return <TableHeaderColumn column={column} title="Servicios" />;
-        },
-        cell: ({ row }) => {
-            const ficha = row.original;
-            const servicios = [];
+    cell: ({ row }) => {
+      const inspector = row.original.inspector || "Sin asignar";
+      const codinspector = row.original.codinspector || "";
 
-            if (ficha.tiene_agua) servicios.push("Agua");
-            if (ficha.tiene_desague) servicios.push("Desagüe");
-            if (ficha.tiene_medidor) servicios.push("Medidor");
-
-            return (
-                <div className="text-start flex items-center gap-2">
-                    <Droplets className="w-4 h-4 text-blue-500" />
-                    <div className="flex flex-wrap gap-1">
-                        {servicios.length > 0 ? (
-                            servicios.map((servicio, index) => (
-                                <CustomBadge key={index} color="blue" className="text-xs">
-                                    {servicio}
-                                </CustomBadge>
-                            ))
-                        ) : (
-                            <CustomBadge color="dark" className="text-xs">
-                                Sin servicios
-                            </CustomBadge>
-                        )}
-                    </div>
-                </div>
-            );
-        },
+      return (
+        <div className="text-start flex items-center gap-2">
+          <User className="w-4 h-4 text-orange-600" />
+          <div>
+            <div className="font-medium">{inspector}</div>
+            <div className="text-xs text-muted-foreground">{codinspector}</div>
+          </div>
+        </div>
+      );
     },
-    {
-        id: "medidor",
-        header: ({ column }) => {
-            return <TableHeaderColumn column={column} title="Medidor" />;
-        },
-        cell: ({ row }) => {
-            const ficha = row.original;
-
-            if (!ficha.tiene_medidor) {
-                return (
-                    <div className="text-start flex items-center gap-2">
-                        <Gauge className="w-4 h-4 text-gray-400" />
-                        <CustomBadge color="dark" className="text-xs">
-                            Sin medidor
-                        </CustomBadge>
-                    </div>
-                );
-            }
-
-            return (
-                <div className="text-start flex items-center gap-2">
-                    <Gauge className="w-4 h-4 text-green-600" />
-                    <div>
-                        <div className="font-medium text-xs">
-                            {ficha.nromed || "Sin número"}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                            {ficha.marcamed || "Sin marca"}
-                        </div>
-                        {ficha.lecturaultima && (
-                            <div className="text-xs text-muted-foreground">
-                                Lectura: {ficha.lecturaultima}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        },
+    size: 150,
+  },
+  {
+    id: "fecha_visita",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Fecha Visita" />;
     },
-    {
-        id: "ubicacion",
-        header: ({ column }) => {
-            return <TableHeaderColumn column={column} title="Ubicación GPS" />;
-        },
-        cell: ({ row }) => {
-            const ficha = row.original;
-            const tieneGPS = ficha.latitud && ficha.longitud;
+    cell: ({ row }) => {
+      const fecha = row.original.fecha_visita;
 
-            return (
-                <div className="text-start flex items-center gap-2">
-                    <MapPin className={`w-4 h-4 ${tieneGPS ? 'text-green-600' : 'text-gray-400'}`} />
-                    <div>
-                        {tieneGPS ? (
-                            <div className="text-xs">
-                                <div>Lat: {parseFloat(ficha.latitud!).toFixed(6)}</div>
-                                <div>Lng: {parseFloat(ficha.longitud!).toFixed(6)}</div>
-                            </div>
-                        ) : (
-                            <CustomBadge color="dark" className="text-xs">
-                                Sin GPS
-                            </CustomBadge>
-                        )}
-                    </div>
-                </div>
-            );
-        },
+      return (
+        <div className="text-start flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-lime-600" />
+          <div className="text-xs">
+            {fecha ? (
+              <div>{format(new Date(fecha), "dd/MM/yyyy", { locale: es })}</div>
+            ) : (
+              <CustomBadge color="dark" className="text-xs">
+                Sin fecha
+              </CustomBadge>
+            )}
+          </div>
+        </div>
+      );
     },
-    {
-        id: "fecha_registro",
-        header: ({ column }) => {
-            return <TableHeaderColumn column={column} title="Fecha Registro" />;
-        },
-        cell: ({ row }) => {
-            const ficha = row.original;
-            const fecha = ficha.fechareg ? new Date(ficha.fechareg) : null;
+    size: 120,
+  },
+  {
+    id: "codigo_catastral",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Nro. Catastro" />;
+    },
+    cell: ({ row }) => {
+      const ficha = row.original;
+      const nrocatastro =
+        ficha.codsuc +
+        "-" +
+        ficha.codsector_new +
+        "-" +
+        ficha.codmza_new +
+        "-" +
+        ficha.codcliente;
 
-            return (
-                <div className="text-start flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-600" />
-                    <div className="text-xs">
-                        {fecha ? (
-                            <div>
-                                <div>{fecha.toLocaleDateString()}</div>
-                                <div className="text-muted-foreground">
-                                    {fecha.toLocaleTimeString()}
-                                </div>
-                            </div>
-                        ) : (
-                            "Sin fecha"
-                        )}
-                    </div>
-                </div>
-            );
-        },
+      return (
+        <div className="text-start flex items-center gap-2">
+          <FileText className="w-4 h-4 text-purple-600" />
+          <CustomBadge color="purple" className="text-xs font-mono">
+            {nrocatastro || "Sin asignar"}
+          </CustomBadge>
+        </div>
+      );
     },
-    {
-        id: "cliente",
-        header: ({ column }) => {
-            return <TableHeaderColumn column={column} title="Cliente" />;
-        },
-        cell: ({ row }) => {
-            const ficha = row.original;
+    size: 140,
+  },
+  {
+    id: "propietario",
+    accessorKey: "propietario",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Propietario" />;
+    },
+    cell: ({ row }) => {
+      const ficha = row.original;
+      return (
+        <div className="text-start flex items-center gap-2">
+          <User className="w-4 h-4 text-blue-600" />
+          <div>
+            <div className="font-medium">
+              {ficha.propietario || "Sin propietario"}
+            </div>
+            {ficha.dni && (
+              <div className="text-xs text-muted-foreground">
+                DNI: {ficha.dni}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    },
+    size: 200,
+  },
+  {
+    id: "direccion",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Dirección" />;
+    },
+    cell: ({ row }) => {
+      const ficha = row.original;
+      const direccion = ficha.direccion || "Sin dirección";
 
-            return (
-                <div className="text-start flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-purple-600" />
-                    <CustomBadge color="purple" className="text-xs">
-                        {ficha.codcliente}
-                    </CustomBadge>
-                </div>
-            );
-        },
+      return (
+        <div className="text-start flex items-center gap-2">
+          <Home className="w-4 h-4 text-green-600" />
+          <div className="w-[220px] truncate break-words whitespace-normal">
+            {direccion}
+          </div>
+        </div>
+      );
     },
-]; 
+    size: 250,
+  },
+  {
+    id: "tipoconstruccion",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Tipo Construcción" />;
+    },
+    cell: ({ row }) => {
+      const tipo = row.original.tipoconstruccion || "Sin especificar";
+
+      return (
+        <div className="text-start flex items-center gap-2">
+          <Building className="w-4 h-4 text-amber-600" />
+          <div className="max-w-[120px] truncate">{tipo}</div>
+        </div>
+      );
+    },
+    size: 150,
+  },
+  {
+    id: "nropisos",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Nro. Pisos" />;
+    },
+    cell: ({ row }) => {
+      const pisos = row.original.nropisos || "No especificado";
+
+      return (
+        <div className="text-start flex items-center gap-2">
+          <Layers className="w-4 h-4 text-green-600" />
+          <CustomBadge color="green" className="text-xs">
+            {pisos}
+          </CustomBadge>
+        </div>
+      );
+    },
+    size: 100,
+  },
+  {
+    id: "tiposervicio",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Tipo Servicio" />;
+    },
+    cell: ({ row }) => {
+      const servicio = row.original.tiposervicio || "Sin especificar";
+
+      return (
+        <div className="text-start flex items-center gap-2">
+          <Wrench className="w-4 h-4 text-blue-600" />
+          <div className="max-w-[100px] truncate">{servicio}</div>
+        </div>
+      );
+    },
+    size: 120,
+  },
+  {
+    id: "suministroluz",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Suministro Luz" />;
+    },
+    cell: ({ row }) => {
+      const suministro = row.original.suministroluz;
+      const color = suministro === " " ? "red" : "green";
+      const icon =
+        suministro === " " ? (
+          <XCircle className="w-4 h-4 text-red-600" />
+        ) : (
+          <Zap className="w-4 h-4 text-green-600" />
+        );
+      const label = suministro === " " ? "No informado" : "SI";
+      return (
+        <div className="text-start flex items-center gap-2">
+          {icon}
+          <CustomBadge color={color} className="text-xs">
+            {label}
+          </CustomBadge>
+        </div>
+      );
+    },
+    size: 120,
+  },
+  {
+    id: "piscina",
+    header: ({ column }) => {
+      return <TableHeaderColumn column={column} title="Piscina" />;
+    },
+    cell: ({ row }) => {
+      const piscina = row.original.piscina || "Sin especificar";
+      return (
+        <div className="text-start flex items-center gap-2">
+          <Waves
+            className={`w-4 h-4 ${piscina ? "text-blue-600" : "text-gray-400"}`}
+          />
+          <CustomBadge color={piscina ? "blue" : "dark"} className="text-xs">
+            {piscina}
+          </CustomBadge>
+        </div>
+      );
+    },
+    size: 100,
+  },
+];
+
+// Exportar columnas por defecto para compatibilidad
+export const columns = createColumns();

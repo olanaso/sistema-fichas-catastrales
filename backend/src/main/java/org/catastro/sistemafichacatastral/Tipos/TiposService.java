@@ -17,7 +17,7 @@ public class TiposService {
 
     public String obtenerDataComoJson(String nombreTabla) {
         try {
-            Query query = entityManager.createNativeQuery("SELECT fichacatastral.obtener_tabla_como_json(?1)");
+            Query query = entityManager.createNativeQuery("SELECT fichacatastral.usp_obtener_tabla_como_json(?1)");
             query.setParameter(1, nombreTabla);
             Object result = query.getSingleResult();
             return result != null ? result.toString() : "[]";
@@ -28,7 +28,7 @@ public class TiposService {
 
     public String obtenerTablaJsonPaginadoConTotal(String tabla, int limit, int offset) {
         try {
-            Query query = entityManager.createNativeQuery("SELECT fichacatastral.obtener_tabla_json_paginado_total(?1, ?2, ?3)");
+            Query query = entityManager.createNativeQuery("SELECT fichacatastral.usp_obtener_tabla_json_paginado_total(?1, ?2, ?3)");
             query.setParameter(1, tabla);
             query.setParameter(2, limit);
             query.setParameter(3, offset);

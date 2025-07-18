@@ -1,73 +1,87 @@
 "use client";
 
-import { FichaCatastroDto } from "@/models/fichacatastro";
-import { columns } from "./columns";
-import { BackendTable } from "@/components/table/table";
-import { TableToolbar } from "@/components/table/table-toolbar";
-import { PaginatedData } from "@/components/table/table";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { FichaCatastro } from "@/models/fichacatastro";
+import { createColumns } from "./columns";
+import { Card, CardContent } from "@/components/ui/card";
+import { CustomBadge } from "@/components/custom/custom-badge";
+import {
+    Info,
+    Circle,
+    CheckSquare
+} from "lucide-react";
+import { TableSelect } from "@/components/custom/table-select";
 
 interface TableFichasProps {
-    fichas: PaginatedData<FichaCatastroDto>;
+    fichas: FichaCatastro[];
     loading?: boolean;
-    onPageChange?: (page: number) => void;
-    onPageSizeChange?: (pageSize: number) => void;
+    onRefresh?: () => void; // Callback para refrescar datos
 }
 
 export default function TableFichas({
     fichas,
     loading = false,
-    onPageChange,
-    onPageSizeChange
+    onRefresh,
 }: TableFichasProps) {
-
-    const handleCreateFicha = () => {
-        // TODO: Implementar funcionalidad de crear ficha
-        console.log("Crear nueva ficha - pendiente de implementación");
-    };
+    const columns = createColumns(onRefresh);
 
     return (
-        <>
-            {fichas.data.length > 0 ? (
-                <BackendTable
+        <div className="space-y-4">
+            {/* Tabla */}
+            {fichas.length > 0 ? (
+                <TableSelect
                     columns={columns}
                     data={fichas}
                     loading={loading}
-                    onPageChange={onPageChange}
-                    onPageSizeChange={onPageSizeChange}
-                    toolbar={(table) => (
-                        <TableToolbar
-                            table={table}
-                            searchKey="propietario"
-                            searchPlaceholder="Buscar por propietario..."
-                            actions={
-                                <Button
-                                    size="sm"
-                                    onClick={handleCreateFicha}
-                                    className="ml-2"
-                                >
-                                    <Plus className="w-4 h-4 mr-2" />
-                                    Nueva Ficha
-                                </Button>
-                            }
-                        />
-                    )}
-                    pageSize={fichas.size || 10}
+                    pagination={true}
+                    pageSize={10}
+                    pageSizeOptions={[5, 10, 20, 50]}
                 />
             ) : (
                 <div className="text-center py-8">
                     <p className="text-muted-foreground">No hay fichas catastrales para mostrar</p>
-                    <Button
-                        size="sm"
-                        onClick={handleCreateFicha}
-                        className="mt-4"
-                    >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Crear Primera Ficha
-                    </Button>
                 </div>
             )}
-        </>
+
+            {/* Leyenda de estados */}
+            <Card className="border-dashed">
+                <CardContent className="pt-6">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Info className="w-4 h-4 text-muted-foreground" />
+                        <h3 className="text-sm font-medium text-muted-foreground">
+                            Leyenda de Estados
+                        </h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="flex items-center gap-2">
+                            <Circle className="w-4 h-4 text-gray-600" />
+                            <CustomBadge color="dark" className="text-xs">
+                                PENDIENTE
+                            </CustomBadge>
+                            <span className="text-xs text-muted-foreground">
+                                Fichas sin procesar
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Circle className="w-4 h-4 text-blue-600" />
+                            <CustomBadge color="blue" className="text-xs">
+                                EN_PROCESO
+                            </CustomBadge>
+                            <span className="text-xs text-muted-foreground">
+                                Fichas en revisión
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Circle className="w-4 h-4 text-green-600" />
+                            <CustomBadge color="green" className="text-xs">
+                                COMPLETADO
+                            </CustomBadge>
+                            <span className="text-xs text-muted-foreground">
+                                Fichas completadas
+                            </span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     );
 } 

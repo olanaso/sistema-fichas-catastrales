@@ -295,41 +295,6 @@ export async function getGruposTrabajo(): Promise<GrupoTrabajoDto[]> {
     }
 } 
 
-/**
- * Función para obtener fichas catastrales filtradas por líder
- * @param codlider - Código del líder del grupo
- * @returns Lista de fichas catastrales del líder
- */
-export async function getFichasCatastralesFiltradas(codlider: string): Promise<FichaCatastroDto[]> {
-    try {
-        if (!codlider) {
-            console.warn('Código de líder no proporcionado');
-            return [];
-        }
-
-        // Construir los parámetros de consulta para las listas
-        const columnasParam = ['codlider'].map(col => `columnas=${encodeURIComponent(col)}`).join('&');
-        const valoresParam = [codlider].map(val => `valores=${encodeURIComponent(val)}`).join('&');
-        
-        const response = await apiClient.get(`/fichas-catastrales/buscar?${columnasParam}&${valoresParam}`);
-
-        // El backend devuelve un string JSON, necesitamos parsearlo
-        const responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
-
-        if (Array.isArray(responseData)) {
-            return responseData as FichaCatastroDto[];
-        } else if (responseData && Array.isArray(responseData.data)) {
-            return responseData.data as FichaCatastroDto[];
-        }
-
-        console.warn('Formato de respuesta inesperado:', responseData);
-        return [];
-    } catch (error: any) {
-        console.error(`Error al obtener fichas catastrales para líder ${codlider}:`, error);
-        toast.error('Error al obtener fichas catastrales');
-        return [];
-    }
-}
 
 /**
  * Función para obtener fichas catastrales filtradas por columnas específicas

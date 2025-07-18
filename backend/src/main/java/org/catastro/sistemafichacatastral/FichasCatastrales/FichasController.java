@@ -32,6 +32,18 @@ public class FichasController {
         }
     }
 
+    @GetMapping("/obtener-detalle")
+    public ResponseEntity<?> obtenerDetalleFicha(
+            @RequestParam Integer codcliente
+    ) {
+        try {
+            String json = fichasService.obtenerDataCompletaFichaCatastro(codcliente);
+            return ResponseEntity.ok(json);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
+
     //actualizar asiganción de trabajo
     @PutMapping("/asignacion")
     public ResponseEntity<?> actualizarFicha(@RequestBody FichaUpdateDto dto) {
