@@ -1,14 +1,13 @@
 "use client"
 
-import { useState, forwardRef, useEffect, useRef } from "react"
+import { useState, forwardRef } from "react"
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Label } from "@/components/ui/label"
 import { ComboboxOption, ComboboxProps } from "@/types/combobox"
-import "./combobox-scroll.css"
 
 interface ComboboxControlledProps extends ComboboxProps {
   options: ComboboxOption[]
@@ -41,7 +40,6 @@ export const ComboboxControlled = forwardRef<HTMLButtonElement, ComboboxControll
   ) => {
     const [open, setOpen] = useState(false)
     const [searchValue, setSearchValue] = useState("")
-    const scrollContainerRef = useRef<HTMLDivElement>(null)
 
     const selectedOption = options.find((option) => option.value === value)
 
@@ -58,7 +56,10 @@ export const ComboboxControlled = forwardRef<HTMLButtonElement, ComboboxControll
 
     const filteredOptions = onSearch
       ? options
-      : options.filter((option) => option.label.toLowerCase().includes(searchValue.toLowerCase()))
+      : options.filter((option) => {
+          const label = option.label || '';
+          return label.toLowerCase().includes(searchValue.toLowerCase())
+        })
 
     return (
       <div className="space-y-2 w-full">
@@ -95,62 +96,38 @@ export const ComboboxControlled = forwardRef<HTMLButtonElement, ComboboxControll
           <PopoverContent 
             className={cn(
               "p-0 w-[var(--radix-popover-trigger-width)] max-w-[calc(100vw-2rem)] sm:max-w-[400px]",
-              "min-w-[200px]"
+              "min-w-[200px] max-h-[300px]"
             )} 
             align="start"
             sideOffset={4}
           >
-            <Command>
+            <Command className="max-h-[300px]">
               <CommandInput
                 placeholder={searchPlaceholder}
                 value={searchValue}
                 onValueChange={handleSearch}
                 className="h-9"
               />
-              
-              {/* Contenedor de scroll nativo */}
-              <div 
-                ref={scrollContainerRef}
-                className="combobox-scroll-container max-h-[200px] overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400"
-                style={{
-                  WebkitOverflowScrolling: 'touch',
-                  overscrollBehavior: 'contain'
-                }}
-              >
-                {filteredOptions.length === 0 ? (
-                  <div className="py-6 text-center text-sm text-muted-foreground">
-                    {emptyMessage}
-                  </div>
-                ) : (
-                  <div className="p-1">
-                    {filteredOptions.map((option) => (
-                      <div
-                        key={option.value}
-                        className={cn(
-                          "combobox-item relative flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-                          option.value === value && "bg-accent text-accent-foreground"
-                        )}
-                        onClick={() => handleSelect(option.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault()
-                            handleSelect(option.value)
-                          }
-                        }}
-                        tabIndex={0}
-                        role="option"
-                        aria-selected={option.value === value}
-                      >
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          {option.icon && <span className="shrink-0">{option.icon}</span>}
-                          <span className="truncate">{option.label}</span>
-                        </div>
-                        <Check className={cn("ml-auto h-4 w-4 shrink-0", option.value === value ? "opacity-100" : "opacity-0")} />
+              <CommandList className="max-h-[200px] overflow-y-auto">
+                <CommandEmpty>{emptyMessage}</CommandEmpty>
+                <CommandGroup>
+                  {filteredOptions.map((option) => (
+                    <CommandItem
+                      key={option.value}
+                      value={option.label}
+                      disabled={option.disabled}
+                      onSelect={() => handleSelect(option.value)}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        {option.icon && <span className="shrink-0">{option.icon}</span>}
+                        <span className="truncate">{option.label}</span>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                      <Check className={cn("ml-auto h-4 w-4 shrink-0", option.value === value ? "opacity-100" : "opacity-0")} />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
             </Command>
           </PopoverContent>
         </Popover>

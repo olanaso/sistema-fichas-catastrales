@@ -1,9 +1,13 @@
-import { FichaCatastroDto } from "@/models/fichacatastro";
+import { FichaCatastro, FichaCatastroDto } from "@/models/fichacatastro";
 import { GrupoTrabajoDto } from "@/models/grupotrabajo";
 import { InspectorDto } from "@/models/inspector";
+import { Sector, Manzana, Sucursal } from "@/models/tipos";
 import { toast } from "sonner";
-import { getData } from "@/service/data.actions";
+import { getData, buscarExacto } from "@/service/data.actions";
 import { buscarPorColumna } from "@/service/obtener-data-dinamico";
+import { ComboboxOption } from "@/types/combobox";
+import { UsuarioDto } from "@/models/usuario";
+import apiClient from "@/lib/axios";
 
 // Interfaces para la asignación
 export interface AsignacionGrupalRequest {
@@ -21,75 +25,93 @@ export interface AsignacionGrupalResponse {
 }
 
 export interface FiltrosAsignacion {
+    sucursal?: string;
     sector?: string;
     manzana?: string;
     estadoPadron?: string;
 }
 
+// Interfaces para los DTOs de asignación
+export interface FichaUpdateDto {
+    idficha: number;
+    inspector: string;
+    encuestador: string;
+    fechaVisita: string; // LocalDate en formato ISO
+    observacion?: string;
+    codbrigada: string;
+}
+
+export interface FichaUpdateMasivoDto {
+    idfichas: number[];
+    inspector: string;
+    encuestador: string;
+    fechaVisita: string; // LocalDate en formato ISO
+    observacion?: string;
+    codbrigada: string;
+}
+
 /**
- * Función para asignar fichas a un grupo de trabajo
- * @param request - Datos de la asignación grupal
+ * Función para asignar una ficha individual
+ * @param dto - Datos de la asignación individual
  * @returns Respuesta de la API
  */
-export async function asignarFichasGrupal(request: AsignacionGrupalRequest): Promise<AsignacionGrupalResponse> {
+export async function asignarFichaIndividual(dto: FichaUpdateDto): Promise<AsignacionGrupalResponse> {
     try {
-        // TODO: Implementar llamada a la API
-        // const response = await axios.post('/api/asignacion-carga/asignar-grupal', request);
+        const response = await apiClient.put('/fichas-catastrales/asignacion', dto);
 
-        // Por ahora, simular respuesta exitosa
-        console.log('Asignación Grupal:', request);
-
-        // Simular delay de API
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        toast.success(`Asignación grupal programada para ${request.fichas.length} fichas al inspector ${request.codinspector}`);
-
-        return {
-            success: true,
-            message: 'Asignación grupal programada exitosamente',
-            data: request
-        };
-    } catch (error) {
-        console.error('Error en asignación grupal:', error);
-        toast.error('Error al programar la asignación grupal');
-
+        if (response.data.success) {
+            toast.success('Ficha asignada exitosamente');
+            return {
+                success: true,
+                message: 'Ficha asignada exitosamente',
+                data: response.data
+            };
+        } else {
+            toast.error(response.data.error || 'Error al asignar la ficha');
+            return {
+                success: false,
+                message: response.data.error || 'Error al asignar la ficha'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al asignar ficha individual:', error);
+        toast.error('Error al asignar la ficha');
         return {
             success: false,
-            message: 'Error al programar la asignación grupal'
+            message: error.response?.data?.error || 'Error al asignar la ficha'
         };
     }
 }
 
 /**
- * Función para asignar una ficha individual
- * @param fichaId - ID de la ficha a asignar
- * @param inspector - Inspector asignado
+ * Función para asignar fichas masivamente
+ * @param dto - Datos de la asignación masiva
  * @returns Respuesta de la API
  */
-export async function asignarFichaIndividual(fichaId: number, inspector: string): Promise<AsignacionGrupalResponse> {
+export async function asignarFichasMasivo(dto: FichaUpdateMasivoDto): Promise<AsignacionGrupalResponse> {
     try {
-        // TODO: Implementar llamada a la API
-        // const response = await axios.post('/api/asignacion-carga/asignar-individual', { fichaId, inspector });
+        const response = await apiClient.put('/fichas-catastrales/asignacion-masiva', dto);
 
-        console.log('Asignación Individual:', { fichaId, inspector });
-
-        // Simular delay de API
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        toast.success('Ficha asignada exitosamente');
-
-        return {
-            success: true,
-            message: 'Ficha asignada exitosamente',
-            data: { fichaId, inspector }
-        };
-    } catch (error) {
-        console.error('Error en asignación individual:', error);
-        toast.error('Error al asignar la ficha');
-
+        if (response.data.success) {
+            toast.success(`Asignación masiva completada para ${dto.idfichas.length} fichas`);
+            return {
+                success: true,
+                message: `Asignación masiva completada para ${dto.idfichas.length} fichas`,
+                data: response.data
+            };
+        } else {
+            toast.error(response.data.error || 'Error en la asignación masiva');
+            return {
+                success: false,
+                message: response.data.error || 'Error en la asignación masiva'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error en asignación masiva:', error);
+        toast.error('Error en la asignación masiva');
         return {
             success: false,
-            message: 'Error al asignar la ficha'
+            message: error.response?.data?.error || 'Error en la asignación masiva'
         };
     }
 }
@@ -118,46 +140,96 @@ export async function getFichasConFiltros(filtros: FiltrosAsignacion): Promise<F
 }
 
 /**
- * Función para obtener sectores disponibles
- * @returns Lista de sectores
+ * Función para obtener todas las sucursales
+ * @returns Lista de sucursales
  */
-export async function getSectores(): Promise<{ value: string, label: string }[]> {
+export async function getSucursales(): Promise<ComboboxOption[]> {
     try {
-        // TODO: Implementar llamada a la API
-        // const response = await axios.get('/api/sectores');
-
-        // Datos de ejemplo
-        return [
-            { value: 'SEC001', label: 'Sector 1' },
-            { value: 'SEC002', label: 'Sector 2' },
-            { value: 'SEC003', label: 'Sector 3' }
-        ];
+        const response = await getData("sucursales");
+        
+        if (response.success) {
+            return response.data.map((sucursal: Sucursal) => ({
+                value: sucursal.codsuc,
+                label: `${sucursal.nombre} (${sucursal.codsuc})`
+            }));
+        }
+        
+        console.error('Error al obtener sucursales:', response.message);
+        return [];
     } catch (error) {
-        console.error('Error al obtener sectores:', error);
+        console.error('Error al obtener sucursales:', error);
         return [];
     }
 }
 
 /**
- * Función para obtener manzanas de un sector
- * @param sector - Código del sector
- * @returns Lista de manzanas
+ * Función para obtener sectores por sucursal
+ * @param codsuc - Código de la sucursal
+ * @returns Lista de sectores de la sucursal
  */
-export async function getManzanasPorSector(sector: string): Promise<{ value: string, label: string }[]> {
+export async function getSectoresPorSucursal(codsuc: string): Promise<ComboboxOption[]> {
     try {
-        // TODO: Implementar llamada a la API
-        // const response = await axios.get(`/api/manzanas/${sector}`);
-
-        console.log('Obteniendo manzanas para sector:', sector);
-
-        // Datos de ejemplo
-        return [
-            { value: 'MZA001', label: 'Manzana A' },
-            { value: 'MZA002', label: 'Manzana B' },
-            { value: 'MZA003', label: 'Manzana C' }
-        ];
+        const response = await buscarExacto("sectores", ["codsuc"], [codsuc]);
+        
+        if (response.success) {
+            return response.data.map((sector: Sector) => ({
+                value: sector.codsector,
+                label: `${sector.descripcion} (${sector.codsector})`
+            }));
+        }
+        
+        console.error('Error al obtener sectores por sucursal:', response.message);
+        return [];
     } catch (error) {
-        console.error('Error al obtener manzanas:', error);
+        console.error('Error al obtener sectores por sucursal:', error);
+        return [];
+    }
+}
+
+/**
+ * Función para obtener manzanas por sector y sucursal
+ * @param codsuc - Código de la sucursal
+ * @param codsector - Código del sector
+ * @returns Lista de manzanas del sector
+ */
+export async function getManzanasPorSector(codsuc: string, codsector: string): Promise<ComboboxOption[]> {
+    try {
+        const response = await buscarExacto("manzanas", ["codsuc", "codsector"], [codsuc, codsector]);
+        
+        if (response.success) {
+            return response.data.map((manzana: Manzana) => ({
+                value: manzana.codmza,
+                label: `${manzana.descripcion || manzana.codmza} (${manzana.codmza})`
+            }));
+        }
+        
+        console.error('Error al obtener manzanas por sector:', response.message);
+        return [];
+    } catch (error) {
+        console.error('Error al obtener manzanas por sector:', error);
+        return [];
+    }
+}
+
+/**
+ * Función para obtener sectores disponibles (mantener compatibilidad)
+ * @returns Lista de sectores
+ */
+export async function getSectores(): Promise<ComboboxOption[]> {
+    try {
+        const response = await getData("sectores");
+        
+        if (response.success) {
+            return response.data.map((sector: Sector) => ({
+                value: sector.codsector,
+                label: `${sector.descripcion} (${sector.codsector})`
+            }));
+        }
+        
+        console.error('Error al obtener sectores:', response.message);
+        return [];
+    } catch (error) {
+        console.error('Error al obtener sectores:', error);
         return [];
     }
 }
@@ -166,13 +238,13 @@ export async function getManzanasPorSector(sector: string): Promise<{ value: str
  * Función para obtener estados de padrón
  * @returns Lista de estados
  */
-export async function getEstadosPadron(): Promise<{ value: string, label: string }[]> {
+export async function getEstadosPadron(): Promise<ComboboxOption[]> {
     try {
         // Datos estáticos basados en los requisitos
         return [
-            { value: 'null', label: 'Pendiente' },
-            { value: 'P', label: 'Proceso' },
-            { value: 'F', label: 'Finalizado' }
+            { value: 'PENDIENTE', label: 'Pendiente' },
+            { value: 'PARCIAL', label: 'Parcial' },
+            { value: 'FINALIZADO', label: 'Finalizado' }
         ];
     } catch (error) {
         console.error('Error al obtener estados de padrón:', error);
@@ -222,3 +294,46 @@ export async function getGruposTrabajo(): Promise<GrupoTrabajoDto[]> {
         return [];
     }
 } 
+
+
+/**
+ * Función para obtener fichas catastrales filtradas por columnas específicas
+ * @param columnas - Array de nombres de columnas de la base de datos
+ * @param valores - Array de valores correspondientes a las columnas
+ * @returns Lista de fichas catastrales filtradas
+ */
+export async function getFichasCatastralesPorColumnas(columnas: string[], valores: string[]): Promise<FichaCatastro[]> {
+    try {
+        if (columnas.length === 0 || valores.length === 0) {
+            console.warn('No se proporcionaron columnas o valores para filtrar');
+            return [];
+        }
+
+        if (columnas.length !== valores.length) {
+            console.error('El número de columnas y valores no coincide');
+            return [];
+        }
+
+        // Construir los parámetros de consulta para las listas
+        const columnasParam = columnas.map(col => `columnas=${encodeURIComponent(col)}`).join('&');
+        const valoresParam = valores.map(val => `valores=${encodeURIComponent(val)}`).join('&');
+        
+        const response = await apiClient.get(`/fichas-catastrales/buscar?${columnasParam}&${valoresParam}`);
+
+        // El backend devuelve un string JSON, necesitamos parsearlo
+        const responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
+
+        if (Array.isArray(responseData)) {
+            return responseData as FichaCatastro[];
+        } else if (responseData && Array.isArray(responseData.data)) {
+            return responseData.data as FichaCatastro[];
+        }
+
+        console.warn('Formato de respuesta inesperado:', responseData);
+        return [];
+    } catch (error: any) {
+        console.error(`Error al obtener fichas catastrales filtradas:`, error);
+        toast.error('Error al obtener fichas catastrales');
+        return [];
+    }
+}

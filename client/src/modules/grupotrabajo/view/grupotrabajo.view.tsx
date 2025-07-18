@@ -9,6 +9,7 @@ import { AlertCircle } from "lucide-react";
 import { Usuario } from "@/models/usuario";
 import { Inspector } from "@/models/inspector";
 import { getDataTable } from "../action/grupotrabajo.actions";
+import TitlePage from "@/components/custom/title-page";
 
 // Componente de carga
 function GrupoTrabajoSkeleton() {
@@ -71,12 +72,10 @@ function GrupoTrabajoContent() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Grupos de Trabajo</h2>
-          <p className="text-muted-foreground">
-            Gestiona los grupos de trabajo y sus inspectores asignados
-          </p>
-        </div>
+        <TitlePage
+          title="Grupos de trabajo"
+          description="Gestiona los grupos de trabajo y sus inspectores asignados"
+        />
       </div>
       
       {gruposTrabajo.data.length === 0 && !isLoading ? (

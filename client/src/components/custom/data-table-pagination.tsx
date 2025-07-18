@@ -60,7 +60,14 @@ export function DataTablePagination<TData>({
   const pageNumbers = getPageNumbers()
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-end gap-4 px-2 py-4">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-4">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <span>
+          Mostrando {currentPage * table.getState().pagination.pageSize + 1} a{" "}
+          {Math.min((currentPage + 1) * table.getState().pagination.pageSize, table.getRowCount())} de{" "}
+          {table.getRowCount()} resultados
+        </span>
+      </div>
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <div className="flex items-center gap-1">
           <Button

@@ -42,6 +42,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
+  const [globalFilter, setGlobalFilter] = useState("")
 
   // Detectar si es móvil
   const isMobile = useIsMobile()
@@ -68,11 +69,13 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter,
     },
     initialState: {
       pagination: {
@@ -93,7 +96,7 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       {toolbar && toolbar(table as any)}
       <div className="rounded-md border border-gray-200 overflow-hidden dark:border-stone-900">
-        <div className="overflow-x-auto">
+        <div className="!overflow-x-auto">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

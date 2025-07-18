@@ -66,7 +66,6 @@ export async function getGruposTrabajoPaginados(page: number = 0, size: number =
     // Convertir page a offset (page * size)
     const offset = page * size;
     const response = await apiClient.get(`/grupo-trabajo/grupos-inspectores?limit=${size}&offset=${offset}`);
-    console.log(response);
     // El backend devuelve un string JSON, necesitamos parsearlo
     const responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
     

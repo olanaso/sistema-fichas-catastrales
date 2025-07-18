@@ -1,122 +1,103 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState } from "react";
 import TableFichas from "../components/table/table-fichas";
-import { GestionFichasProvider, useGestionFichas } from "../context/gestion-fichas-context";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, FileText, Database } from "lucide-react";
+import { AlertCircle, Database } from "lucide-react";
+import TitlePage from "@/components/custom/title-page";
+import { FiltrosFichas } from "../components/filters/filtros-fichas";
+import { FiltrosGestionFichas, getFichasConFiltrosGestion } from "../action/gestion-fichas.actions";
+import { FichaCatastro } from "@/models/fichacatastro";
 
-// Componente de carga
-function GestionFichasSkeleton() {
-    return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                    <Skeleton className="h-8 w-64" />
-                    <Skeleton className="h-4 w-96" />
-                </div>
-            </div>
-            <Skeleton className="h-[600px] w-full" />
-        </div>
-    );
-}
-
-// Componente interno que usa el contexto
-function GestionFichasContent() {
-    const {
-        data: fichas,
-        isLoading,
-        error,
-        refreshData,
-        pagination,
-        handlePageChange,
-        handlePageSizeChange
-    } = useGestionFichas();
-
-    useEffect(() => {
-        refreshData();
-    }, [refreshData]);
-
-    useEffect(() => {
-        console.log("Fichas catastrales cargadas:", fichas);
-    }, [fichas, isLoading, error, pagination]);
-
-    if (isLoading && fichas.data.length === 0) {
-        return <GestionFichasSkeleton />;
-    }
-
-    if (error) {
-        return (
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                            <FileText className="w-6 h-6" />
-                            Gestión de Fichas Catastrales
-                        </h2>
-                        <p className="text-muted-foreground">
-                            Administra las fichas catastrales del sistema
-                        </p>
-                    </div>
-                </div>
-
-                <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                        <p className="font-semibold">Error al cargar fichas catastrales:</p>
-                        <p>{error}</p>
-                        <p className="text-sm text-muted-foreground mt-2">
-                            Verifique la conexión con la base de datos o que la tabla 'fichacatastro_eps' exista
-                        </p>
-                    </AlertDescription>
-                </Alert>
-            </div>
-        );
-    }
-
-    return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                        <FileText className="w-6 h-6" />
-                        Gestión de Fichas Catastrales
-                    </h2>
-                    <p className="text-muted-foreground">
-                        Administra las fichas catastrales del sistema
-                    </p>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Database className="w-4 h-4" />
-                    <span>Total: {fichas.total || 0} fichas</span>
-                </div>
-            </div>
-
-            {fichas.data.length === 0 && !isLoading ? (
-                <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                        <p className="font-semibold">No se encontraron fichas catastrales</p>
-                    </AlertDescription>
-                </Alert>
-            ) : (
-                <TableFichas
-                    fichas={fichas}
-                    loading={isLoading}
-                    onPageChange={handlePageChange}
-                    onPageSizeChange={handlePageSizeChange}
-                />
-            )}
-        </div>
-    );
-}
-
-// Componente principal que envuelve con el provider
 export default function GestionFichasView() {
-    return (
-        <GestionFichasProvider>
-            <GestionFichasContent />
-        </GestionFichasProvider>
-    );
-} 
+  const [fichasFiltradas, setFichasFiltradas] = useState<FichaCatastro[]>([]);
+  const [mostrarResultados, setMostrarResultados] = useState(false);
+  const [loadingFiltros, setLoadingFiltros] = useState(false);
+  const [filtrosAplicados, setFiltrosAplicados] = useState<FiltrosGestionFichas>({});
+
+  const handleFiltrar = async (filtros: FiltrosGestionFichas) => {
+    try {
+      setLoadingFiltros(true);
+      setFiltrosAplicados(filtros);
+
+      const fichasResultado = await getFichasConFiltrosGestion(filtros);
+      setFichasFiltradas(fichasResultado);
+      setMostrarResultados(true);
+
+    } catch (error) {
+      console.error("Error al aplicar filtros:", error);
+    } finally {
+      setLoadingFiltros(false);
+    }
+  };
+
+  const handleLimpiar = async () => {
+    setFichasFiltradas([]);
+    setMostrarResultados(false);
+    setFiltrosAplicados({});
+  };
+
+  const handleRefresh = async () => {
+    // Si hay filtros aplicados, recargar con esos filtros
+    if (Object.keys(filtrosAplicados).length > 0) {
+      await handleFiltrar(filtrosAplicados);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <TitlePage
+          title="Gestión de fichas catastrales"
+          description="Visualiza las fichas catastrales"
+        />
+      </div>
+
+      <FiltrosFichas
+        onFiltrar={handleFiltrar}
+        onLimpiar={handleLimpiar}
+        loading={loadingFiltros}
+      />
+
+      {/* Mostrar resultados solo después de filtrar */}
+      {mostrarResultados && (
+        <>
+          {fichasFiltradas.length === 0 ? (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <p className="font-semibold">
+                  No se encontraron fichas catastrales con los filtros aplicados
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Intente ajustar los filtros de búsqueda
+                </p>
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <TableFichas
+              fichas={fichasFiltradas}
+              loading={loadingFiltros}
+              onRefresh={handleRefresh}
+            />
+          )}
+        </>
+      )}
+
+      {/* Mensaje inicial cuando no se han aplicado filtros y no hay datos */}
+      {!mostrarResultados && fichasFiltradas.length === 0 && !loadingFiltros && (
+        <Alert>
+          <Database className="h-4 w-4" />
+          <AlertDescription>
+            <p className="font-semibold">
+              Seleccione filtros para buscar fichas catastrales
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Use los filtros de arriba para comenzar la búsqueda de fichas
+            </p>
+          </AlertDescription>
+        </Alert>
+      )}
+    </div>
+  );
+}

@@ -28,6 +28,7 @@ import { Usuario } from "@/models/usuario";
 import { Inspector } from "@/models/inspector";
 import { DataCombobox } from "@/components/custom/data-combobox";
 import { Badge } from "@/components/ui/badge";
+import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 
 export default function CreateGrupoTrabajoForm({ supervisores, inspectores }: { supervisores: Usuario[], inspectores: Inspector[] }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -120,14 +121,17 @@ export default function CreateGrupoTrabajoForm({ supervisores, inspectores }: { 
                     <FormItem>
                       <FormLabel>Líder del grupo *</FormLabel>
                       <FormControl>
-                        <DataCombobox
-                          placeholder="Seleccione un líder"
+                        <ComboboxControlled
                           options={supervisores.map((supervisor) => ({
                             value: supervisor.codusu,
-                            label: `${supervisor.nombre} ${supervisor.apellidopa}`,
-                            icon: <User className="w-4 h-4" />,
+                            label: `${supervisor.nombre} ${supervisor.apellidopa} ${supervisor.apellidoma}`,
                           }))}
-                          {...field}
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="Seleccionar líder..."
+                          searchPlaceholder="Buscar líder..."
+                          emptyMessage="No se encontraron líderes"
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <FormMessage />

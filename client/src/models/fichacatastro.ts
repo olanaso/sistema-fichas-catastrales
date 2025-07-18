@@ -182,6 +182,7 @@ export interface FichaCatastro {
     // Personal
     gestor?: string;
     inspector?: string;
+    codinspector?: string;
     encuestador?: string;
 
     // Información de brigada

@@ -1,9 +1,6 @@
 // Exportar la vista principal
 export { default as AsignacionCargaView } from './view/asignacion-carga.view';
 
-// Exportar el contexto
-export { AsignacionCargaProvider, useAsignacionCarga } from './context/asignacion-carga-context';
-
 // Exportar componentes
 export { FiltrosAsignacion } from './components/filters/filtros-asignacion';
 export { AsignacionGrupal } from './components/asignacion-grupal/asignacion-grupal';
