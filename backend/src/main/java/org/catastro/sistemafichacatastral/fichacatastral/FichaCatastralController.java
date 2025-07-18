@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("ficha-catastral")
 public class FichaCatastralController {
@@ -32,29 +33,40 @@ public class FichaCatastralController {
         this.fichaCatastralService = fichaCatastralService;
     }
 
+
+
     @GetMapping("/pdf")
     public ResponseEntity<byte[]> generarPdf() {
 
-        try (InputStream plantillaStream = getClass().getClassLoader().getResourceAsStream("plantilla3.docx")) {
+        try (InputStream plantillaStream = getClass().getClassLoader().getResourceAsStream("plantillaficha.docx")) {
 
             if (plantillaStream == null) {
                 return ResponseEntity.notFound().build();
             }
 
             IXDocReport report;
-            String plantillaId = "plantilla3.docx";
+            String plantillaId = "plantillaficha.docx";
 
             // Verifica si la plantilla ya está registrada
+
             if (XDocReportRegistry.getRegistry().existsReport(plantillaId)) {
+                XDocReportRegistry.getRegistry().unregisterReport(plantillaId);
+            }
+            report = XDocReportRegistry.getRegistry()
+                    .loadReport(plantillaStream, plantillaId, TemplateEngineKind.Velocity);
+
+           /* if (XDocReportRegistry.getRegistry().existsReport(plantillaId)) {
                 report = XDocReportRegistry.getRegistry().getReport(plantillaId);
             } else {
                 report = XDocReportRegistry.getRegistry()
                         .loadReport(plantillaStream, plantillaId, TemplateEngineKind.Velocity);
-            }
+            }*/
 
             IContext context = report.createContext();
-            context.put("nombre", "Juan Pérez");
+            context.put("region", "Juan Pérez");
             context.put("codigo", "XYZ123");
+            context.put("direccion", "ayacucho lima");
+            context.put("edad", "25");
 
             ByteArrayOutputStream pdfOut = new ByteArrayOutputStream();
             Options options = Options.getTo(ConverterTypeTo.PDF);
@@ -80,14 +92,14 @@ public class FichaCatastralController {
     @GetMapping("/docx")
     public ResponseEntity<byte[]> generarWord() {
 
-        try (InputStream plantillaStream = getClass().getClassLoader().getResourceAsStream("plantilla3.docx")) {
+        try (InputStream plantillaStream = getClass().getClassLoader().getResourceAsStream("plantillaficha.docx")) {
 
             if (plantillaStream == null) {
                 return ResponseEntity.notFound().build();
             }
 
             IXDocReport report;
-            String plantillaId = "plantilla3.docx";
+            String plantillaId = "plantillaficha.docx";
 
             if (XDocReportRegistry.getRegistry().existsReport(plantillaId)) {
                 report = XDocReportRegistry.getRegistry().getReport(plantillaId);
@@ -97,8 +109,10 @@ public class FichaCatastralController {
             }
 
             IContext context = report.createContext();
-            context.put("nombre", "Juan Pérez");
+            context.put("region", "Juan Pérez");
             context.put("codigo", "XYZ123");
+            context.put("direccion", "ayacucho lima");
+            context.put("edad", "25");
 
             ByteArrayOutputStream docxOut = new ByteArrayOutputStream();
             report.process(context, docxOut);

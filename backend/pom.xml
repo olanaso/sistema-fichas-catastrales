@@ -91,19 +91,19 @@
             <version>0.12.3</version>
             <scope>runtime</scope>
         </dependency>
-        
+
         <!-- Spring Boot Starter Mail para envío de emails -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-        
+
         <!-- Thymeleaf para templates de email -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-        
+
         <!-- Spring Boot Starter Validation para validaciones de DTOs -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
