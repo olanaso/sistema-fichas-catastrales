@@ -18,7 +18,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <ProtectedRoute requiredRoles={['ADMIN', 'USER']}>
+    <ProtectedRoute requiredAccess="total">
       <div className="flex flex-col min-h-screen">
         <Navbar
           breadcrumb={breadcrumb}

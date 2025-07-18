@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/navbar";
+import SupervisoresView from "@/modules/usuarios/view/supervisores.view";
 import { Home, Users } from "lucide-react";
-import UsuariosView from "@/modules/usuarios/view/usuarios.view";
 
 export default function UsuariosPage() {
   const breadcrumb = [
@@ -25,7 +25,7 @@ export default function UsuariosPage() {
       />
       <div className="mx-auto p-8 w-full">
         <div className="grid grid-cols-1 gap-8">
-          <UsuariosView />
+          <SupervisoresView />
         </div>
       </div>
     </>

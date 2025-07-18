@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/navbar";
-import { Home, UserCog, Users } from "lucide-react";
-import UsuariosView from "@/modules/usuarios/view/usuarios.view";
 import SupervisoresView from "@/modules/usuarios/view/supervisores.view";
+import { Home, UserCog } from "lucide-react";
 
 export default function SupervisoresPage() {
   const breadcrumb = [

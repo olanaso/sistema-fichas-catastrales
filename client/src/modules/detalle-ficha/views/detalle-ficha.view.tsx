@@ -174,7 +174,7 @@ export default function DetalleFichaView({ codCliente }: { codCliente: string })
   return (
     <div className="space-y-6">
       {/* Header con información de la ficha */}
-      <Card>
+      <Card className="bg-gray-100 dark:bg-stone-900">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -225,7 +225,7 @@ export default function DetalleFichaView({ codCliente }: { codCliente: string })
       {/* Contenido principal */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Menú lateral */}
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 bg-sidebar-accent">
           <CardContent className="p-4">
             <nav className="space-y-2">
               {SECCIONES.map((seccion) => {
