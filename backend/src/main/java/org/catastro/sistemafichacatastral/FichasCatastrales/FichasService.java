@@ -36,6 +36,21 @@ public class FichasService {
         }
     }
 
+    public String obtenerDataCompletaFichaCatastro(Integer codcliente) {
+        try {
+            Query query = entityManager.createNativeQuery(
+                    "SELECT fichacatastral.usp_clientefichacatastro_jdon(?1)"
+            );
+            query.setParameter(1, codcliente);
+
+            Object result = query.getSingleResult();
+            return result != null ? result.toString() : "[]";
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar ficha catastral: " + e.getMessage(), e);
+        }
+    }
+
     public void actualizarFicha(FichaUpdateDto dto) {
         try {
             Query query = entityManager.createNativeQuery(
