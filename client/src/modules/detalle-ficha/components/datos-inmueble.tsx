@@ -1,13 +1,13 @@
 "use client";
 
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { ComboboxOption } from "@/types/combobox";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface DatosInmuebleProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 
@@ -39,7 +39,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
   ];
 
   const opcionesTipoServicio: ComboboxOption[] = [
-    { value: "003", label: "AGUA" },
+    { value: "001", label: "AGUA" },
     { value: "004", label: "AGUA Y DESAGÜE" }
   ];
 
@@ -65,7 +65,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="region">1. Región</Label>
         <Input
           id="region"
-          value={ficha.region}
+          value={"-----No atributos-----"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -76,8 +76,8 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="sucursal">2. Sucursal</Label>
         <ComboboxControlled
           options={opcionesSucursal}
-          value={ficha.sucursal}
-          onChange={() => {}}
+          value={ficha.codsuc || "No registrado"}
+          onChange={() => { }}
           placeholder="Seleccionar sucursal..."
           disabled={vistaSupervision}
         />
@@ -88,8 +88,8 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="sector">3. Sector</Label>
         <ComboboxControlled
           options={opcionesSector}
-          value={ficha.sector}
-          onChange={() => {}}
+          value={ficha.codsector_new || "No registrado"}
+          onChange={() => { }}
           placeholder="Seleccionar sector..."
           disabled={vistaSupervision}
         />
@@ -100,7 +100,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="mzna">4. Mzna</Label>
         <Input
           id="mzna"
-          value={ficha.mzna}
+          value={ficha.codmza_new || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -111,7 +111,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="lote">5. Lote</Label>
         <Input
           id="lote"
-          value={ficha.lote}
+          value={ficha.nrolote_new || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -122,7 +122,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="sublote">6. Sub lote</Label>
         <Input
           id="sublote"
-          value={ficha.sublote}
+          value={ficha.nrosublote_new || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -133,7 +133,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="suministro">7. N° de Suministro</Label>
         <Input
           id="suministro"
-          value={ficha.suministro}
+          value={ficha.codcliente || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -142,12 +142,11 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
       {/* 7. Calle/Jiron/Avenida/Pasaje */}
       <div className="space-y-2">
         <Label htmlFor="calle">7. Calle/Jiron/Avenida/Pasaje</Label>
-        <ComboboxControlled
-          options={opcionesCalle}
-          value={ficha.codcalle.toString()}
-          onChange={() => {}}
-          placeholder="Seleccionar calle..."
-          disabled={vistaSupervision}
+        <Input
+          id="calle"
+          value={ficha.direccion || "No registrado"}
+          readOnly={vistaSupervision}
+          className="bg-muted"
         />
       </div>
 
@@ -156,7 +155,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="cuadra">8. Cuadra</Label>
         <Input
           id="cuadra"
-          value={ficha.cuadra}
+          value={ficha.cuadra?.toString() || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -167,7 +166,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="nromuni">9. N Muni</Label>
         <Input
           id="nromuni"
-          value={ficha.nromuni}
+          value={ficha.nromunic?.toString() || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -178,7 +177,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="mzmuni">10. Mz Muni</Label>
         <Input
           id="mzmuni"
-          value={ficha.mzmuni}
+          value={ficha.mzamunic?.toString() || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -189,7 +188,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="ltmuni">11. Lt Muni</Label>
         <Input
           id="ltmuni"
-          value={ficha.ltmuni}
+          value={ficha.ltemunic?.toString() || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -200,8 +199,8 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="urbanizacion">12. Urbanización/Asociación/AA.HH.</Label>
         <ComboboxControlled
           options={opcionesUrbanizacion}
-          value={ficha.codurbaso}
-          onChange={() => {}}
+          value={ficha.urbanizacion || "No registrado"}
+          onChange={() => { }}
           placeholder="Seleccionar urbanización..."
           disabled={vistaSupervision}
         />
@@ -212,8 +211,8 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="tipoconstruccion">13. Tipo de Construcción</Label>
         <ComboboxControlled
           options={opcionesTipoConstruccion}
-          value={ficha.tipoconstruccion}
-          onChange={() => {}}
+          value={ficha.tipoconstruccion?.toString() || "No registrado"}
+          onChange={() => { }}
           placeholder="Seleccionar tipo..."
           disabled={vistaSupervision}
         />
@@ -224,7 +223,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="nropisos">14. Numero de Pisos</Label>
         <Input
           id="nropisos"
-          value={ficha.nropisos}
+          value={ficha.nropisos || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted"
         />
@@ -235,8 +234,8 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="tiposervicio">15. Tipo Servicio</Label>
         <ComboboxControlled
           options={opcionesTipoServicio}
-          value={ficha.tiposervicio_campo}
-          onChange={() => {}}
+          value={ficha.tiposervicio || ""}
+          onChange={() => { }}
           placeholder="Seleccionar servicio..."
           disabled={vistaSupervision}
         />
@@ -247,8 +246,8 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="abastecimiento">16. Abastecimiento</Label>
         <ComboboxControlled
           options={opcionesAbastecimiento}
-          value={ficha.abastecimiento}
-          onChange={() => {}}
+          value={ficha.tipoaba || "No registrado"}
+          onChange={() => { }}
           placeholder="Seleccionar abastecimiento..."
           disabled={vistaSupervision}
         />
@@ -259,8 +258,8 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="piscina">17. Piscina</Label>
         <ComboboxControlled
           options={opcionesPiscina}
-          value={ficha.piscina}
-          onChange={() => {}}
+          value={ficha.piscina || "No registrado"}
+          onChange={() => { }}
           placeholder="Seleccionar..."
           disabled={vistaSupervision}
         />
@@ -271,8 +270,8 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="almacenaje">18. Reservorio/Almacenaje</Label>
         <ComboboxControlled
           options={opcionesAlmacenaje}
-          value={ficha.almacenaje}
-          onChange={() => {}}
+          value={ficha.codalmacenaje || "No registrado"}
+          onChange={() => { }}
           placeholder="Seleccionar..."
           disabled={vistaSupervision}
         />

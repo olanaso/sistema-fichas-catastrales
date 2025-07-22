@@ -3,10 +3,10 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Waves } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface DatosConexionDesagueProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 
@@ -21,7 +21,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
           </Label>
           <Input
             id="estado-conexion-desague"
-            value={ficha.estadocaja_a || "ACTIVO"}
+            value={ficha.situacionconex_d?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -33,7 +33,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
           </Label>
           <Input
             id="diametro-desague"
-            value={ficha.diametrocampo_d || "160 MM (6)"}
+            value={ficha.coddiametro_d?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -45,7 +45,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
           </Label>
           <Input
             id="tipo-material-desague"
-            value={ficha.materialtubo_d || "PVC"}
+            value={ficha.tipomaterial_d?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -58,7 +58,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
           </Label>
           <Input
             id="caja-desague"
-            value={ficha.caja_d || "CONCRETO"}
+            value={ficha.concajadesague?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -70,7 +70,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
           </Label>
           <Input
             id="localizacion-caja-desague"
-            value={ficha.localizacion_d || "ADELANTE"}
+            value={ficha.loccaja_d?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -82,7 +82,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
           </Label>
           <Input
             id="estado-caja-desague"
-            value={ficha.estadocaja_d || "BUEN ESTADO"}
+            value={ficha.estadocaja_d?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -95,7 +95,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
           </Label>
           <Input
             id="tapa-desague"
-            value={ficha.tapa_d || "CONCRETO"}
+            value={ficha.tipotapa_d?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -107,7 +107,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
           </Label>
           <Input
             id="estado-tapa-desague"
-            value={ficha.estadotapa_d || "BUEN ESTADO"}
+            value={ficha.esttapa_d?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -119,7 +119,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
           </Label>
           <Input
             id="fugas-desague"
-            value={ficha.fugas_d || "NO HAY"}
+            value={ficha.fugasdesague?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -128,7 +128,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
 
       {/* Información adicional */}
       <div className="mt-6 text-red-600 text-sm">
-        <p>Estado Caja: {ficha.estadocaja_d || ""} | Estado Tapa: {ficha.estadotapa_d || ""}</p>
+        <p>Estado Caja: {ficha.estadocaja_d?.toString() || ""} | Estado Tapa: {ficha.esttapa_d?.toString() || ""}</p>
       </div>
     </div>
   );

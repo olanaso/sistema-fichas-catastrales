@@ -4,11 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface CalidadServicioProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 

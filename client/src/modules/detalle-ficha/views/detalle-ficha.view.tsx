@@ -23,7 +23,7 @@ import {
   CheckCircle,
   Clock
 } from "lucide-react";
-import { getDetalleFicha, DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { DetalleFichaResponse } from "../action/detalle-ficha.action";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -36,6 +36,8 @@ import DatosConexionDesague from "../components/datos-conexion-desague";
 import CalidadServicio from "../components/calidad-servicio";
 import ImagenesAdjuntas from "../components/imagenes-adjuntas";
 import DatosPadronOrigen from "../components/datos-padron-origen";
+import { buscarExacto } from "@/service/data.actions";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 // Definir las secciones disponibles
 const SECCIONES = [
@@ -89,9 +91,9 @@ const SECCIONES = [
   }
 ];
 
-export default function DetalleFichaView({ codCliente }: { codCliente: string }) {
+export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
 
-  const [ficha, setFicha] = useState<DetalleFichaResponse | null>(null);
+  const [ficha, setFicha] = useState<FichaCatastro | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [seccionActiva, setSeccionActiva] = useState("inmueble");
@@ -99,14 +101,15 @@ export default function DetalleFichaView({ codCliente }: { codCliente: string })
 
   useEffect(() => {
     const cargarFicha = async () => {
-      if (!codCliente) return;
+      if (!codFicha) return;
       
       try {
         setLoading(true);
-        const resultado = await getDetalleFicha(codCliente);
+        const resultado = await buscarExacto("fichacatastro_eps", ["idficha"], [codFicha.toString()]);
+        console.log("resultado", resultado.data);
         
         if (resultado.success && resultado.data) {
-          setFicha(resultado.data);
+          setFicha(resultado.data[0]);
         } else {
           setError(resultado.error || 'Error al cargar la ficha');
         }
@@ -118,7 +121,7 @@ export default function DetalleFichaView({ codCliente }: { codCliente: string })
     };
 
     cargarFicha();
-  }, [codCliente]);
+  }, [codFicha]);
 
   const obtenerEstadoFicha = () => {
     if (!ficha) return { texto: "Cargando...", color: "gray" };
@@ -194,7 +197,7 @@ export default function DetalleFichaView({ codCliente }: { codCliente: string })
                 <p className="text-sm text-muted-foreground">Encuestador</p>
                 <p className="font-medium">{ficha.encuestador}</p>
                 <p className="text-xs text-muted-foreground">
-                  {formatearFecha(ficha.fecencuestador)}
+                  {formatearFecha(ficha.encuestador || "")}
                 </p>
               </div>
               
@@ -202,14 +205,14 @@ export default function DetalleFichaView({ codCliente }: { codCliente: string })
                 <p className="text-sm text-muted-foreground">Modificado por</p>
                 <p className="font-medium">{ficha.usermodificador}</p>
                 <p className="text-xs text-muted-foreground">
-                  {formatearFecha(ficha.fechamodificacion)}
+                  {formatearFecha(ficha.fechamodificacion?.toString() || "")}
                 </p>
               </div>
               
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Fecha Finalización</p>
                 <p className="font-medium">
-                  {ficha.fechaaprobacion ? formatearFecha(ficha.fechaaprobacion) : "-"}
+                  {ficha.fechaaprobacion ? formatearFecha(ficha.fechaaprobacion.toString()) : "-"}
                 </p>
               </div>
               

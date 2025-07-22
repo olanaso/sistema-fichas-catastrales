@@ -157,9 +157,9 @@ export interface DetalleFichaResponse {
     fotodetalle5: string;
 }
 
-export async function getDetalleFicha(codClient: string): Promise<{ success: boolean; data?: DetalleFichaResponse; error?: string }> {
+export async function getDetalleFicha(codFicha: number): Promise<{ success: boolean; data?: DetalleFichaResponse; error?: string }> {
     try {
-        const response = await apiClient.get(`/fichas-catastrales/obtener-detalle?codcliente=${codClient}`);
+        const response = await apiClient.get(`/fichas-catastrales/obtener-detalle?codficha=${codFicha}`);
         
         if (response.data) {
             return {

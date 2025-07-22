@@ -3,10 +3,10 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Droplets } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface DatosConexionAguaProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 
@@ -21,7 +21,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="estado-servicio"
-            value={ficha.estservicio_a || ""}
+            value={ficha.estadoservicio?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -33,7 +33,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="pavimentacion"
-            value={ficha.pavimento_a || ""}
+            value={ficha.pavconagu_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -58,7 +58,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="diametro"
-            value={ficha.diametrocampo_a || ""}
+            value={ficha.coddiametro_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -70,7 +70,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="tipo-material"
-            value={ficha.materialtubo_a || ""}
+            value={ficha.tipomaterial_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -82,7 +82,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="tipo-ingreso"
-            value={ficha.tipoingreso_a || ""}
+            value={ficha.tipoingreso?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -95,7 +95,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="material-caja"
-            value={ficha.materialcaja_a || ""}
+            value={ficha.tipomaterial_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -107,7 +107,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="localizacion-caja"
-            value={ficha.localizacion_a || ""}
+            value={ficha.loccaja_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -119,7 +119,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="estado-caja"
-            value={ficha.estadocaja_a || ""}
+            value={ficha.estadocaja_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -132,7 +132,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="material-tapa"
-            value={ficha.materialtapa_a || ""}
+            value={ficha.tipomaterial_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -144,7 +144,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="estado-tapa"
-            value={ficha.estadotapa_a || ""}
+            value={ficha.esttapa_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -156,7 +156,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="llaves"
-            value={ficha.llaves || ""}
+            value={ficha.llavemed?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -169,7 +169,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="posicion-medidor"
-            value={ficha.posicionmedidor || ""}
+            value={ficha.posicionmed?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -181,7 +181,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="tipo-corte"
-            value={ficha.tipocorte_a || ""}
+            value={ficha.tipocorte_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -193,7 +193,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="razon-corte"
-            value={ficha.razoncorte || ""}
+            value={ficha.tipocerrado || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -206,7 +206,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="fugas"
-            value={ficha.fugas_a || ""}
+            value={ficha.tipofugas_a?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -218,7 +218,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="caja-observacion"
-            value={ficha.tipocajaobserv_a || ""}
+            value={ficha.tipocajaobserv?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />

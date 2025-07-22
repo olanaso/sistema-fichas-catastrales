@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Image, Upload, Eye, X, MapPin } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface ImagenesAdjuntasProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 

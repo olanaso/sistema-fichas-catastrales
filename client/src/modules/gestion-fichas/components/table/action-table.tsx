@@ -26,7 +26,7 @@ export default function GestionFichasActionTable({
   const router = useRouter();
 
   const handleEditarFicha = () => {
-    router.push(`/gestion-fichas/${ficha.codcliente}`);
+    router.push(`/gestion-fichas/${ficha.idficha}`);
   };
 
   const handleImprimirFicha = () => {

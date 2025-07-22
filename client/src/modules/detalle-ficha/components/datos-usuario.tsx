@@ -13,10 +13,10 @@ import {
   Minus,
   Building2
 } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface DatosUsuarioProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 
@@ -45,7 +45,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
             </Label>
             <Input
               id="nombres"
-              value={ficha.apellidosnombre_campo || ""}
+              value={ficha.propietario || "No registrado"}
               readOnly={vistaSupervision}
               className="mt-1"
             />
@@ -57,7 +57,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
             </Label>
             <Input
               id="dni"
-              value={ficha.dni || ""}
+              value={ficha.dni || "No registrado"}
               readOnly={vistaSupervision}
               className="mt-1"
             />
@@ -69,7 +69,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
             </Label>
             <Input
               id="habitantes"
-              value={ficha.habitantes || ""}
+              value={ficha.habitantes || "No registrado"}
               readOnly={vistaSupervision}
               className="mt-1"
             />
@@ -96,7 +96,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
             </Label>
             <Input
               id="telefono"
-              value={ficha.telefono || ""}
+              value={ficha.celular || "No registrado"}
               readOnly={vistaSupervision}
               className="mt-1"
             />
@@ -108,7 +108,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
             </Label>
             <Input
               id="contrato"
-              value={ficha.nrocontrato || ""}
+              value={ficha.nrocontrato || "No registrado"}
               readOnly={vistaSupervision}
               className="mt-1"
             />
@@ -120,7 +120,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
             </Label>
             <Input
               id="reservorio"
-              value={ficha.reservorio || ""}
+              value={ficha.codreservorio?.toString() || "No registrado"}
               readOnly={vistaSupervision}
               className="mt-1"
             />
@@ -132,7 +132,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
             </Label>
             <Input
               id="sector"
-              value={ficha.sectabastecimiento || ""}
+              value={ficha.codsectorabast || "No registrado"}
               readOnly={vistaSupervision}
               className="mt-1"
             />
@@ -144,7 +144,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
             </Label>
             <Input
               id="categoria"
-              value={ficha.categoriascampo || ""}
+              value={ficha.catetar || "No registrado"}
               readOnly={vistaSupervision}
               className="mt-1"
             />
@@ -159,7 +159,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
             </Label>
             <Input
               id="razon-social"
-              value={ficha.razonsocial || ""}
+              value={ficha.razonsocial || "No registrado"}
               readOnly={vistaSupervision}
               className="mt-1"
             />
@@ -178,7 +178,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
               <span className="font-semibold">Actividad Sistema:</span> {ficha.actividad || "VIVIENDA"}
             </p>
             <p className="text-sm">
-              <span className="font-semibold">Unidades de Uso Sistema:</span> {ficha.unidades_uso || ""}
+              <span className="font-semibold">Unidades de Uso Sistema:</span> {"No atributos"}
             </p>
           </div>
         </CardContent>
@@ -229,7 +229,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
               </Label>
               <Input
                 id="razon-social-tarifa"
-                value={ficha.razonsocial || ""}
+                value={ficha.razonsocial || "No registrado"}
                 readOnly={vistaSupervision}
                 className="mt-1"
               />

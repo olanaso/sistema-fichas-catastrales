@@ -2,11 +2,10 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Database } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface DatosPadronOrigenProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 
@@ -21,7 +20,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="padron"
-            value={ficha.codcatastral || ""}
+            value={ficha.nrocatastro?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -33,7 +32,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="sector"
-            value={ficha.sector || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -45,7 +44,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="manzana"
-            value={ficha.mzna || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -58,7 +57,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="lote"
-            value={ficha.lote || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -70,7 +69,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="sub-lote"
-            value={ficha.sublote || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -82,7 +81,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="edificio"
-            value={ficha.urbanizacion || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -95,7 +94,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="piso"
-            value={ficha.nropisos || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -107,7 +106,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="unidad"
-            value={ficha.nromuni || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -119,7 +118,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="codigo-catastral"
-            value={ficha.codcatastral || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -132,7 +131,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="direccion"
-            value={ficha.calle || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -144,7 +143,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="distrito"
-            value={ficha.coddist || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -156,7 +155,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="provincia"
-            value={ficha.coddist || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -169,7 +168,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="departamento"
-            value={ficha.codsector_new || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -181,7 +180,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="coordenada-x"
-            value={ficha.posicionx || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -193,7 +192,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="coordenada-y"
-            value={ficha.posiciony || ""}
+            value={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -205,10 +204,10 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
         <h4 className="font-semibold text-blue-800 mb-2">Información del Padrón</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-700">
           <div>
-            <span className="font-medium">Padrón Completo:</span> {ficha.codcatastral || ""} - {ficha.sector || ""} - {ficha.mzna || ""} - {ficha.lote || ""}
+            <span className="font-medium">Padrón Completo:</span> {ficha.nrocatastro?.toString() || ""} - {ficha.codsector_new || ""} - {ficha.codmza_new || ""} - {ficha.nrolote_new || ""}
           </div>
           <div>
-            <span className="font-medium">Ubicación:</span> {ficha.coddist || ""}, {ficha.codsector_new || ""}
+            <span className="font-medium">Ubicación:</span> {ficha.codprov || ""}, {ficha.codsector_new || ""}
           </div>
         </div>
       </div>

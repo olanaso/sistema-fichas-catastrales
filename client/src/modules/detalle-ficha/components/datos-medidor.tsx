@@ -2,11 +2,10 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Gauge } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface DatosMedidorProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 
@@ -21,7 +20,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="numero-medidor"
-            value={ficha.nromed_sistema || ""}
+            value={ficha.nromed?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -45,7 +44,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="lectura-medidor"
-            value={ficha.lecturamedidor || "0"}
+            value={ficha.lecturaultima?.toString() || "0"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -58,7 +57,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="numero-medidor-sistema"
-            value={ficha.nromed_sistema || ""}
+            value={ficha.nromed_new?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -70,7 +69,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="fecha-instalacion"
-            value={ficha.fechainstalacion || ""}
+            value={ficha.fechainstalacion?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -82,7 +81,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="marca"
-            value={ficha.marcamedidor || ""}
+            value={ficha.marcamed?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -95,7 +94,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="diametro-medidor"
-            value={ficha.diametromedidor || ""}
+            value={ficha.coddiametro_m?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -107,7 +106,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="lectura"
-            value={ficha.lectura || ""}
+            value={ficha.lectura?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -119,7 +118,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="tipo-facturacion"
-            value={ficha.tipofacturacion || "ASIGNADO"}
+            value={ficha.tipofacturacion?.toString() || "ASIGNADO"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -132,7 +131,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="tipo-lectura"
-            value={ficha.tipolectura || ""}
+            value={ficha.tipolectura?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -144,7 +143,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="estado-medidor"
-            value={ficha.estadomedidor || ""}
+            value={ficha.estadomed?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
