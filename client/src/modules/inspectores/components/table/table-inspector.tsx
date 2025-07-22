@@ -7,6 +7,7 @@ import { TableToolbar } from "@/components/table/table-toolbar";
 import CreateInspectorForm from "../forms/create-inspector";
 import { PaginatedData } from "@/components/table/table";
 import { GrupoTrabajo } from "@/models/grupotrabajo";
+import { useInspectores } from "../../context/inspectores-context";
 
 interface TableInspectorProps {
   gruposDeTrabajo: GrupoTrabajo[];
@@ -23,6 +24,11 @@ export default function TableInspector({
   onPageChange,
   onPageSizeChange 
 }: TableInspectorProps) {
+  const { searchData, searchParams } = useInspectores();
+
+  const handleSearch = (searchValue: string) => {
+    searchData(searchValue, searchParams.searchColumns);
+  };
 
   return (
     <>
@@ -37,7 +43,10 @@ export default function TableInspector({
             <TableToolbar 
               table={table} 
               searchKey="nombres"
-              searchPlaceholder="Buscar inspectores..."
+              searchPlaceholder="Buscar por nombres, apellidos, DNI, email..."
+              onSearch={handleSearch}
+              searchColumns={searchParams.searchColumns}
+              currentSearchValue={searchParams.searchValue}
               actions={<CreateInspectorForm gruposDeTrabajo={gruposDeTrabajo} />}
             />
           )}

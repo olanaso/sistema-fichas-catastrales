@@ -8,6 +8,7 @@ import { PaginatedData } from "@/components/table/table";
 import { createColumns } from "./columns";
 import { Usuario } from "@/models/usuario";
 import { Inspector } from "@/models/inspector";
+import { useGrupoTrabajo } from "../../context/grupotrabajo-context";
 
 interface TableGrupoTrabajoProps {
   gruposTrabajo: PaginatedData<GrupoTrabajoDto>;
@@ -26,6 +27,11 @@ export default function TableGrupoTrabajo({
   onPageChange,
   onPageSizeChange 
 }: TableGrupoTrabajoProps) {
+  const { searchData, searchParams } = useGrupoTrabajo();
+
+  const handleSearch = (searchValue: string) => {
+    searchData(searchValue, searchParams.searchColumns);
+  };
 
   const columns = createColumns({ supervisores, inspectores });
 
@@ -42,7 +48,10 @@ export default function TableGrupoTrabajo({
             <TableToolbar 
               table={table} 
               searchKey="nombre"
-              searchPlaceholder="Buscar grupos de trabajo..."
+              searchPlaceholder="Buscar por nombre, descripción..."
+              onSearch={handleSearch}
+              searchColumns={searchParams.searchColumns}
+              currentSearchValue={searchParams.searchValue}
               actions={<CreateGrupoTrabajoForm supervisores={supervisores} inspectores={inspectores} />}
             />
           )}

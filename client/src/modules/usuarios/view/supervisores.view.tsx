@@ -19,22 +19,18 @@ function SupervisoresSkeleton() {
 // Componente interno que usa el contexto
 function SupervisoresContent() {
   const { 
-    usuarios, 
+    data: usuarios, 
     isLoading, 
     error, 
-    refreshUsuarios,
+    refreshData,
     pagination,
     handlePageChange,
     handlePageSizeChange
   } = useUsuarios();
 
   useEffect(() => {
-    refreshUsuarios();
-  }, [refreshUsuarios]);
-
-  useEffect(() => {
-  }, [usuarios, isLoading, error, pagination]);
-
+    refreshData();
+  }, [refreshData]);
 
   if (isLoading && usuarios.data.length === 0) {
     return <SupervisoresSkeleton />;

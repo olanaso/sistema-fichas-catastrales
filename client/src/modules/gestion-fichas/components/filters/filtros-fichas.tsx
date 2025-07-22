@@ -163,12 +163,12 @@ export function FiltrosFichas({
     <div className="mb-6">
       <div>
         <Label className="text-lg font-bold">Filtros</Label>
-        <div className="flex gap-4 justify-center items-center lg:flex-row flex-col">
+        <div className="flex gap-2 justify-center items-center lg:flex-row flex-col">
           <ComboboxControlled
             options={grupos}
             value={filtros.grupo}
             onChange={handleGrupoChange}
-            placeholder="Seleccionar grupo..."
+            placeholder="Seleccionar..."
             searchPlaceholder="Buscar grupo..."
             emptyMessage="No se encontraron grupos"
             label="Equipos de trabajo"
@@ -180,7 +180,7 @@ export function FiltrosFichas({
             options={inspectores}
             value={filtros.inspector}
             onChange={handleInspectorChange}
-            placeholder="Seleccionar inspector..."
+            placeholder="Seleccionar..."
             searchPlaceholder="Buscar inspector..."
             emptyMessage="No se encontraron inspectores"
             label="Inspector"
@@ -203,7 +203,7 @@ export function FiltrosFichas({
                   {fechaInicio ? (
                     format(fechaInicio, "PPP", { locale: es })
                   ) : (
-                    <span>Seleccionar fecha</span>
+                    <span>Seleccionar</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -234,7 +234,7 @@ export function FiltrosFichas({
                   {fechaFin ? (
                     format(fechaFin, "PPP", { locale: es })
                   ) : (
-                    <span>Seleccionar fecha</span>
+                    <span>Seleccionar</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -259,7 +259,7 @@ export function FiltrosFichas({
             options={estados}
             value={filtros.estado}
             onChange={handleEstadoChange}
-            placeholder="Seleccionar estado..."
+            placeholder="Seleccionar..."
             searchPlaceholder="Buscar estado..."
             emptyMessage="No se encontraron estados"
             label="Estado"

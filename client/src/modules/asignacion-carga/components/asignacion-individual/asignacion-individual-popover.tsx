@@ -16,10 +16,11 @@ import { FichaCatastro } from "@/models/fichacatastro";
 import { Inspector } from "@/models/inspector";
 import { asignarFichaIndividual, type FichaUpdateDto } from "../../action/asignacion-carga.actions";
 import { toast } from "sonner";
+import { Cliente } from "@/models/cliente";
 
 
 interface AsignacionIndividualPopoverProps {
-    ficha: FichaCatastro;
+    ficha: Cliente;
     inspectores: Inspector[];
     onAsignacionCompleta?: () => void;
     children: React.ReactNode;
@@ -36,11 +37,11 @@ export function AsignacionIndividualPopover({
 
     const [asignacion, setAsignacion] = useState({
         inspector: ficha.codinspector,
-        fechaVisita: ficha.fecha_visita,
-        observacion: ficha.observacion
+        fechaVisita: ficha.fechaasignacion,
+        observacion: ""
     });
     const [fechaVisita, setFechaVisita] = useState<Date | undefined>(
-        ficha.fecha_visita ? new Date(ficha.fecha_visita) : undefined
+        ficha.fechaasignacion ? new Date(ficha.fechaasignacion) : undefined
     );
 
     const handleInspectorChange = (value: string | number) => {
@@ -82,7 +83,7 @@ export function AsignacionIndividualPopover({
             setLoading(true);
 
             const dto: FichaUpdateDto = {
-                idficha: ficha.idficha,
+                idficha: ficha.codcliente,
                 inspector: asignacion.inspector,
                 encuestador: asignacion.inspector, // El encuestador es el mismo inspector
                 fechaVisita: asignacion.fechaVisita.toString(),

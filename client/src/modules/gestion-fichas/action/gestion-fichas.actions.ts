@@ -315,7 +315,7 @@ export async function getFichasCatastralesPorColumnas(columnas: string[], valore
 export async function getFichasConFiltrosGestion(filtros: FiltrosGestionFichas): Promise<FichaCatastro[]> {
     try {
         // Definir las columnas de la base de datos correspondientes a los filtros
-        const columnas = ["codbrigada", "inspector", "fecha_creacion", "fecha_creacion", "estadoficha"];
+        const columnas = ["codbrigada", "inspector", "fecha_inicio", "fecha_fin", "estadoficha"];
         
         // Obtener los valores correspondientes de los filtros
         const valores = [

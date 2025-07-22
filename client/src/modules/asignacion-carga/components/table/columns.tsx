@@ -29,8 +29,9 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AsignacionIndividualPopover } from "../asignacion-individual/asignacion-individual-popover";
 import { Inspector } from "@/models/inspector";
+import { Cliente } from "@/models/cliente";
 
-export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => void): ColumnDef<FichaCatastro>[] => [
+export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => void): ColumnDef<Cliente>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -58,10 +59,10 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
       const ficha = row.original;
 
       //obtener el estado de la ficha
-      const estado = ficha.estadoficha;
+      const estado = ficha.codinspector ? "A" : "P";
       //designar el color y el texto del estado
-      const color = estado === "F" ? "green" : estado === "P" ? "blue" : "dark";
-      const texto = estado === "F" ? "Ficha completada" : estado === "P" ? "Ficha parcial" : "Ficha pendiente";
+      const color = estado === "A" ? "green" : estado === "P" ? "blue" : "dark";
+      const texto = estado === "A" ? "Cliente asignado" : "Cliente sin asignar";
 
       return (
         <div className="flex items-center gap-1">
@@ -115,12 +116,12 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
     size: 150,
   },
   {
-    id: "fecha_visita",
+    id: "fechaasignacion",
     header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Fecha Visita" />;
+      return <TableHeaderColumn column={column} title="Fecha Asignación" />;
     },
     cell: ({ row }) => {
-      const fecha = row.original.fecha_visita;
+      const fecha = row.original.fechaasignacion;
 
       return (
         <div className="text-start flex items-center gap-2">
@@ -149,9 +150,9 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
       const nrocatastro =
         ficha.codsuc +
         "-" +
-        ficha.codsector_new +
+        ficha.codsector +
         "-" +
-        ficha.codmza_new +
+        ficha.codmza +
         "-" +
         ficha.codcliente;
 
@@ -199,7 +200,7 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
     },
     cell: ({ row }) => {
       const ficha = row.original;
-      const direccion = ficha.direccion || "Sin dirección";
+      const direccion = ficha.direcc || "Sin dirección";
 
       return (
         <div className="text-start flex items-center gap-2">
@@ -213,12 +214,12 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
     size: 250,
   },
   {
-    id: "tipoconstruccion",
+    id: "tiposervicio",
     header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Tipo Construcción" />;
+      return <TableHeaderColumn column={column} title="Tipo Servicio" />;
     },
     cell: ({ row }) => {
-      const tipo = row.original.tipoconstruccion || "Sin especificar";
+      const tipo = row.original.tiposervicio || "Sin especificar";
 
       return (
         <div className="text-start flex items-center gap-2">
@@ -230,89 +231,5 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
       );
     },
     size: 150,
-  },
-  {
-    id: "nropisos",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Nro. Pisos" />;
-    },
-    cell: ({ row }) => {
-      const pisos = row.original.nropisos || "No especificado";
-
-      return (
-        <div className="text-start flex items-center gap-2">
-          <Layers className="w-4 h-4 text-green-600" />
-          <CustomBadge color="green" className="text-xs">
-            {pisos}
-          </CustomBadge>
-        </div>
-      );
-    },
-    size: 100,
-  },
-  {
-    id: "tiposervicio",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Tipo Servicio" />;
-    },
-    cell: ({ row }) => {
-      const servicio = row.original.tiposervicio || "Sin especificar";
-
-      return (
-        <div className="text-start flex items-center gap-2">
-          <Wrench className="w-4 h-4 text-blue-600" />
-          <div className="max-w-[100px] truncate">
-            {servicio}
-          </div>
-        </div>
-      );
-    },
-    size: 120,
-  },
-  {
-    id: "suministroluz",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Suministro Luz" />;
-    },
-    cell: ({ row }) => {
-      const suministro = row.original.suministroluz;
-      const color = suministro === " " ? "red" : "green";
-      const icon = suministro === " " ? <XCircle className="w-4 h-4 text-red-600" /> : <Zap className="w-4 h-4 text-green-600" />;
-      const label = suministro === " " ? "No informado" : "SI";
-      return (
-        <div className="text-start flex items-center gap-2">
-          {icon}
-          <CustomBadge color={color} className="text-xs">
-            {label}
-          </CustomBadge>
-        </div>
-      );
-    },
-    size: 120,
-  },
-  {
-    id: "piscina",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Piscina" />;
-    },
-    cell: ({ row }) => {
-      const piscina = row.original.piscina || "Sin especificar";
-      return (
-        <div className="text-start flex items-center gap-2">
-          <Waves
-            className={`w-4 h-4 ${
-              piscina ? "text-blue-600" : "text-gray-400"
-            }`}
-          />
-          <CustomBadge
-            color={piscina ? "blue" : "dark"}
-            className="text-xs"
-          >
-            {piscina}
-          </CustomBadge>
-        </div>
-      );
-    },
-    size: 100,
   },
 ];

@@ -27,9 +27,7 @@ export const createColumns = ({ supervisores, inspectores }: ColumnsProps): Colu
   {
     id: "codgrupo",
     accessorKey: "codgrupo",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Código" />
-    },
+    header: "Código",
     cell: ({ row }) => {
       const codigo = row.original.codgrupo;
       return (
@@ -42,9 +40,7 @@ export const createColumns = ({ supervisores, inspectores }: ColumnsProps): Colu
   {
     id: "nombre",
     accessorKey: "nombre",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Nombre" />
-    },
+    header: "Nombre",
     cell: ({ row }) => {
       return (
         <div className="text-start flex items-center gap-2">
@@ -57,9 +53,7 @@ export const createColumns = ({ supervisores, inspectores }: ColumnsProps): Colu
   {
     id: "codlider",
     accessorKey: "codlider",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Líder" />
-    },
+    header: "Líder",
     cell: ({ row }) => {
       const lider = supervisores.find(supervisor => supervisor.codusu === row.original.codlider);
       return (
@@ -73,9 +67,7 @@ export const createColumns = ({ supervisores, inspectores }: ColumnsProps): Colu
   {
     id: "inspectores",
     accessorKey: "inspectores",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Inspectores" />
-    },
+    header: "Inspectores",
     cell: ({ row }) => {
       const inspectores = row.original.inspectores;
       const count = inspectores;
@@ -92,9 +84,7 @@ export const createColumns = ({ supervisores, inspectores }: ColumnsProps): Colu
   {
     id: "activo",
     accessorKey: "activo",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Estado" />
-    },
+    header: "Estado",
     cell: ({ row }) => {
       const activo = row.original.activo;
       

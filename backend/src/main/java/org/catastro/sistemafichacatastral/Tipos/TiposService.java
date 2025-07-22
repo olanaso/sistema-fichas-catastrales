@@ -26,12 +26,14 @@ public class TiposService {
         }
     }
 
-    public String obtenerTablaJsonPaginadoConTotal(String tabla, int limit, int offset) {
+    public String obtenerTablaJsonPaginadoConTotal(String tabla, int limit, int offset, String valorBusqueda, String[] columnas) {
         try {
-            Query query = entityManager.createNativeQuery("SELECT fichacatastral.usp_obtener_tabla_json_paginado_total(?1, ?2, ?3)");
+            Query query = entityManager.createNativeQuery("SELECT fichacatastral.usp_obtener_tabla_json_paginado_total(?1, ?2, ?3, ?4, ?5)");
             query.setParameter(1, tabla);
             query.setParameter(2, limit);
             query.setParameter(3, offset);
+            query.setParameter(4, valorBusqueda != null ? valorBusqueda : "");
+            query.setParameter(5, columnas);
 
             Object result = query.getSingleResult();
             return result != null ? result.toString() : "{\"total\":0,\"data\":[]}";

@@ -6,6 +6,7 @@ import { BackendTable } from "@/components/table/table";
 import { TableToolbar } from "@/components/table/table-toolbar";
 import { PaginatedData } from "@/components/table/table";
 import CreateUsuarioForm from "../forms/create-usuario";
+import { useUsuarios } from "../../context/usuarios-context";
 
 interface TableUsuarioProps {
   usuarios: PaginatedData<UsuarioDto>;
@@ -20,6 +21,11 @@ export default function TableUsuario({
   onPageChange,
   onPageSizeChange 
 }: TableUsuarioProps) {
+  const { searchData, searchParams } = useUsuarios();
+
+  const handleSearch = (searchValue: string) => {
+    searchData(searchValue, searchParams.searchColumns);
+  };
 
   return (
     <>
@@ -34,7 +40,10 @@ export default function TableUsuario({
             <TableToolbar 
               table={table} 
               searchKey="nombre"
-              searchPlaceholder="Buscar usuarios..."
+              searchPlaceholder="Buscar por nombre, apellido, email, usuario..."
+              onSearch={handleSearch}
+              searchColumns={searchParams.searchColumns}
+              currentSearchValue={searchParams.searchValue}
               actions={<CreateUsuarioForm />}
             />
           )}

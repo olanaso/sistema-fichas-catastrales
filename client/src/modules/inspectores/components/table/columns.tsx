@@ -17,9 +17,7 @@ export const columns = (gruposDeTrabajo: GrupoTrabajo[]): ColumnDef<InspectorDto
   },
   {
     id: "codigo",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Código" />
-    },
+    header: "Código",
     cell: ({ row }) => {
       const inspector = row.original;
       const codigo = `${inspector.codemp}-${inspector.codsede}-${inspector.codinspector}`;
@@ -33,9 +31,7 @@ export const columns = (gruposDeTrabajo: GrupoTrabajo[]): ColumnDef<InspectorDto
   {
     id: "nombres",
     accessorKey: "nombres",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Nombres" />
-    },
+    header: "Nombres",
     cell: ({ row }) => {
       return (
         <div className="text-start flex items-center gap-2">
@@ -48,16 +44,12 @@ export const columns = (gruposDeTrabajo: GrupoTrabajo[]): ColumnDef<InspectorDto
   {
     id: "dni",
     accessorKey: "dni",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="DNI" />
-    },
+    header: "DNI",
   },
   {
     id: "supervisor",
     accessorKey: "supervisor",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Rol" />
-    },
+    header: "Rol",
     cell: ({ row }) => {
       const supervisor = row.original.supervisor;
       const isSupervisor = supervisor === 1;
@@ -82,9 +74,7 @@ export const columns = (gruposDeTrabajo: GrupoTrabajo[]): ColumnDef<InspectorDto
   {
     id: "grupotrabajo",
     accessorKey: "grupotrabajo",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Grupo de trabajo" />
-    },
+    header: "Grupo de trabajo",
     cell: ({ row }) => {
       const grupotrabajo = gruposDeTrabajo.find(grupo => grupo.codgrupo === row.original.codbrigada);
       return (

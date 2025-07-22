@@ -15,13 +15,14 @@ import { FichaCatastro } from "@/models/fichacatastro";
 import { ComboboxOption } from "@/types/combobox";
 import { getData } from "@/service/data.actions";
 import { Inspector } from "@/models/inspector";
+import { Cliente } from "@/models/cliente";
 
 
 export default function AsignacionCargaView() {
   const [fichasSeleccionadas, setFichasSeleccionadas] = useState<number[]>([]);
   const [filtrosAplicados, setFiltrosAplicados] =
     useState<FiltrosAsignacionType>({});
-  const [fichasFiltradas, setFichasFiltradas] = useState<FichaCatastro[]>([]);
+  const [fichasFiltradas, setFichasFiltradas] = useState<Cliente[]>([]);
   const [mostrarResultados, setMostrarResultados] = useState(false);
   const [loadingFiltros, setLoadingFiltros] = useState(false);
   const [inspectores, setInspectores] = useState<Inspector[]>([]);
@@ -38,14 +39,14 @@ export default function AsignacionCargaView() {
       setFiltrosAplicados(filtros);
 
       // Definir las columnas de la base de datos
-      const columnas = ["codsuc", "codsector_new", "codmza", "estadoficha"];
+      const columnas = ["codsuc", "codsector", "codmza", "estado"];
 
       // Obtener los valores correspondientes de los filtros
       const valores = [
         filtros.sucursal || "",
         filtros.sector || "",
         filtros.manzana || "",
-        filtros.estadoPadron || "",
+        filtros.estadoRegistro || "",
       ];
 
       // Filtrar solo las columnas que tienen valores

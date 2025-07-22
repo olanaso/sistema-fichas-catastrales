@@ -23,10 +23,10 @@ function GrupoTrabajoSkeleton() {
 // Componente interno que usa el contexto
 function GrupoTrabajoContent() {
   const { 
-    gruposTrabajo, 
+    data: gruposTrabajo, 
     isLoading, 
     error, 
-    refreshGruposTrabajo,
+    refreshData,
     pagination,
     handlePageChange,
     handlePageSizeChange
@@ -36,8 +36,8 @@ function GrupoTrabajoContent() {
   const [inspectores, setInspectores] = useState<Inspector[]>([]);
 
   useEffect(() => {
-    refreshGruposTrabajo();
-  }, [refreshGruposTrabajo]);
+    refreshData();
+  }, [refreshData]);
 
   useEffect(() => {
     getDataTable("usersystema").then((data) => {

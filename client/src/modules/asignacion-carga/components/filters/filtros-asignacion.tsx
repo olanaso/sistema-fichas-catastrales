@@ -36,7 +36,7 @@ export function FiltrosAsignacion({
     sucursal: "",
     sector: "",
     manzana: "",
-    estadoPadron: "",
+    estadoRegistro: "",
   });
 
   const [loadingSectores, setLoadingSectores] = useState(false);
@@ -138,7 +138,7 @@ export function FiltrosAsignacion({
   const handleEstadoPadronChange = (value: string | number) => {
     setFiltros((prev) => ({
       ...prev,
-      estadoPadron: String(value),
+      estadoRegistro: String(value),
     }));
   };
 
@@ -156,7 +156,7 @@ export function FiltrosAsignacion({
       sucursal: "",
       sector: "",
       manzana: "",
-      estadoPadron: "",
+      estadoRegistro: "",
     });
     onLimpiar();
   };
@@ -208,7 +208,7 @@ export function FiltrosAsignacion({
 
           <ComboboxControlled
             options={estadosPadron}
-            value={filtros.estadoPadron}
+            value={filtros.estadoRegistro}
             onChange={handleEstadoPadronChange}
             placeholder="Seleccionar estado..."
             searchPlaceholder="Buscar estado..."

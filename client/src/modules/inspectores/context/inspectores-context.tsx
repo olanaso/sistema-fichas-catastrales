@@ -12,6 +12,7 @@ export function InspectoresProvider({ children }: InspectoresProviderProps) {
     <DataPaginatedProvider<InspectorDto>
       tableName="inspectores"
       initialPageSize={10}
+      searchColumns={["nombres", "dni"]}
     >
       {children}
     </DataPaginatedProvider>

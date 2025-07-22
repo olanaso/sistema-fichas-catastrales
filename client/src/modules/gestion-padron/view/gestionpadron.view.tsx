@@ -26,10 +26,10 @@ function PadronClientesSkeleton() {
 // Componente interno que usa el contexto
 function PadronClientesContent() {
   const { 
-    padronClientes, 
+    data: padronClientes, 
     isLoading, 
     error, 
-    refreshPadronClientes,
+    refreshData,
     handlePageChange,
     handlePageSizeChange
   } = usePadronClientes();
@@ -62,8 +62,8 @@ function PadronClientesContent() {
   }, []);
 
   useEffect(() => {
-    refreshPadronClientes();
-  }, [refreshPadronClientes]);
+    refreshData();
+  }, [refreshData]);
 
   if (isLoading && padronClientes.data.length === 0) {
     return <PadronClientesSkeleton />;
@@ -135,28 +135,19 @@ function PadronClientesContent() {
         </div>
       )}
       
-      {padronClientes.data.length === 0 && !isLoading ? (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            No se encontraron grupos de trabajo. Verifique la conexión con la base de datos.
-          </AlertDescription>
-        </Alert>
-      ) : (
-        <TableGestionPadron 
-          padronClientes={padronClientes}
-          tiposData={{
-            sectores,
-            manzanas,
-            calles,
-            tiposervicios,
-            tipocalle
-          }}  
-          loading={isLoading}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
-        />
-      )}
+      <TableGestionPadron 
+        padronClientes={padronClientes}
+        tiposData={{
+          sectores,
+          manzanas,
+          calles,
+          tiposervicios,
+          tipocalle
+        }}  
+        loading={isLoading}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+      />
     </div>
   );
 }

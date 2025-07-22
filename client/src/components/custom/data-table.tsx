@@ -15,10 +15,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DataTablePagination } from "@/components/custom/data-table-pagination"
-import { DataTableSkeleton } from "@/components/custom/data-table-skeleton"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 interface DataTableProps<TData, TValue> {

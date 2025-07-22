@@ -8,6 +8,7 @@ import { buscarPorColumna } from "@/service/obtener-data-dinamico";
 import { ComboboxOption } from "@/types/combobox";
 import { UsuarioDto } from "@/models/usuario";
 import apiClient from "@/lib/axios";
+import { Cliente } from "@/models/cliente";
 
 // Interfaces para la asignación
 export interface AsignacionGrupalRequest {
@@ -28,7 +29,7 @@ export interface FiltrosAsignacion {
     sucursal?: string;
     sector?: string;
     manzana?: string;
-    estadoPadron?: string;
+    estadoRegistro?: string;
 }
 
 // Interfaces para los DTOs de asignación
@@ -242,9 +243,8 @@ export async function getEstadosPadron(): Promise<ComboboxOption[]> {
     try {
         // Datos estáticos basados en los requisitos
         return [
-            { value: 'PENDIENTE', label: 'Pendiente' },
-            { value: 'PARCIAL', label: 'Parcial' },
-            { value: 'FINALIZADO', label: 'Finalizado' }
+            { value: 'SIN ASIGNAR', label: 'Sin asignar' },
+            { value: 'ASIGNADO', label: 'Asignado' },
         ];
     } catch (error) {
         console.error('Error al obtener estados de padrón:', error);
@@ -302,7 +302,7 @@ export async function getGruposTrabajo(): Promise<GrupoTrabajoDto[]> {
  * @param valores - Array de valores correspondientes a las columnas
  * @returns Lista de fichas catastrales filtradas
  */
-export async function getFichasCatastralesPorColumnas(columnas: string[], valores: string[]): Promise<FichaCatastro[]> {
+export async function getFichasCatastralesPorColumnas(columnas: string[], valores: string[]): Promise<Cliente[]> {
     try {
         if (columnas.length === 0 || valores.length === 0) {
             console.warn('No se proporcionaron columnas o valores para filtrar');
@@ -318,15 +318,15 @@ export async function getFichasCatastralesPorColumnas(columnas: string[], valore
         const columnasParam = columnas.map(col => `columnas=${encodeURIComponent(col)}`).join('&');
         const valoresParam = valores.map(val => `valores=${encodeURIComponent(val)}`).join('&');
         
-        const response = await apiClient.get(`/fichas-catastrales/buscar?${columnasParam}&${valoresParam}`);
+        const response = await apiClient.get(`/cliente/buscar?${columnasParam}&${valoresParam}`);
 
         // El backend devuelve un string JSON, necesitamos parsearlo
         const responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
 
         if (Array.isArray(responseData)) {
-            return responseData as FichaCatastro[];
+            return responseData as Cliente[];
         } else if (responseData && Array.isArray(responseData.data)) {
-            return responseData.data as FichaCatastro[];
+            return responseData.data as Cliente[];
         }
 
         console.warn('Formato de respuesta inesperado:', responseData);

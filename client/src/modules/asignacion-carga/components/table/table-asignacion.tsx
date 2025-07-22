@@ -12,6 +12,7 @@ import {
 import { TableSelect } from "@/components/custom/table-select";
 import { ComboboxOption } from "@/types/combobox";
 import { Inspector } from "@/models/inspector";
+import { Cliente } from "@/models/cliente";
 
 // Tipo específico para opciones de inspectores
 interface InspectorOption extends ComboboxOption {
@@ -19,7 +20,7 @@ interface InspectorOption extends ComboboxOption {
 }
 
 interface TableAsignacionProps {
-    fichas: FichaCatastro[];
+    fichas: Cliente[];
     inspectores: Inspector[];
     onSelectionChange?: (selectedIds: number[]) => void;
     selectedFichas?: number[]; // IDs de fichas seleccionadas externamente

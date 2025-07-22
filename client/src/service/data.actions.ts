@@ -1,12 +1,12 @@
 import apiClient from "@/lib/axios";
 
 //obtener datos paginados de cualquier tabla
-export async function getDataPaginada(page: number = 0, size: number = 10, tabla: string) {
+export async function getDataPaginada(page: number = 0, size: number = 10, tabla: string, valorBusqueda?: string, columnas?: string[]) {
     try {
         // Convertir page a offset (page * size)
         const offset = page * size;
-        const response = await apiClient.get(`/tipos/obtener-paginado?tabla=${tabla}&limit=${size}&offset=${offset}`);
-
+        const response = await apiClient.get(`/tipos/obtener-paginado?tabla=${tabla}&limit=${size}&offset=${offset}&valorBusqueda=${valorBusqueda}&columnas=${columnas}`);
+        console.log(response.data);
         // El backend devuelve un string JSON, necesitamos parsearlo
         const responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;
 

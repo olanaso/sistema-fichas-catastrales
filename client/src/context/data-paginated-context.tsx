@@ -22,12 +22,19 @@ interface DataContextType<T> {
   // Métodos optimizados simplificados
   refreshCurrentPage: () => Promise<void>;
   forceRefresh: () => Promise<void>;
+  // Nuevos métodos para búsqueda
+  searchData: (searchValue: string, searchColumns?: string[]) => Promise<void>;
+  searchParams: {
+    searchValue: string;
+    searchColumns: string[];
+  };
 }
 
 interface DataPaginatedProviderProps<T> {
   children: React.ReactNode;
   tableName: string;
   initialPageSize?: number;
+  searchColumns?: string[];
 }
 
 const DataContext = createContext<DataContextType<any> | undefined>(undefined);
@@ -35,7 +42,8 @@ const DataContext = createContext<DataContextType<any> | undefined>(undefined);
 export function DataPaginatedProvider<T>({ 
   children, 
   tableName, 
-  initialPageSize = 10 
+  initialPageSize = 10,
+  searchColumns = []
 }: DataPaginatedProviderProps<T>) {
   const [data, setData] = useState<PaginatedData<T>>({
     data: [],
@@ -52,13 +60,17 @@ export function DataPaginatedProvider<T>({
     total: 0,
     totalPages: 0,
   });
+  const [searchParams, setSearchParams] = useState({
+    searchValue: "",
+    searchColumns: searchColumns,
+  });
 
-  const fetchData = useCallback(async (page: number, pageSize: number) => {
+  const fetchData = useCallback(async (page: number, pageSize: number, searchValue?: string, searchColumns?: string[]) => {
     try {
       setIsLoading(true);
       setError(null);
       
-      const result = await getDataPaginada(page, pageSize, tableName);
+      const result = await getDataPaginada(page, pageSize, tableName, searchValue, searchColumns);
       
       if (result.success) {
         setData(result.data);
@@ -78,33 +90,41 @@ export function DataPaginatedProvider<T>({
     } finally {
       setIsLoading(false);
     }
-  }, [tableName]);
+  }, [tableName, searchParams.searchColumns]);
 
   const refreshData = useCallback(async (page?: number, pageSize?: number) => {
     const currentPage = page ?? pagination.page;
     const currentPageSize = pageSize ?? pagination.pageSize;
-    await fetchData(currentPage, currentPageSize);
-  }, [fetchData, pagination.page, pagination.pageSize]);
+    await fetchData(currentPage, currentPageSize, searchParams.searchValue, searchParams.searchColumns);
+  }, [fetchData, pagination.page, pagination.pageSize, searchParams]);
 
   // Método optimizado para refrescar solo la página actual
   const refreshCurrentPage = useCallback(async () => {
-    await fetchData(pagination.page, pagination.pageSize);
-  }, [fetchData, pagination.page, pagination.pageSize]);
+    await fetchData(pagination.page, pagination.pageSize, searchParams.searchValue, searchParams.searchColumns);
+  }, [fetchData, pagination.page, pagination.pageSize, searchParams]);
 
   // Método para forzar un refresh completo (útil después de operaciones CRUD)
   const forceRefresh = useCallback(async () => {
-    await fetchData(pagination.page, pagination.pageSize);
-  }, [fetchData, pagination.page, pagination.pageSize, tableName]);
+    await fetchData(pagination.page, pagination.pageSize, searchParams.searchValue, searchParams.searchColumns);
+  }, [fetchData, pagination.page, pagination.pageSize, searchParams]);
 
   const handlePageChange = useCallback((newPage: number) => {
     setPagination(prev => ({ ...prev, page: newPage }));
-    fetchData(newPage, pagination.pageSize);
-  }, [fetchData, pagination.pageSize]);
+    fetchData(newPage, pagination.pageSize, searchParams.searchValue, searchParams.searchColumns);
+  }, [fetchData, pagination.pageSize, searchParams]);
 
   const handlePageSizeChange = useCallback((newPageSize: number) => {
     setPagination(prev => ({ ...prev, page: 0, pageSize: newPageSize }));
-    fetchData(0, newPageSize);
-  }, [fetchData]);
+    fetchData(0, newPageSize, searchParams.searchValue, searchParams.searchColumns);
+  }, [fetchData, searchParams]);
+
+  // Nuevo método para búsqueda
+  const searchData = useCallback(async (searchValue: string, searchColumns?: string[]) => {
+    const columns = searchColumns || searchParams.searchColumns;
+    setSearchParams({ searchValue, searchColumns: columns });
+    setPagination(prev => ({ ...prev, page: 0 })); // Reset a la primera página
+    await fetchData(0, pagination.pageSize, searchValue, columns);
+  }, [fetchData, pagination.pageSize, searchParams.searchColumns]);
 
   const value = {
     data,
@@ -119,6 +139,9 @@ export function DataPaginatedProvider<T>({
     // Métodos optimizados simplificados
     refreshCurrentPage,
     forceRefresh,
+    // Nuevos métodos para búsqueda
+    searchData,
+    searchParams,
   };
 
   return (

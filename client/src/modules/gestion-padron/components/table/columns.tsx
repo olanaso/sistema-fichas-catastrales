@@ -1,8 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { TableHeaderColumn } from "@/components/table/table-header-column";
-import { User } from "lucide-react";
+import { Circle, User } from "lucide-react";
 import { CustomBadge } from "@/components/custom/custom-badge";
-import ActionTable from "./action-table";
 import { ClienteDto } from "@/models/cliente";
 import {
   Calle,
@@ -11,9 +10,8 @@ import {
   TipoCalle,
   TipoServicio,
 } from "@/models/tipos";
-import { buscarPorColumna } from "@/service/obtener-data-dinamico";
-import { Predio } from "@/models/predio";
-import { useEffect, useState } from "react";
+import { IconButton } from "@/components/custom/icon-button";
+import { IconButtonColor } from "@/types/icon-button";
 
 export const columns = (tiposData: {
   sectores: Sector[];
@@ -22,19 +20,35 @@ export const columns = (tiposData: {
   tipocalle: TipoCalle[];
   tiposervicios: TipoServicio[];
 }): ColumnDef<ClienteDto>[] => [
+  // {
+  //   id: "actions",
+  //   header: "Acciones",
+  //   cell: ({ row }) => {
+  //     return <ActionTable cliente={row.original} />;
+  //   },
+  // },
   {
-    id: "actions",
-    header: "Acciones",
+    id: "estado",
+    header: "Estado",
     cell: ({ row }) => {
-      return <ActionTable cliente={row.original} />;
+      const estado = row.original.codinspector ? true : false;
+      let color = estado ? "green" : "dark";
+      let texto = estado ? "Asignado" : "No asignado";
+      return (
+        <div className="text-start">
+          <IconButton
+            tooltip={texto}
+            color={color as IconButtonColor}
+            children={<Circle className="w-4 h-4" />}
+          />
+        </div>
+      );
     },
   },
   {
     id: "codcatastral",
     accessorKey: "codcatastral",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Cod. Cat." />;
-    },
+    header: "Cod. Cat.",
     cell: ({ row }) => {
       return (
         <div className="text-start">
@@ -56,9 +70,7 @@ export const columns = (tiposData: {
   {
     id: "codcliente",
     accessorKey: "codcliente",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Suministro" />;
-    },
+    header: "Suministro",
     cell: ({ row }) => {
       return (
         <div className="text-start">
@@ -70,9 +82,7 @@ export const columns = (tiposData: {
   {
     id: "propietario",
     accessorKey: "propietario",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Propietario" />;
-    },
+    header: "Propietario",
     cell: ({ row }) => {
       const ficha = row.original;
       return (
@@ -90,9 +100,7 @@ export const columns = (tiposData: {
   {
     id: "codcalle",
     accessorKey: "codcalle",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Urb./Calle" />;
-    },
+    header: "Urb./Calle",
     cell: ({ row }) => {
       const calle = tiposData.calles.find(
         (c) => c.codcalle === row.original.codcalle
@@ -113,60 +121,9 @@ export const columns = (tiposData: {
     },
   },
   {
-    id: "tipoconstruccion",
-    header: ({ column }) => (
-      <TableHeaderColumn column={column} title="Tipo de Const." />
-    ),
-    cell: ({ row }) => (
-      <PredioCampoCell
-        codcliente={row.original.codcliente}
-        campo="tipoconstruccion"
-      />
-    ),
-  },
-  {
-    id: "nropisos",
-    header: ({ column }) => (
-      <TableHeaderColumn column={column} title="Nro. Pisos" />
-    ),
-    cell: ({ row }) => (
-      <PredioCampoCell codcliente={row.original.codcliente} campo="nropisos" />
-    ),
-  },
-  {
-    id: "tiposervicio",
-    accessorKey: "tiposervicio",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Tipo de Servicio" />;
-    },
-    cell: ({ row }) => {
-      const tipoServicio = tiposData.tiposervicios.find(
-        (t) => t.tiposervicio === row.original.tiposervicio
-      );
-      return (
-        <div className="text-start">
-          <CustomBadge color="purple" className="text-xs">
-            {tipoServicio?.descripcion || "Sin tipo de servicio"}
-          </CustomBadge>
-        </div>
-      );
-    },
-  },
-  {
-    id: "piscina",
-    header: ({ column }) => (
-      <TableHeaderColumn column={column} title="Piscina" />
-    ),
-    cell: ({ row }) => (
-      <PredioCampoCell codcliente={row.original.codcliente} campo="piscina" />
-    ),
-  },
-  {
     id: "dni",
     accessorKey: "dni",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="DNI/RUC" />;
-    },
+    header: "DNI/RUC",
     cell: ({ row }) => {
       return (
         <div className="text-start">
@@ -180,9 +137,7 @@ export const columns = (tiposData: {
   {
     id: "telefono",
     accessorKey: "telefono",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Teléfono" />;
-    },
+    header: "Teléfono",
     cell: ({ row }) => {
       return (
         <div className="text-start">{row.original.telefono || "Sin dato"}</div>
@@ -190,34 +145,3 @@ export const columns = (tiposData: {
     },
   },
 ];
-
-function PredioCampoCell({
-  codcliente,
-  campo,
-}: {
-  codcliente: number;
-  campo: keyof Predio;
-}) {
-  const [valor, setValor] = useState<string | number | null>(null);
-
-  useEffect(() => {
-    if (codcliente) {
-      buscarPorColumna<Predio>(
-        "predio",
-        "codcliente",
-        codcliente.toString()
-      ).then((res) => {
-        const predio = res[0];
-        setValor(predio ? predio[campo] ?? null : null);
-      });
-    }
-  }, [codcliente, campo]);
-
-  return (
-    <span className="text-start">
-      {valor !== null && valor !== undefined && valor !== ""
-        ? valor
-        : "Sin dato"}
-    </span>
-  );
-}

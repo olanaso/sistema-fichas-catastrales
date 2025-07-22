@@ -16,16 +16,12 @@ export const columns: ColumnDef<UsuarioDto>[] = [
   {
     id: "dni",
     accessorKey: "dni",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="DNI" />
-    },
+    header: "DNI",
   },
   {
     id: "nombre",
     accessorFn: (row) => `${row.nombre} ${row.apellidopa} ${row.apellidoma}`,
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Nombre" />
-    },
+    header: "Nombre",
     cell: ({ row }) => {
       const nombre = row.original.nombre || '';
       const apellidopa = row.original.apellidopa || '';
@@ -38,16 +34,12 @@ export const columns: ColumnDef<UsuarioDto>[] = [
   {
     id: "email",
     accessorKey: "email",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Email" />
-    },
+    header: "Email",
   },
   {
     id: "accesototal",
     accessorKey: "accesototal",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Nivel de Acceso" />
-    },
+    header: "Nivel de Acceso",
     cell: ({ row }) => {
       const accesototal = row.original.accesototal;
       const isAccesoTotal = accesototal === 1;
@@ -72,9 +64,7 @@ export const columns: ColumnDef<UsuarioDto>[] = [
   {
     id: "codusu",
     accessorKey: "codusu",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Código" />
-    },
+    header: "Código",
     cell: ({ row }) => {
       return <div className="text-start">
         <CustomBadge color="purple" className="text-xs">{row.original.codusu}</CustomBadge>
@@ -84,9 +74,7 @@ export const columns: ColumnDef<UsuarioDto>[] = [
   {
     id: "activo",
     accessorKey: "activo",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Estado" />
-    },
+    header: "Estado",
     cell: ({ row }) => {
       const activo = row.original.activo
       let icon = <Circle />

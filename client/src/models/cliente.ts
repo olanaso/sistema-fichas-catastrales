@@ -126,6 +126,7 @@ export interface Cliente {
     codinspector?: string;
     codbrigada?: string;
     fechaasignacion?: string;
+    inspector?: string;
 }
 
 export interface ClienteDto {
@@ -256,6 +257,7 @@ export interface ClienteDto {
     codinspector?: string;
     codbrigada?: string;
     fechaasignacion?: string;
+    inspector?: string;
 }
 
 // Request para crear/actualizar cliente
@@ -379,6 +381,7 @@ export interface ClienteRequest {
     codinspector?: string;
     codbrigada?: string;
     fechaasignacion?: string;
+    inspector?: string;
 }
 
 // Response de la API

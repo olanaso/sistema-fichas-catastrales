@@ -74,14 +74,15 @@ public class TiposController {
     public ResponseEntity<?> obtenerTablaPaginadoJson(
             @RequestParam String tabla,
             @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(defaultValue = "0") int offset
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(required = false) String valorBusqueda,
+            @RequestParam(required = false) String[] columnas
     ) {
         try {
-            String json = tiposService.obtenerTablaJsonPaginadoConTotal(tabla, limit, offset);
-            return ResponseEntity.ok(json); // json ya es string con estructura total + data
+            String json = tiposService.obtenerTablaJsonPaginadoConTotal(tabla, limit, offset, valorBusqueda, columnas);
+            return ResponseEntity.ok(json);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
-
 }
