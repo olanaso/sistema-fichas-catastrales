@@ -1,16 +1,26 @@
 package org.catastro.sistemafichacatastral.fichacatastral;
 
+
+import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider;
+import fr.opensagres.xdocreport.template.formatter.FieldsMetadata;
+import fr.opensagres.xdocreport.template.formatter.NullImageBehaviour;
+import org.catastro.sistemafichacatastral.DocxProjectWithFreemarkerAndImage;
+import org.springframework.http.HttpStatus;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.catastro.sistemafichacatastral.FichasCatastrales.FichasService;
 import org.catastro.sistemafichacatastral.dto.DetalleFichaClienteDto;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.catastro.sistemafichacatastral.Project;
 import org.springframework.web.bind.annotation.RestController;
-
-
+import fr.opensagres.xdocreport.document.images.ClassPathImageProvider;
+import fr.opensagres.xdocreport.document.images.IImageProvider;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.converter.Options;
 import fr.opensagres.xdocreport.converter.ConverterTypeTo;
 import fr.opensagres.xdocreport.document.IXDocReport;
@@ -21,6 +31,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
@@ -39,119 +52,79 @@ public class FichaCatastralController {
         this.fichasService = fichasService;
     }
 
-
-
-    @GetMapping("/pdf")
-    public ResponseEntity<byte[]> generarPdf() {
-
-        try (InputStream plantillaStream = getClass().getClassLoader().getResourceAsStream("plantillaficha.docx")) {
-
-            if (plantillaStream == null) {
-                return ResponseEntity.notFound().build();
+    @GetMapping("/docx3")
+    public ResponseEntity<byte[]> generarWord3() {
+        try {
+            // 1. Carga la plantilla desde el classpath
+           // String plantillaPath = "DocxProjectWithVelocityAndImage.docx";
+            String plantillaPath = "plantillaficha.docx";
+            InputStream in = getClass().getClassLoader().getResourceAsStream(plantillaPath);
+            if (in == null) {
+                throw new RuntimeException("No se encontró la plantilla en el classpath.");
             }
 
-            IXDocReport report;
-            String plantillaId = "plantillaficha.docx";
+            IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
 
-            // Verifica si la plantilla ya está registrada
+            // 2. Metadatos de imágenes
+            FieldsMetadata metadata = report.createFieldsMetadata();
+            metadata.addFieldAsImage("logo");
+            metadata.addFieldAsImage("originalSizeLogo");
+            metadata.addFieldAsImage("forcedSizeLogo");
+            metadata.addFieldAsImage("pruebaLogo");
+            metadata.addFieldAsImage("ratioSizeLogo");
+            metadata.addFieldAsImage("imageNotExistsAndRemoveImageTemplate", NullImageBehaviour.RemoveImageTemplate);
+            metadata.addFieldAsImage("imageNotExistsAndKeepImageTemplate", NullImageBehaviour.KeepImageTemplate);
 
-            if (XDocReportRegistry.getRegistry().existsReport(plantillaId)) {
-                XDocReportRegistry.getRegistry().unregisterReport(plantillaId);
-            }
-            report = XDocReportRegistry.getRegistry()
-                    .loadReport(plantillaStream, plantillaId, TemplateEngineKind.Velocity);
-
-           /* if (XDocReportRegistry.getRegistry().existsReport(plantillaId)) {
-                report = XDocReportRegistry.getRegistry().getReport(plantillaId);
-            } else {
-                report = XDocReportRegistry.getRegistry()
-                        .loadReport(plantillaStream, plantillaId, TemplateEngineKind.Velocity);
-            }*/
-
+            // 3. Modelo y contexto
             IContext context = report.createContext();
-            context.put("region", "Juan Pérez");
-            context.put("codigo", "XYZ123");
-            context.put("direccion", "ayacucho lima");
-            context.put("edad", "25");
+            Project project = new Project("XDocReport"); // Aquí puedes poner tu propio modelo
+            context.put("project", project);
+            IImageProvider logo = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            context.put("logo", logo);
 
-            ByteArrayOutputStream pdfOut = new ByteArrayOutputStream();
-            Options options = Options.getTo(ConverterTypeTo.PDF);
-            report.convert(context, options, pdfOut);
+            boolean useImageSize = true;
+            IImageProvider originalSizeLogo = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png", useImageSize);
+            context.put("originalSizeLogo", originalSizeLogo);
 
-            byte[] pdfBytes = pdfOut.toByteArray();
+            IImageProvider forcedSizeLogo = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            forcedSizeLogo.setSize(80f, 80f);
+            context.put("forcedSizeLogo", forcedSizeLogo);
 
+            IImageProvider pforcedSizeLogo = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            forcedSizeLogo.setSize(80f, 80f);
+            context.put("pruebaLogo", pforcedSizeLogo);
+
+            IImageProvider ratioSizeLogo = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            ratioSizeLogo.setUseImageSize(true);
+            ratioSizeLogo.setWidth(400f);
+            ratioSizeLogo.setResize(true);
+            context.put("ratioSizeLogo", ratioSizeLogo);
+
+            // 4. Exportar a un array de bytes (en memoria)
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            report.process(context, out);
+
+            // 5. Armar respuesta HTTP para descarga
+            byte[] documento = out.toByteArray();
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("inline", "reporte.pdf");
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"ficha_catastral.docx\"");
 
-            return ResponseEntity
-                    .ok()
-                    .headers(headers)
-                    .body(pdfBytes);
+            return new ResponseEntity<>(documento, headers, HttpStatus.OK);
 
         } catch (Exception e) {
+            System.err.println("❌ Error al generar el documento:");
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/docx")
-    public ResponseEntity<byte[]> generarWord(
-            @RequestParam Integer codcliente
-    ) throws JsonProcessingException {
-
-        // Obtener la información completa de la ficha
-        String fichaDetalle = this.fichasService.obtenerDataCompletaFichaCatastro(codcliente);
-        // Convertir el JSON a Map
-        ObjectMapper mapper = new ObjectMapper();
-        DetalleFichaClienteDto ficha = mapper.readValue(fichaDetalle, DetalleFichaClienteDto.class);
-
-        try (InputStream plantillaStream = getClass().getClassLoader().getResourceAsStream("plantillaficha.docx")) {
-
-            if (plantillaStream == null) {
-                return ResponseEntity.notFound().build();
-            }
-
-            IXDocReport report;
-            String plantillaId = "plantillaficha.docx";
-
-            if (XDocReportRegistry.getRegistry().existsReport(plantillaId)) {
-                report = XDocReportRegistry.getRegistry().getReport(plantillaId);
-            } else {
-                report = XDocReportRegistry.getRegistry()
-                        .loadReport(plantillaStream, plantillaId, TemplateEngineKind.Velocity);
-            }
-
-            IContext context = report.createContext();
-            context.put("region", ficha.getRegion().toString());
-            context.put("sucursal", ficha.getSucursal().toString());
-            context.put("sector", ficha.getSector().toString());
-            context.put("mzna", ficha.getMzna().toString());
-            context.put("lote", ficha.getLote().toString());
-            context.put("sublote", ficha.getSublote().toString());
-            context.put("suministro", ficha.getSuministro().toString());
 
 
 
-            ByteArrayOutputStream docxOut = new ByteArrayOutputStream();
-            report.process(context, docxOut);
 
-            byte[] docxBytes = docxOut.toByteArray();
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
-            headers.setContentDispositionFormData("attachment", "reporte.docx");
 
-            return ResponseEntity
-                    .ok()
-                    .headers(headers)
-                    .body(docxBytes);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
-    }
 
 
 }
