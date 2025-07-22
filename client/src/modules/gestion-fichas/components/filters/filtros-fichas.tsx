@@ -140,9 +140,24 @@ export function FiltrosFichas({
     onLimpiar();
   };
 
-  const tieneFiltrosAplicados = Object.values(filtros).some(
-    (value) => value && value.trim() !== ""
-  );
+  const tieneFiltrosAplicados = () => {
+    // Si solo hay estado seleccionado, no considerar como filtros aplicados
+    const filtrosSinEstado = {
+      grupo: filtros.grupo,
+      inspector: filtros.inspector,
+      fechaInicio: filtros.fechaInicio,
+      fechaFin: filtros.fechaFin,
+    };
+    
+    const tieneOtrosFiltros = Object.values(filtrosSinEstado).some(
+      (value) => value && value.trim() !== ""
+    );
+    
+    // Si hay fecha inicio, debe haber fecha fin
+    const fechasValidas = !filtros.fechaInicio || (filtros.fechaInicio && filtros.fechaFin);
+    
+    return tieneOtrosFiltros && fechasValidas;
+  };
 
   return (
     <div className="mb-6">
@@ -197,7 +212,7 @@ export function FiltrosFichas({
                   mode="single"
                   selected={fechaInicio}
                   onSelect={setFechaInicio}
-                  initialFocus
+                  locale={es}
                 />
               </PopoverContent>
             </Popover>
@@ -209,6 +224,7 @@ export function FiltrosFichas({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
+                  disabled={!fechaInicio}
                   className={cn(
                     "w-[200px] justify-start text-left font-normal",
                     !fechaFin && "text-muted-foreground"
@@ -227,7 +243,13 @@ export function FiltrosFichas({
                   mode="single"
                   selected={fechaFin}
                   onSelect={setFechaFin}
-                  initialFocus
+                  disabled={(date) => {
+                    // Deshabilitar si no hay fecha inicio seleccionada
+                    if (!fechaInicio) return true;
+                    // Deshabilitar fechas anteriores a la fecha inicio
+                    return date < fechaInicio;
+                  }}
+                  locale={es}
                 />
               </PopoverContent>
             </Popover>
@@ -250,7 +272,7 @@ export function FiltrosFichas({
               variant="outline"
               size="sm"
               onClick={handleLimpiar}
-              disabled={!tieneFiltrosAplicados || externalLoading}
+              disabled={!tieneFiltrosAplicados() || externalLoading}
               className="flex items-center gap-2"
             >
               <X className="h-4 w-4" />
@@ -260,7 +282,7 @@ export function FiltrosFichas({
             <Button
               size="sm"
               onClick={handleFiltrar}
-              disabled={!tieneFiltrosAplicados || externalLoading}
+              disabled={!tieneFiltrosAplicados() || externalLoading}
               className="flex items-center gap-2"
             >
               <Search className="h-4 w-4" />

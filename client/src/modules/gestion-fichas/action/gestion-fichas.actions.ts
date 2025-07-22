@@ -374,4 +374,49 @@ export async function getFichasConFiltrosGestion(filtros: FiltrosGestionFichas):
     }
 } 
 
+/**
+ * Descargar ficha catastral en formato Word
+ * @param id - ID de la ficha
+ * @returns Promise con el resultado de la operación
+ */
+export async function descargarFichaDoc(id: number): Promise<{ success: boolean; message?: string }> {
+    try {
+        const response = await apiClient.get(`/ficha-catastral/docx?codcliente=${id}`, {
+            responseType: 'blob',
+            headers: {
+                'Accept': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            }
+        });
 
+        // Crear un blob con los datos del archivo
+        const blob = new Blob([response.data], {
+            type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        });
+
+        // Crear URL del blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Crear elemento de enlace temporal
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ficha-catastral-${id}.docx`;
+
+        // Agregar al DOM, hacer clic y limpiar
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Liberar la URL del blob
+        window.URL.revokeObjectURL(url);
+
+        toast.success('Ficha descargada exitosamente');
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error al descargar ficha:', error);
+        toast.error('Error al descargar la ficha');
+        return {
+            success: false,
+            message: error.message || 'Error al descargar la ficha'
+        };
+    }
+}

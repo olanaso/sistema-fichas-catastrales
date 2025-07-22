@@ -7,7 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { UserPlus } from "lucide-react";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { UserPlus, Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import { FichaCatastro } from "@/models/fichacatastro";
 import { Inspector } from "@/models/inspector";
 import { asignarFichaIndividual, type FichaUpdateDto } from "../../action/asignacion-carga.actions";
@@ -35,6 +39,9 @@ export function AsignacionIndividualPopover({
         fechaVisita: ficha.fecha_visita,
         observacion: ficha.observacion
     });
+    const [fechaVisita, setFechaVisita] = useState<Date | undefined>(
+        ficha.fecha_visita ? new Date(ficha.fecha_visita) : undefined
+    );
 
     const handleInspectorChange = (value: string | number) => {
         setAsignacion(prev => ({
@@ -47,6 +54,15 @@ export function AsignacionIndividualPopover({
         setAsignacion(prev => ({
             ...prev,
             [field]: value
+        }));
+    };
+
+    // Actualizar fechaVisita en asignacion cuando cambie fechaVisita
+    const handleFechaVisitaChange = (date: Date | undefined) => {
+        setFechaVisita(date);
+        setAsignacion(prev => ({
+            ...prev,
+            fechaVisita: date ? format(date, 'yyyy-MM-dd') : ""
         }));
     };
 
@@ -83,6 +99,7 @@ export function AsignacionIndividualPopover({
                     fechaVisita: "",
                     observacion: ""
                 });
+                setFechaVisita(undefined);
 
                 // Cerrar popover
                 setOpen(false);
@@ -135,12 +152,34 @@ export function AsignacionIndividualPopover({
                         {/* Fecha de visita */}
                         <div className="space-y-2">
                             <Label>Fecha de visita</Label>
-                            <Input
-                                type="date"
-                                value={asignacion.fechaVisita?.toString() || ""}
-                                onChange={(e) => handleInputChange("fechaVisita", e.target.value)}
-                                disabled={loading}
-                            />
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            "w-full justify-start text-left font-normal",
+                                            !fechaVisita && "text-muted-foreground"
+                                        )}
+                                        disabled={loading}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {fechaVisita ? (
+                                            format(fechaVisita, "PPP", { locale: es })
+                                        ) : (
+                                            <span>Seleccionar fecha</span>
+                                        )}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <CalendarComponent
+                                        mode="single"
+                                        selected={fechaVisita}
+                                        onSelect={handleFechaVisitaChange}
+                                        locale={es}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
                         </div>
 
                         {/* Observación */}

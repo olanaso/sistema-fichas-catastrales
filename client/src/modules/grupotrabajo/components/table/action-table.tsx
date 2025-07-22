@@ -33,7 +33,6 @@ export default function ActionTable({ grupoTrabajo, supervisores, inspectores }:
         nombre: grupoTrabajo.nombre,
         activo: !grupoTrabajo.activo,
         codlider: grupoTrabajo.codlider,
-        inspectores: inspectoresString,
       });
 
       if (result.success) {
@@ -73,7 +72,6 @@ export default function ActionTable({ grupoTrabajo, supervisores, inspectores }:
         nombre: grupoTrabajo.nombre,
         activo: false, // Marcar como inactivo en lugar de eliminar
         codlider: grupoTrabajo.codlider,
-        inspectores: inspectoresString,
       });
 
       if (result.success) {

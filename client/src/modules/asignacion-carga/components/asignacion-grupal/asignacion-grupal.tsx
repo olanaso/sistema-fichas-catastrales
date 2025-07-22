@@ -6,7 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
-import { Calendar, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar as CalendarIcon, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import { GrupoTrabajoDto } from "@/models/grupotrabajo";
 import { InspectorDto } from "@/models/inspector";
 import { UsuarioDto } from "@/models/usuario";
@@ -46,6 +51,7 @@ export function AsignacionGrupal({
     observacion: "",
     fecha_visita: "",
   });
+  const [fechaVisita, setFechaVisita] = useState<Date>();
 
   // Cargar grupos de trabajo al montar el componente
   useEffect(() => {
@@ -72,6 +78,14 @@ export function AsignacionGrupal({
       setLiderGrupo(null);
     }
   }, [asignacion.codgrupo, gruposTrabajo]);
+
+  // Actualizar fecha_visita cuando cambie fechaVisita
+  useEffect(() => {
+    setAsignacion(prev => ({
+      ...prev,
+      fecha_visita: fechaVisita ? format(fechaVisita, 'yyyy-MM-dd') : "",
+    }));
+  }, [fechaVisita]);
 
   const loadGruposTrabajo = async () => {
     try {
@@ -213,6 +227,7 @@ export function AsignacionGrupal({
           observacion: "",
           fecha_visita: "",
         });
+        setFechaVisita(undefined);
 
         onAsignacionCompleta();
       }
@@ -286,14 +301,34 @@ export function AsignacionGrupal({
               {/* Fecha de visita */}
               <div className="space-y-2">
                 <Label>Fecha de visita</Label>
-                <Input
-                  type="date"
-                  value={asignacion.fecha_visita}
-                  onChange={(e) =>
-                    handleInputChange("fecha_visita", e.target.value)
-                  }
-                  disabled={loading}
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !fechaVisita && "text-muted-foreground"
+                      )}
+                      disabled={loading}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {fechaVisita ? (
+                        format(fechaVisita, "PPP", { locale: es })
+                      ) : (
+                        <span>Seleccionar fecha</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <CalendarComponent
+                      mode="single"
+                      selected={fechaVisita}
+                      onSelect={setFechaVisita}
+                      locale={es}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
@@ -318,7 +353,7 @@ export function AsignacionGrupal({
                 className="w-full flex items-center justify-center gap-2"
                 size="sm"
               >
-                <Calendar className="h-4 w-4" />
+                <CalendarIcon className="h-4 w-4" />
                 {loading ? "Programando..." : "Programar asignación"}
               </Button>
             </div>
