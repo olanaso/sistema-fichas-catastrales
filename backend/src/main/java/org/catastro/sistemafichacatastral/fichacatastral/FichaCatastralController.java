@@ -1,17 +1,17 @@
 package org.catastro.sistemafichacatastral.fichacatastral;
 
-<<<<<<< HEAD
+
 import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider;
 import fr.opensagres.xdocreport.template.formatter.FieldsMetadata;
 import fr.opensagres.xdocreport.template.formatter.NullImageBehaviour;
 import org.catastro.sistemafichacatastral.DocxProjectWithFreemarkerAndImage;
 import org.springframework.http.HttpStatus;
-=======
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.catastro.sistemafichacatastral.FichasCatastrales.FichasService;
 import org.catastro.sistemafichacatastral.dto.DetalleFichaClienteDto;
->>>>>>> 5785727d64529e202d70f783b3fdad7ca58c3b20
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -122,164 +122,7 @@ public class FichaCatastralController {
 
 
 
-    @GetMapping("/docx2")
-    public ResponseEntity<byte[]> generarWord2() {
-        String plantillaId = "plantillaficha2.docx";
-        String nombreArchivo = "reporte56.docx";
-        String nombreImagen = "imagenes/foto.jpg"; // La ruta debe estar en src/main/resources/imagenes/foto.jpg
 
-        try (InputStream plantillaStream = getClass().getClassLoader().getResourceAsStream(plantillaId)) {
-
-            if (plantillaStream == null) {
-                System.err.println("No se encontró la plantilla: " + plantillaId);
-                return ResponseEntity.notFound().build();
-            }
-
-            // Cargar plantilla y motor de plantilla Velocity
-            IXDocReport report = XDocReportRegistry.getRegistry()
-                    .loadReport(plantillaStream, plantillaId, TemplateEngineKind.Velocity);
-
-            // Declarar campo de imagen correctamente
-            FieldsMetadata metadata = report.createFieldsMetadata();
-            metadata.addFieldAsImage("imagen");
-
-            IContext context = report.createContext();
-            context.put("region", "Juan Pérez");
-            context.put("codigo", "XYZ123");
-            context.put("direccion", "Ayacucho, Lima");
-            context.put("edad", "25");
-
-            // Cargar y procesar imagen
-            try (InputStream imageStream = getClass().getClassLoader().getResourceAsStream(nombreImagen)) {
-                if (imageStream != null) {
-                    BufferedImage originalImage = ImageIO.read(imageStream);
-
-                    // Redimensionar a 120x120 píxeles
-                    int widthPx = 120, heightPx = 120;
-                    Image scaledImage = originalImage.getScaledInstance(widthPx, heightPx, Image.SCALE_SMOOTH);
-                    BufferedImage resizedImage = new BufferedImage(widthPx, heightPx, BufferedImage.TYPE_INT_RGB);
-
-                    Graphics2D g2d = resizedImage.createGraphics();
-                    g2d.drawImage(scaledImage, 0, 0, null);
-                    g2d.dispose();
-
-                    // Convertir a bytes
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ImageIO.write(resizedImage, "jpg", baos);
-                    byte[] imageBytes = baos.toByteArray();
-
-                    // Poner imagen en el contexto
-                    context.put("imagen", new ByteArrayImageProvider(imageBytes));
-                    baos.close();
-                } else {
-                    System.err.println("No se encontró la imagen: " + nombreImagen);
-                    context.put("imagen", null);
-                }
-            }
-
-            // Generar el documento
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            report.process(context, out);
-
-            // Preparar respuesta HTTP
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType(
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
-            headers.setContentDispositionFormData("attachment", nombreArchivo);
-
-            return ResponseEntity.ok().headers(headers).body(out.toByteArray());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-
-    @GetMapping("/docx")
-<<<<<<< HEAD
-    public ResponseEntity<byte[]> generarWord() {
-        String plantillaId = "plantillaficha2.docx";
-        String nombreArchivo = "reporte56.docx";
-        String nombreImagen = "imagenes/foto.jpg"; // La ruta debe ser src/main/resources/imagenes/foto.jpg
-=======
-    public ResponseEntity<byte[]> generarWord(
-            @RequestParam Integer codcliente
-    ) throws JsonProcessingException {
-
-        // Obtener la información completa de la ficha
-        String fichaDetalle = this.fichasService.obtenerDataCompletaFichaCatastro(codcliente);
-        // Convertir el JSON a Map
-        ObjectMapper mapper = new ObjectMapper();
-        DetalleFichaClienteDto ficha = mapper.readValue(fichaDetalle, DetalleFichaClienteDto.class);
->>>>>>> 5785727d64529e202d70f783b3fdad7ca58c3b20
-
-        try (InputStream plantillaStream = getClass().getClassLoader().getResourceAsStream(plantillaId)) {
-
-            if (plantillaStream == null) {
-                System.err.println("No se encontró la plantilla: " + plantillaId);
-                return ResponseEntity.notFound().build();
-            }
-
-            IXDocReport report;
-            if (XDocReportRegistry.getRegistry().existsReport(plantillaId)) {
-                report = XDocReportRegistry.getRegistry().getReport(plantillaId);
-                report.createFieldsMetadata().addFieldAsImage("imagen");
-            } else {
-                report = XDocReportRegistry.getRegistry()
-                        .loadReport(plantillaStream, plantillaId, TemplateEngineKind.Velocity);
-
-                // Declara que el campo "imagen" es una imagen
-                FieldsMetadata metadata = report.createFieldsMetadata();
-                metadata.addFieldAsImage("imagen");
-            }
-
-            IContext context = report.createContext();
-            context.put("region", ficha.getRegion().toString());
-            context.put("sucursal", ficha.getSucursal().toString());
-            context.put("sector", ficha.getSector().toString());
-            context.put("mzna", ficha.getMzna().toString());
-            context.put("lote", ficha.getLote().toString());
-            context.put("sublote", ficha.getSublote().toString());
-            context.put("suministro", ficha.getSuministro().toString());
-
-
-
-            // --- Cargar imagen correctamente ---
-            try (InputStream imageStream = getClass().getClassLoader().getResourceAsStream(nombreImagen)) {
-                if (imageStream != null) {
-                    byte[] imageBytes = imageStream.readAllBytes();
-                    ByteArrayImageProvider imageProvider = new ByteArrayImageProvider(imageBytes);
-                    context.put("imagen", imageProvider);
-                    System.out.println("Imagen cargada correctamente: " + nombreImagen);
-                } else {
-                    // Si no hay imagen, puedes poner null o un mensaje/log.
-                    context.put("imagen", null); // O no poner nada, como prefieras.
-                    System.err.println("No se encontró la imagen: " + nombreImagen);
-                }
-            }
-
-            // --- Generar el Word ---
-            ByteArrayOutputStream docxOut = new ByteArrayOutputStream();
-            report.process(context, docxOut);
-
-            byte[] docxBytes = docxOut.toByteArray();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType(
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
-            headers.setContentDispositionFormData("attachment", nombreArchivo);
-
-            return ResponseEntity
-                    .ok()
-                    .headers(headers)
-                    .body(docxBytes);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
-    }
 
 
 
