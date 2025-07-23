@@ -1,11 +1,9 @@
 package org.catastro.sistemafichacatastral.Cliente;
 
-import org.catastro.sistemafichacatastral.FichasCatastrales.FichasService;
+import org.catastro.sistemafichacatastral.dto.AsiganacionDto;
+import org.catastro.sistemafichacatastral.dto.AsignacionMasivoDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -34,4 +32,23 @@ public class ClienteController {
         }
     }
 
+    @PutMapping("/asignacion-masiva")
+    public ResponseEntity<?> asignacionMasiva(@RequestBody AsignacionMasivoDto dto) {
+        try {
+            clienteService.asignacionMasiva(dto);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Fichas actualizadas correctamente."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/asignacion")
+    public ResponseEntity<?> actualizarFicha(@RequestBody AsiganacionDto dto) {
+        try {
+            clienteService.guardarOActualizarAsiganacion(dto);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Ficha actualizada correctamente."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
 }

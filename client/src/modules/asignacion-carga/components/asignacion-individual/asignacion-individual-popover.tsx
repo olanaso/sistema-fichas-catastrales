@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
@@ -12,12 +11,11 @@ import { UserPlus, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { FichaCatastro } from "@/models/fichacatastro";
 import { Inspector } from "@/models/inspector";
 import { asignarFichaIndividual, type FichaUpdateDto } from "../../action/asignacion-carga.actions";
 import { toast } from "sonner";
 import { Cliente } from "@/models/cliente";
-
+import { useAuth } from "@/hooks/use-auth";
 
 interface AsignacionIndividualPopoverProps {
     ficha: Cliente;
@@ -32,22 +30,23 @@ export function AsignacionIndividualPopover({
     onAsignacionCompleta,
     children
 }: AsignacionIndividualPopoverProps) {
+    const { user } = useAuth();
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const [asignacion, setAsignacion] = useState({
-        inspector: ficha.codinspector,
-        fechaVisita: ficha.fechaasignacion,
-        observacion: ""
+        codinspector: ficha.codinspector || "",
+        fecha_visita: ficha.fecha_visita || "",
+        observaciones: ficha.observaciones || ""
     });
     const [fechaVisita, setFechaVisita] = useState<Date | undefined>(
-        ficha.fechaasignacion ? new Date(ficha.fechaasignacion) : undefined
+        ficha.fecha_visita ? new Date(ficha.fecha_visita) : undefined
     );
 
     const handleInspectorChange = (value: string | number) => {
         setAsignacion(prev => ({
             ...prev,
-            inspector: String(value)
+            codinspector: String(value)
         }));
     };
 
@@ -58,37 +57,52 @@ export function AsignacionIndividualPopover({
         }));
     };
 
-    // Actualizar fechaVisita en asignacion cuando cambie fechaVisita
+    // Actualizar fecha_visita en asignacion cuando cambie fechaVisita
     const handleFechaVisitaChange = (date: Date | undefined) => {
         setFechaVisita(date);
         setAsignacion(prev => ({
             ...prev,
-            fechaVisita: date ? format(date, 'yyyy-MM-dd') : ""
+            fecha_visita: date ? format(date, 'yyyy-MM-dd') : ""
         }));
     };
 
     const handleAsignar = async () => {
         // Validaciones
-        if (!asignacion.inspector) {
+        if (!asignacion.codinspector) {
             toast.error("Debe seleccionar un inspector");
             return;
         }
 
-        if (!asignacion.fechaVisita) {
+        if (!asignacion.fecha_visita) {
             toast.error("Debe seleccionar una fecha de visita");
+            return;
+        }
+
+        if (!user?.codusu) {
+            toast.error("Error: Usuario no autenticado");
             return;
         }
 
         try {
             setLoading(true);
 
+            // Obtener el código de brigada del inspector seleccionado
+            const inspectorSeleccionado = inspectores.find(i => i.codinspector === asignacion.codinspector);
+            const codbrigada = inspectorSeleccionado?.codbrigada || "";
+
+            if (!codbrigada) {
+                toast.error("Error: No se pudo determinar la brigada del inspector");
+                return;
+            }
+
             const dto: FichaUpdateDto = {
-                idficha: ficha.codcliente,
-                inspector: asignacion.inspector,
-                encuestador: asignacion.inspector, // El encuestador es el mismo inspector
-                fechaVisita: asignacion.fechaVisita.toString(),
-                observacion: asignacion.observacion || undefined,
-                codbrigada: inspectores.find(i => i.codinspector === asignacion.inspector)?.codbrigada || ""
+                codbrigada: codbrigada, // varchar(20) NOT NULL
+                codcliente: ficha.codcliente, // int4 NOT NULL
+                codinspector: asignacion.codinspector, // varchar(20) NOT NULL
+                estado: "Programado", // varchar(20) NOT NULL
+                observaciones: asignacion.observaciones || undefined, // text NULL (opcional)
+                fecha_visita: asignacion.fecha_visita, // date NULL (formato ISO)
+                codcreador: user.codusu, // varchar NOT NULL
             };
 
             const response = await asignarFichaIndividual(dto);
@@ -96,9 +110,9 @@ export function AsignacionIndividualPopover({
             if (response.success) {
                 // Limpiar formulario
                 setAsignacion({
-                    inspector: "",
-                    fechaVisita: "",
-                    observacion: ""
+                    codinspector: "",
+                    fecha_visita: "",
+                    observaciones: ""
                 });
                 setFechaVisita(undefined);
 
@@ -117,7 +131,7 @@ export function AsignacionIndividualPopover({
         }
     };
 
-    const puedeAsignar = asignacion.inspector && asignacion.fechaVisita;
+    const puedeAsignar = asignacion.codinspector && asignacion.fecha_visita && user?.codusu;
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -140,7 +154,7 @@ export function AsignacionIndividualPopover({
                                         label: inspector.nombres,
                                         value: inspector.codinspector
                                     }))}
-                                value={asignacion.inspector}
+                                value={asignacion.codinspector}
                                 onChange={handleInspectorChange}
                                 placeholder="Seleccionar inspector..."
                                 searchPlaceholder="Buscar inspector..."
@@ -187,8 +201,8 @@ export function AsignacionIndividualPopover({
                         <div className="space-y-2">
                             <Label>Observación (opcional)</Label>
                             <Textarea
-                                value={asignacion.observacion}
-                                onChange={(e) => handleInputChange("observacion", e.target.value)}
+                                value={asignacion.observaciones}
+                                onChange={(e) => handleInputChange("observaciones", e.target.value)}
                                 placeholder="Ingrese observaciones..."
                                 disabled={loading}
                                 rows={3}

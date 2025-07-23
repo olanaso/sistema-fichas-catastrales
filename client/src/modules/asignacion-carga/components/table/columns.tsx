@@ -59,10 +59,13 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
       const ficha = row.original;
 
       //obtener el estado de la ficha
-      const estado = ficha.codinspector ? "A" : "P";
+      let estado = ficha.codinspector ? "A" : "NA";
+      if (ficha.estado_asignacion === "Programado") {
+        estado = "P";
+      }
       //designar el color y el texto del estado
-      const color = estado === "A" ? "green" : estado === "P" ? "blue" : "dark";
-      const texto = estado === "A" ? "Cliente asignado" : "Cliente sin asignar";
+      const color = estado === "A" ? "green" : estado === "P" ? "orange" : "dark";
+      const texto = estado === "A" ? "ASIGNADO" : estado === "P" ? "PROGRAMADO" : "SIN ASIGNAR";
 
       return (
         <div className="flex items-center gap-1">
@@ -97,17 +100,14 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
     },
     cell: ({ row }) => {
       const inspector = row.original.inspector || "Sin asignar";
-      const codinspector = row.original.codinspector || "";
+      const codinspector = row.original.codinspector;
 
       return (
         <div className="text-start flex items-center gap-2">
           <User className="w-4 h-4 text-orange-600" />
-          <div>
-            <div className="font-medium">
-              {inspector}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {codinspector}
+          <div className="w-[180px] whitespace-normal break-words">
+            <div className="text-xs ">
+              {inspector} ({codinspector})
             </div>
           </div>
         </div>
@@ -116,13 +116,12 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
     size: 150,
   },
   {
-    id: "fechaasignacion",
+    id: "fechareg",
     header: ({ column }) => {
       return <TableHeaderColumn column={column} title="Fecha Asignación" />;
     },
     cell: ({ row }) => {
-      const fecha = row.original.fechaasignacion;
-
+      const fecha = row.original.fechareg;
       return (
         <div className="text-start flex items-center gap-2">
           <Calendar className="w-4 h-4 text-lime-600" />
@@ -170,28 +169,21 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
   {
     id: "propietario",
     accessorKey: "propietario",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Propietario" />;
-    },
+    header: "Propietario",
     cell: ({ row }) => {
       const ficha = row.original;
       return (
         <div className="text-start flex items-center gap-2">
           <User className="w-4 h-4 text-blue-600" />
-          <div>
-            <div className="font-medium">
-              {ficha.propietario || "Sin propietario"}
+          <div className="w-[180px] whitespace-normal break-words">
+            <div className="text-xs">
+              {ficha.propietario || "Sin propietario"} (DNI: {ficha.dni || "N/A"})
             </div>
-            {ficha.dni && (
-              <div className="text-xs text-muted-foreground">
-                DNI: {ficha.dni}
-              </div>
-            )}
           </div>
         </div>
       );
     },
-    size: 200,
+    size: 100,
   },
   {
     id: "direccion",
@@ -205,13 +197,13 @@ export const columns = (inspectores: Inspector[], onAsignacionCompleta?: () => v
       return (
         <div className="text-start flex items-center gap-2">
           <Home className="w-4 h-4 text-green-600" />
-          <div className="w-[220px] truncate break-words whitespace-normal">
+          <div className="w-[180px] truncate break-words whitespace-normal">
             {direccion}
           </div>
         </div>
       );
     },
-    size: 250,
+    size: 150,
   },
   {
     id: "tiposervicio",

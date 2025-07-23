@@ -32,23 +32,25 @@ export interface FiltrosAsignacion {
     estadoRegistro?: string;
 }
 
-// Interfaces para los DTOs de asignación
+// Interfaces actualizadas para los DTOs de asignación según la estructura de BD
 export interface FichaUpdateDto {
-    idficha: number;
-    inspector: string;
-    encuestador: string;
-    fechaVisita: string; // LocalDate en formato ISO
-    observacion?: string;
-    codbrigada: string;
+    codbrigada: string; // varchar(20) NOT NULL
+    codcliente: number; // int4 NOT NULL
+    codinspector: string; // varchar(20) NOT NULL
+    estado: string; // varchar(20) NOT NULL
+    observaciones?: string; // text NULL
+    fecha_visita?: string; // date NULL (formato ISO)
+    codcreador: string; // varchar NOT NULL
 }
 
 export interface FichaUpdateMasivoDto {
-    idfichas: number[];
-    inspector: string;
-    encuestador: string;
-    fechaVisita: string; // LocalDate en formato ISO
-    observacion?: string;
-    codbrigada: string;
+    codbrigada: string; // varchar(20) NOT NULL
+    codclientes: number[]; // Array de códigos de clientes
+    codinspector: string; // varchar(20) NOT NULL
+    estado: string; // varchar(20) NOT NULL
+    observaciones?: string; // text NULL
+    fecha_visita?: string; // date NULL (formato ISO)
+    codcreador: string; // varchar NOT NULL
 }
 
 /**
@@ -58,7 +60,7 @@ export interface FichaUpdateMasivoDto {
  */
 export async function asignarFichaIndividual(dto: FichaUpdateDto): Promise<AsignacionGrupalResponse> {
     try {
-        const response = await apiClient.put('/fichas-catastrales/asignacion', dto);
+        const response = await apiClient.put('/cliente/asignacion', dto);
 
         if (response.data.success) {
             toast.success('Ficha asignada exitosamente');
@@ -91,13 +93,13 @@ export async function asignarFichaIndividual(dto: FichaUpdateDto): Promise<Asign
  */
 export async function asignarFichasMasivo(dto: FichaUpdateMasivoDto): Promise<AsignacionGrupalResponse> {
     try {
-        const response = await apiClient.put('/fichas-catastrales/asignacion-masiva', dto);
+        const response = await apiClient.put('/cliente/asignacion-masiva', dto);
 
         if (response.data.success) {
-            toast.success(`Asignación masiva completada para ${dto.idfichas.length} fichas`);
+            toast.success(`Asignación masiva completada para ${dto.codclientes.length} fichas`);
             return {
                 success: true,
-                message: `Asignación masiva completada para ${dto.idfichas.length} fichas`,
+                message: `Asignación masiva completada para ${dto.codclientes.length} fichas`,
                 data: response.data
             };
         } else {
@@ -294,7 +296,6 @@ export async function getGruposTrabajo(): Promise<GrupoTrabajoDto[]> {
         return [];
     }
 } 
-
 
 /**
  * Función para obtener fichas catastrales filtradas por columnas específicas

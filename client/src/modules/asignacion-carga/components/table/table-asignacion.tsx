@@ -58,7 +58,7 @@ export default function TableAsignacion({
                     data={fichas}
                     onSelectionChange={onSelectionChange}
                     selectedIds={selectedFichas}
-                    idField="idficha"
+                    idField="codcliente"
                     loading={loading}
                     pagination={true}
                     pageSize={10}
@@ -76,35 +76,35 @@ export default function TableAsignacion({
                     <div className="flex items-center gap-2 mb-3">
                         <Info className="w-4 h-4 text-muted-foreground" />
                         <h3 className="text-sm font-medium text-muted-foreground">
-                            Leyenda de Estados
+                            Leyenda de estados
                         </h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="flex items-center gap-2">
                             <Circle className="w-4 h-4 text-gray-600" />
                             <CustomBadge color="dark" className="text-xs">
-                                PENDIENTE
+                                SIN ASIGNAR
                             </CustomBadge>
                             <span className="text-xs text-muted-foreground">
-                                Fichas sin procesar
+                                Clientes sin asignar
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Circle className="w-4 h-4 text-blue-600" />
-                            <CustomBadge color="blue" className="text-xs">
-                                PROCESO
+                            <Circle className="w-4 h-4 text-orange-600" />
+                            <CustomBadge color="orange" className="text-xs">
+                                PROGRAMADO
                             </CustomBadge>
                             <span className="text-xs text-muted-foreground">
-                                Fichas en revisión
+                                Clientes programados
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Circle className="w-4 h-4 text-green-600" />
                             <CustomBadge color="green" className="text-xs">
-                                FINALIZADO
+                                ASIGNADO
                             </CustomBadge>
                             <span className="text-xs text-muted-foreground">
-                                Fichas completadas
+                                Clientes asignados
                             </span>
                         </div>
                     </div>

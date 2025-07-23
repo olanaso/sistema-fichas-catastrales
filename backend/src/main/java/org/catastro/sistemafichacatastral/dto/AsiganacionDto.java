@@ -5,12 +5,12 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class FichaUpdateDto {
+public class AsiganacionDto {
     private Integer codcliente;
     private String codinspector;
     private String codcreador;
     private LocalDate fecha_visita;
-    private String observacion;  // opcional
+    private String observaciones;  // opcional
     private String codbrigada;
     private String estado;
 }

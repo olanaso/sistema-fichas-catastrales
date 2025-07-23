@@ -11,8 +11,6 @@ import {
   type FiltrosAsignacion as FiltrosAsignacionType,
 } from "../action/asignacion-carga.actions";
 import TitlePage from "@/components/custom/title-page";
-import { FichaCatastro } from "@/models/fichacatastro";
-import { ComboboxOption } from "@/types/combobox";
 import { getData } from "@/service/data.actions";
 import { Inspector } from "@/models/inspector";
 import { Cliente } from "@/models/cliente";
@@ -115,10 +113,13 @@ export default function AsignacionCargaView() {
       {mostrarResultados && (
         <>
           {/* Asignación Grupal */}
+          {filtrosAplicados.estadoRegistro === "SIN ASIGNAR" && (
           <AsignacionGrupal
+            cantidadFichas={fichasFiltradas.length}
             fichasSeleccionadas={fichasSeleccionadas}
             onAsignacionCompleta={handleAsignacionCompleta}
           />
+          )}
 
           {/* Tabla de fichas */}
           {fichasFiltradas.length === 0 ? (

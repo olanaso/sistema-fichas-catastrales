@@ -6,8 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
-import { Calendar as CalendarIcon, Users, ChevronDown, ChevronUp } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Calendar as CalendarIcon,
+  Users,
+  ChevronDown,
+  ChevronUp,
+  CheckSquare,
+  SquareDashedMousePointer,
+} from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -25,16 +36,21 @@ import {
 import { buscarPorColumna } from "@/service/obtener-data-dinamico";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
+import { CustomBadge } from "@/components/custom/custom-badge";
+import { useAuth } from "@/hooks/use-auth";
 
 interface AsignacionGrupalProps {
+  cantidadFichas: number;
   fichasSeleccionadas: number[];
   onAsignacionCompleta: () => void;
 }
 
 export function AsignacionGrupal({
+  cantidadFichas,
   fichasSeleccionadas,
   onAsignacionCompleta,
 }: AsignacionGrupalProps) {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [loadingInspectores, setLoadingInspectores] = useState(false);
   const [loadingGrupos, setLoadingGrupos] = useState(false);
@@ -81,9 +97,9 @@ export function AsignacionGrupal({
 
   // Actualizar fecha_visita cuando cambie fechaVisita
   useEffect(() => {
-    setAsignacion(prev => ({
+    setAsignacion((prev) => ({
       ...prev,
-      fecha_visita: fechaVisita ? format(fechaVisita, 'yyyy-MM-dd') : "",
+      fecha_visita: fechaVisita ? format(fechaVisita, "yyyy-MM-dd") : "",
     }));
   }, [fechaVisita]);
 
@@ -131,8 +147,12 @@ export function AsignacionGrupal({
         return;
       }
 
-      const lideres = await buscarPorColumna<UsuarioDto>("usersystema", "codusu", codlider);
-      
+      const lideres = await buscarPorColumna<UsuarioDto>(
+        "usersystema",
+        "codusu",
+        codlider
+      );
+
       if (lideres && lideres.length > 0) {
         setLiderGrupo(lideres[0]);
       } else {
@@ -205,16 +225,22 @@ export function AsignacionGrupal({
       return;
     }
 
+    if (!user?.codusu) {
+      toast.error("Error: Usuario no autenticado");
+      return;
+    }
+
     try {
       setLoading(true);
 
       const dto: FichaUpdateMasivoDto = {
-        idfichas: fichasSeleccionadas,
-        inspector: asignacion.codinspector,
-        encuestador: asignacion.codinspector, // El encuestador es el mismo inspector
-        fechaVisita: asignacion.fecha_visita,
-        observacion: asignacion.observacion || undefined,
-        codbrigada: asignacion.codgrupo, // El código de brigada es el mismo que el grupo
+        codbrigada: asignacion.codgrupo, // varchar(20) NOT NULL
+        codclientes: fichasSeleccionadas, // Array de códigos de clientes
+        codinspector: asignacion.codinspector, // varchar(20) NOT NULL
+        estado: "Programado", // varchar(20) NOT NULL
+        observaciones: asignacion.observacion || undefined, // text NULL (opcional)
+        fecha_visita: asignacion.fecha_visita, // date NULL (formato ISO)
+        codcreador: user.codusu, // varchar NOT NULL
       };
 
       const response = await asignarFichasMasivo(dto);
@@ -243,7 +269,8 @@ export function AsignacionGrupal({
     fichasSeleccionadas.length > 0 &&
     asignacion.codgrupo &&
     asignacion.codinspector &&
-    asignacion.fecha_visita;
+    asignacion.fecha_visita &&
+    user?.codusu;
 
   // Función para obtener el nombre completo del líder
   const getLiderNombreCompleto = () => {
@@ -255,134 +282,119 @@ export function AsignacionGrupal({
 
   return (
     <div className="mb-6">
-        <div>
-          <Separator className="my-4" />
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-            {/* Columna 1: Selección de Grupo y Líder */}
-            <div className="space-y-1">
-              {/* Grupo de trabajo */}
-              <ComboboxControlled
-                options={grupoOptions}
-                value={asignacion.codgrupo}
-                onChange={handleGrupoChange}
-                placeholder="Seleccionar grupo..."
-                searchPlaceholder="Buscar grupo..."
-                emptyMessage="No se encontraron grupos"
-                label="Grupo de trabajo a asignar"
-                disabled={loading || loadingGrupos}
-              />
-              <Label className="text-sm text-muted-foreground pl-2">
-                Líder: {getLiderNombreCompleto()}
-              </Label>
-            </div>
+      <div>
+        <Separator className="my-4" />
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          {/* Columna 1: Selección de Grupo y Líder */}
+          <div className="space-y-1">
+            {/* Grupo de trabajo */}
+            <ComboboxControlled
+              options={grupoOptions}
+              value={asignacion.codgrupo}
+              onChange={handleGrupoChange}
+              placeholder="Seleccionar grupo..."
+              searchPlaceholder="Buscar grupo..."
+              emptyMessage="No se encontraron grupos"
+              label="Grupo de trabajo a asignar"
+              disabled={loading || loadingGrupos}
+            />
+            <Label className="text-sm text-muted-foreground pl-2">
+              Líder: {getLiderNombreCompleto()}
+            </Label>
+          </div>
 
-            {/* Columna 2: Selección de Inspector */}
-            <div className="space-y-1 lg:col-span-1">
-              {/* Inspector */}
-              <ComboboxControlled
-                options={inspectorOptions}
-                value={asignacion.codinspector}
-                onChange={handleInspectorChange}
-                placeholder="Seleccionar inspector..."
-                searchPlaceholder="Buscar inspector..."
-                emptyMessage="No se encontraron inspectores"
-                label="Inspector"
-                disabled={
-                  !grupoSeleccionado ||
-                  loadingInspectores ||
-                  loading ||
-                  inspectores.length === 0
-                }
-              />
-            </div>
+          {/* Columna 2: Selección de Inspector */}
+          <div className="space-y-1 lg:col-span-1">
+            {/* Inspector */}
+            <ComboboxControlled
+              options={inspectorOptions}
+              value={asignacion.codinspector}
+              onChange={handleInspectorChange}
+              placeholder="Seleccionar inspector..."
+              searchPlaceholder="Buscar inspector..."
+              emptyMessage="No se encontraron inspectores"
+              label="Inspector"
+              disabled={
+                !grupoSeleccionado ||
+                loadingInspectores ||
+                loading ||
+                inspectores.length === 0
+              }
+            />
+          </div>
 
-            {/* Columna 3: Fecha de visita */}
-            <div className="space-y-5">
-              {/* Fecha de visita */}
-              <div className="space-y-2">
-                <Label>Fecha de visita</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !fechaVisita && "text-muted-foreground"
-                      )}
-                      disabled={loading}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {fechaVisita ? (
-                        format(fechaVisita, "PPP", { locale: es })
-                      ) : (
-                        <span>Seleccionar fecha</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <CalendarComponent
-                      mode="single"
-                      selected={fechaVisita}
-                      onSelect={setFechaVisita}
-                      locale={es}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+          {/* Columna 3: Fecha de visita */}
+          <div className="space-y-5">
+            {/* Fecha de visita */}
+            <div className="space-y-2">
+              <Label>Fecha de visita</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !fechaVisita && "text-muted-foreground"
+                    )}
+                    disabled={loading}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {fechaVisita ? (
+                      format(fechaVisita, "PPP", { locale: es })
+                    ) : (
+                      <span>Seleccionar fecha</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <CalendarComponent
+                    mode="single"
+                    selected={fechaVisita}
+                    onSelect={setFechaVisita}
+                    locale={es}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
+          </div>
 
-            {/* Columna 4: Observación */}
-            <div className="space-y-5 lg:col-span-1">
-              <Label>Observación</Label>
-              <Input
-                value={asignacion.observacion}
-                onChange={(e) =>
-                  handleInputChange("observacion", e.target.value)
-                }
-                placeholder="Ingrese observaciones (opcional)"
-                disabled={loading}
-              />
-            </div>
+          {/* Columna 4: Observación */}
+          <div className="space-y-5 lg:col-span-1">
+            <Label>Observación</Label>
+            <Input
+              value={asignacion.observacion}
+              onChange={(e) => handleInputChange("observacion", e.target.value)}
+              placeholder="Ingrese observaciones (opcional)"
+              disabled={loading}
+            />
+          </div>
 
-            {/* Botón programar */}
-            <div className="space-y-1 mt-6">
-              <Button
-                onClick={handleProgramar}
-                disabled={!puedeAsignar || loading}
-                className="w-full flex items-center justify-center gap-2"
-                size="sm"
-              >
-                <CalendarIcon className="h-4 w-4" />
-                {loading ? "Programando..." : "Programar asignación"}
-              </Button>
-            </div>
-
-            {/* <div className="space-y-3 lg:col-span-4"> */}
-            {/* Resumen */}
-            {/* <div className="p-3 rounded-lg border">
-                <div className="text-sm font-medium mb-2">
-                  Resumen de Asignación
-                </div>
-                <div className="text-sm flex-col grid lg:grid-cols-2 gap-1">
-                  <div>📋 Fichas: {fichasSeleccionadas.length}</div>
-                  <div>
-                    👥 Grupo: {grupoSeleccionado?.nombre || "No seleccionado"}
-                  </div>
-                  <div>
-                    👤 Inspector:{" "}
-                    {inspectores.find(
-                      (i) => i.codinspector === asignacion.codinspector
-                    )?.nombres || "No seleccionado"}
-                  </div>
-                  <div>
-                    📅 Fecha: {asignacion.fecha_visita || "No seleccionada"}
-                  </div>
-                </div>
-              </div> */}
-            {/* </div> */}
+          {/* Botón programar */}
+          <div className="space-y-1 mt-6">
+            <Button
+              onClick={handleProgramar}
+              disabled={!puedeAsignar || loading}
+              className="w-full flex items-center justify-center gap-2"
+              size="sm"
+            >
+              <CalendarIcon className="h-4 w-4" />
+              {loading ? "Programando..." : "Programar asignación"}
+            </Button>
+          </div>
         </div>
       </div>
+      {inspectores.length > 0 && (
+      <div className="flex items-center gap-2 p-3 bg-orange-50 border border-orange-200 rounded-lg dark:bg-orange-950/20 dark:border-orange-800">
+        <SquareDashedMousePointer className="w-4 h-4 text-orange-600" />
+        <span className="text-sm font-medium text-orange-900 dark:text-orange-100">
+          {inspectores.length} inspectores disponibles
+        </span>
+        <CustomBadge color="orange" className="text-xs">
+            {Math.ceil(cantidadFichas/inspectores.length) - 1} fichas por inspector - {cantidadFichas % inspectores.length} fichas restantes
+          </CustomBadge>
+        </div>
+      )}
     </div>
   );
 }

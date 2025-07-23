@@ -125,8 +125,12 @@ export interface Cliente {
     nrocontrato_sici?: string;
     codinspector?: string;
     codbrigada?: string;
+
     fechaasignacion?: string;
     inspector?: string;
+    fecha_visita?: string;
+    observaciones?: string;
+    estado_asignacion?: string;
 }
 
 export interface ClienteDto {
