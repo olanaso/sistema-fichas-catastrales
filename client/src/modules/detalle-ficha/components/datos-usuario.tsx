@@ -29,7 +29,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
         <div className="space-y-4">
           <div>
             <Label htmlFor="tipo-usuario" className="text-sm font-medium">
-              19. Tipo de Usuario
+              20. Tipo de Usuario
             </Label>
             <Input
               id="tipo-usuario"
@@ -41,7 +41,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
 
           <div>
             <Label htmlFor="nombres" className="text-sm font-medium">
-              20. Usuario/Nombres/Razón Social
+              21. Usuario/Nombres/Razón Social
             </Label>
             <Input
               id="nombres"
@@ -53,7 +53,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
 
           <div>
             <Label htmlFor="dni" className="text-sm font-medium">
-              21. DNI/RUC
+              22. DNI/RUC
             </Label>
             <Input
               id="dni"
@@ -65,7 +65,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
 
           <div>
             <Label htmlFor="habitantes" className="text-sm font-medium">
-              22. Nº habitantes
+              23. Nº habitantes
             </Label>
             <Input
               id="habitantes"
@@ -77,7 +77,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
 
           <div>
             <Label htmlFor="responsable" className="text-sm font-medium">
-              23. Responsable
+              24. Responsable
             </Label>
             <Input
               id="responsable"
@@ -92,7 +92,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
         <div className="space-y-4">
           <div>
             <Label htmlFor="telefono" className="text-sm font-medium">
-              24. Teléfono
+              25. Teléfono
             </Label>
             <Input
               id="telefono"
@@ -104,7 +104,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
 
           <div>
             <Label htmlFor="contrato" className="text-sm font-medium">
-              24. Nº Contrato
+              26. Nº Contrato
             </Label>
             <Input
               id="contrato"
@@ -116,7 +116,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
 
           <div>
             <Label htmlFor="reservorio" className="text-sm font-medium">
-              25. Reservorio Conectado
+              27. Reservorio Conectado
             </Label>
             <Input
               id="reservorio"
@@ -128,7 +128,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
 
           <div>
             <Label htmlFor="sector" className="text-sm font-medium">
-              26. Sector Abastecimiento
+              28. Sector Abastecimiento
             </Label>
             <Input
               id="sector"
@@ -140,7 +140,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
 
           <div>
             <Label htmlFor="categoria" className="text-sm font-medium">
-              27. Categoría
+              29. Categoría
             </Label>
             <Input
               id="categoria"
@@ -155,7 +155,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
         <div className="space-y-4">
           <div>
             <Label htmlFor="razon-social" className="text-sm font-medium">
-              29. Razón Social
+              30. Razón Social
             </Label>
             <Input
               id="razon-social"
@@ -168,9 +168,9 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
       </div>
 
       {/* Información del sistema */}
-      <Card className="bg-red-50 border-red-200">
+      <Card className="bg-red-50 border-red-200 dark:bg-gray-900 dark:border-gray-800">
         <CardContent className="p-4">
-          <div className="space-y-2 text-red-700">
+          <div className="space-y-2 text-red-700 dark:text-gray-300">
             <p className="text-sm">
               <span className="font-semibold">Categoria Sistema:</span> {ficha.catetar || "DOMESTICO I"}
             </p>
@@ -201,7 +201,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="categoria-tarifa" className="text-sm font-medium">
-                27. Categoría
+                31. Categoría
               </Label>
               <Input
                 id="categoria-tarifa"
@@ -213,7 +213,7 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
 
             <div>
               <Label htmlFor="tipo-actividad" className="text-sm font-medium">
-                28. Tipo Actividad
+                32. Tipo Actividad
               </Label>
               <Input
                 id="tipo-actividad"

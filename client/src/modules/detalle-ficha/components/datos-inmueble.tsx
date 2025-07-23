@@ -141,7 +141,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 7. Calle/Jiron/Avenida/Pasaje */}
       <div className="space-y-2">
-        <Label htmlFor="calle">7. Calle/Jiron/Avenida/Pasaje</Label>
+        <Label htmlFor="calle">8. Calle/Jiron/Avenida/Pasaje</Label>
         <Input
           id="calle"
           value={ficha.direccion || "No registrado"}
@@ -152,7 +152,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 8. Cuadra */}
       <div className="space-y-2">
-        <Label htmlFor="cuadra">8. Cuadra</Label>
+        <Label htmlFor="cuadra">9. Cuadra</Label>
         <Input
           id="cuadra"
           value={ficha.cuadra?.toString() || "No registrado"}
@@ -163,7 +163,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 9. N Muni */}
       <div className="space-y-2">
-        <Label htmlFor="nromuni">9. N Muni</Label>
+        <Label htmlFor="nromuni">10. N Muni</Label>
         <Input
           id="nromuni"
           value={ficha.nromunic?.toString() || "No registrado"}
@@ -174,7 +174,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 10. Mz Muni */}
       <div className="space-y-2">
-        <Label htmlFor="mzmuni">10. Mz Muni</Label>
+        <Label htmlFor="mzmuni">11. Mz Muni</Label>
         <Input
           id="mzmuni"
           value={ficha.mzamunic?.toString() || "No registrado"}
@@ -185,7 +185,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 11. Lt Muni */}
       <div className="space-y-2">
-        <Label htmlFor="ltmuni">11. Lt Muni</Label>
+        <Label htmlFor="ltmuni">12. Lt Muni</Label>
         <Input
           id="ltmuni"
           value={ficha.ltemunic?.toString() || "No registrado"}
@@ -196,7 +196,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 12. Urbanización/Asociación/AA.HH. */}
       <div className="space-y-2">
-        <Label htmlFor="urbanizacion">12. Urbanización/Asociación/AA.HH.</Label>
+        <Label htmlFor="urbanizacion">13. Urbanización/Asociación/AA.HH.</Label>
         <ComboboxControlled
           options={opcionesUrbanizacion}
           value={ficha.urbanizacion || "No registrado"}
@@ -208,7 +208,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 13. Tipo de Construcción */}
       <div className="space-y-2">
-        <Label htmlFor="tipoconstruccion">13. Tipo de Construcción</Label>
+        <Label htmlFor="tipoconstruccion">14. Tipo de Construcción</Label>
         <ComboboxControlled
           options={opcionesTipoConstruccion}
           value={ficha.tipoconstruccion?.toString() || "No registrado"}
@@ -220,7 +220,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 14. Numero de Pisos */}
       <div className="space-y-2">
-        <Label htmlFor="nropisos">14. Numero de Pisos</Label>
+        <Label htmlFor="nropisos">15. Numero de Pisos</Label>
         <Input
           id="nropisos"
           value={ficha.nropisos || "No registrado"}
@@ -231,7 +231,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 15. Tipo Servicio */}
       <div className="space-y-2">
-        <Label htmlFor="tiposervicio">15. Tipo Servicio</Label>
+        <Label htmlFor="tiposervicio">16. Tipo Servicio</Label>
         <ComboboxControlled
           options={opcionesTipoServicio}
           value={ficha.tiposervicio || ""}
@@ -243,7 +243,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 16. Abastecimiento */}
       <div className="space-y-2">
-        <Label htmlFor="abastecimiento">16. Abastecimiento</Label>
+        <Label htmlFor="abastecimiento">17. Abastecimiento</Label>
         <ComboboxControlled
           options={opcionesAbastecimiento}
           value={ficha.tipoaba || "No registrado"}
@@ -255,7 +255,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 17. Piscina */}
       <div className="space-y-2">
-        <Label htmlFor="piscina">17. Piscina</Label>
+        <Label htmlFor="piscina">18. Piscina</Label>
         <ComboboxControlled
           options={opcionesPiscina}
           value={ficha.piscina || "No registrado"}
@@ -267,7 +267,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 18. Reservorio/Almacenaje */}
       <div className="space-y-2">
-        <Label htmlFor="almacenaje">18. Reservorio/Almacenaje</Label>
+        <Label htmlFor="almacenaje">19. Reservorio/Almacenaje</Label>
         <ComboboxControlled
           options={opcionesAlmacenaje}
           value={ficha.codalmacenaje || "No registrado"}

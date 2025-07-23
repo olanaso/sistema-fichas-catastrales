@@ -16,11 +16,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
         {/* Fila 1 */}
         <div>
           <Label htmlFor="numero-medidor" className="text-sm font-medium">
-            47. Numero medidor
+            50. Numero medidor
           </Label>
           <Input
             id="numero-medidor"
-            value={ficha.nromed?.toString() || ""}
+            value={ficha.nromed || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -28,11 +28,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
 
         <div>
           <Label htmlFor="ano" className="text-sm font-medium">
-            49. Año
+            51. Año
           </Label>
           <Input
             id="ano"
-            value={ficha.anio || ""}
+            value={ficha.anio || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -40,11 +40,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
 
         <div>
           <Label htmlFor="lectura-medidor" className="text-sm font-medium">
-            51. Lectura Medidor
+            52. Lectura Medidor
           </Label>
           <Input
             id="lectura-medidor"
-            value={ficha.lecturaultima?.toString() || "0"}
+            value={ficha.lecturaultima || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -57,7 +57,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="numero-medidor-sistema"
-            value={ficha.nromed_new?.toString() || ""}
+            value={ficha.nromed_new || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -65,11 +65,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
 
         <div>
           <Label htmlFor="fecha-instalacion" className="text-sm font-medium">
-            52. Fecha de Instalación
+            53. Fecha de Instalación
           </Label>
           <Input
             id="fecha-instalacion"
-            value={ficha.fechainstalacion?.toString() || ""}
+            value={ficha.fechainstalacion?.toString() || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -77,11 +77,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
 
         <div>
           <Label htmlFor="marca" className="text-sm font-medium">
-            53. Marca
+            54. Marca
           </Label>
           <Input
             id="marca"
-            value={ficha.marcamed?.toString() || ""}
+            value={ficha.marcamed || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -90,11 +90,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
         {/* Fila 3 */}
         <div>
           <Label htmlFor="diametro-medidor" className="text-sm font-medium">
-            54. Diámetro del Medidor
+            55. Diámetro del Medidor
           </Label>
           <Input
             id="diametro-medidor"
-            value={ficha.coddiametro_m?.toString() || ""}
+            value={ficha.coddiametro_m || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -102,11 +102,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
 
         <div>
           <Label htmlFor="lectura" className="text-sm font-medium">
-            55. Lectura
+            56. Lectura
           </Label>
           <Input
             id="lectura"
-            value={ficha.lectura?.toString() || ""}
+            value={ficha.lectura || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -114,11 +114,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
 
         <div>
           <Label htmlFor="tipo-facturacion" className="text-sm font-medium">
-            56. Tipo Facturación
+            57. Tipo Facturación
           </Label>
           <Input
             id="tipo-facturacion"
-            value={ficha.tipofacturacion?.toString() || "ASIGNADO"}
+            value={ficha.tipofacturacion || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -127,11 +127,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
         {/* Fila 4 */}
         <div>
           <Label htmlFor="tipo-lectura" className="text-sm font-medium">
-            57. Tipo de Lectura
+            58. Tipo de Lectura
           </Label>
           <Input
             id="tipo-lectura"
-            value={ficha.tipolectura?.toString() || ""}
+            value={ficha.tipolectura || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -139,11 +139,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
 
         <div>
           <Label htmlFor="estado-medidor" className="text-sm font-medium">
-            58. Estado del Medidor
+            59. Estado del Medidor
           </Label>
           <Input
             id="estado-medidor"
-            value={ficha.estadomed?.toString() || ""}
+            value={ficha.estadomed || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -151,11 +151,11 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
 
         <div>
           <Label htmlFor="operativo" className="text-sm font-medium">
-            59. Operativo
+            60. Operativo
           </Label>
           <Input
             id="operativo"
-            value={ficha.medidoroperativo || "NO"}
+            value={ficha.medidoroperativo || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />

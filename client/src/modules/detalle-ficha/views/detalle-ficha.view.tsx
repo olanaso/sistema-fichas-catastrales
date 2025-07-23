@@ -1,27 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  Home, 
-  User, 
-  Droplets, 
-  Gauge, 
-  Waves, 
-  FileText, 
-  Image, 
+import {
+  Home,
+  User,
+  Droplets,
+  Gauge,
+  Waves,
+  FileText,
+  Image,
   Database,
   Printer,
   Eye,
   AlertCircle,
   CheckCircle,
-  Clock
+  Clock,
+  X
 } from "lucide-react";
 import { DetalleFichaResponse } from "../action/detalle-ficha.action";
 import { format } from "date-fns";
@@ -102,12 +101,11 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
   useEffect(() => {
     const cargarFicha = async () => {
       if (!codFicha) return;
-      
+
       try {
         setLoading(true);
         const resultado = await buscarExacto("fichacatastro_eps", ["idficha"], [codFicha.toString()]);
-        console.log("resultado", resultado.data);
-        
+
         if (resultado.success && resultado.data) {
           setFicha(resultado.data[0]);
         } else {
@@ -125,7 +123,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
 
   const obtenerEstadoFicha = () => {
     if (!ficha) return { texto: "Cargando...", color: "gray" };
-    
+
     if (ficha.fichaaprobada === 1) {
       return { texto: "Aprobada", color: "green" };
     } else if (ficha.fichaaprobada === 0) {
@@ -179,46 +177,46 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
       {/* Header con información de la ficha */}
       <Card className="bg-gray-100 dark:bg-stone-900">
         <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div>
-                <h1 className="text-2xl font-bold">Ficha catastral - Estado actual</h1>
-                <div className="flex items-center gap-2 mt-2">
-                  <div className={`w-3 h-3 rounded-full bg-${estado.color}-500`}></div>
-                  <Badge variant="outline" className={`text-${estado.color}-600 border-${estado.color}-200`}>
-                    {estado.texto}
-                  </Badge>
-                </div>
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="w-full lg:w-auto">
+              <h1 className="text-xl lg:text-2xl font-bold">Ficha catastral - Estado actual</h1>
+              <div className="flex items-center gap-2 mt-2">
+                <div className={`w-3 h-3 rounded-full bg-${estado.color}-500`}></div>
+                <Badge variant="outline" className={`text-${estado.color}-600 border-${estado.color}-200`}>
+                  {estado.texto}
+                </Badge>
               </div>
             </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Encuestador</p>
-                <p className="font-medium">{ficha.encuestador}</p>
-                <p className="text-xs text-muted-foreground">
-                  {formatearFecha(ficha.encuestador || "")}
-                </p>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full sm:w-auto">
+                <div className="text-left sm:text-right">
+                  <p className="text-sm text-muted-foreground">Encuestador</p>
+                  <p className="font-medium">{ficha.encuestador}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatearFecha(ficha.encuestador || "")}
+                  </p>
+                </div>
+
+                <div className="text-left sm:text-right">
+                  <p className="text-sm text-muted-foreground">Modificado por</p>
+                  <p className="font-medium">{ficha.usermodificador}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatearFecha(ficha.fechamodificacion?.toString() || "")}
+                  </p>
+                </div>
+
+                <div className="text-left sm:text-right">
+                  <p className="text-sm text-muted-foreground">Fecha Finalización</p>
+                  <p className="font-medium">
+                    {ficha.fechaaprobacion ? formatearFecha(ficha.fechaaprobacion.toString()) : "-"}
+                  </p>
+                </div>
               </div>
-              
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Modificado por</p>
-                <p className="font-medium">{ficha.usermodificador}</p>
-                <p className="text-xs text-muted-foreground">
-                  {formatearFecha(ficha.fechamodificacion?.toString() || "")}
-                </p>
-              </div>
-              
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Fecha Finalización</p>
-                <p className="font-medium">
-                  {ficha.fechaaprobacion ? formatearFecha(ficha.fechaaprobacion.toString()) : "-"}
-                </p>
-              </div>
-              
-              <Button variant="outline" size="sm">
+
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
                 <Printer className="w-4 h-4 mr-2" />
-                Imprimir Ficha
+                Imprimir
               </Button>
             </div>
           </div>
@@ -234,16 +232,15 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
               {SECCIONES.map((seccion) => {
                 const Icono = seccion.icono;
                 const isActive = seccionActiva === seccion.id;
-                
+
                 return (
                   <button
                     key={seccion.id}
                     onClick={() => setSeccionActiva(seccion.id)}
-                    className={`w-full text-left p-3 rounded-lg transition-colors ${
-                      isActive
+                    className={`w-full text-left p-3 rounded-lg transition-colors ${isActive
                         ? "bg-primary text-primary-foreground"
                         : "hover:bg-muted"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-3">
                       <Icono className="w-4 h-4" />
@@ -269,7 +266,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
                   {SECCIONES.find(s => s.id === seccionActiva)?.titulo}
                 </h2>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Vista supervisión</span>
                 <Button
@@ -282,11 +279,11 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
               </div>
             </div>
           </CardHeader>
-          
+
           <CardContent>
             {ComponenteSeccion && (
-              <ComponenteSeccion 
-                ficha={ficha} 
+              <ComponenteSeccion
+                ficha={ficha}
                 vistaSupervision={vistaSupervision}
               />
             )}
@@ -297,7 +294,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
       {/* Botones de acción */}
       <div className="flex justify-end gap-4">
         <Button variant="outline">
-          <Clock className="w-4 h-4 mr-2" />
+          <X className="w-4 h-4 mr-2" />
           Cancelar
         </Button>
         <Button>

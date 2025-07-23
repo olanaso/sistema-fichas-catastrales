@@ -2,7 +2,6 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Waves } from "lucide-react";
 import { FichaCatastro } from "@/models/fichacatastro";
 
 interface DatosConexionDesagueProps {
@@ -17,11 +16,11 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
         {/* Fila 1 */}
         <div>
           <Label htmlFor="estado-conexion-desague" className="text-sm font-medium">
-            60. Estado de Conexión desagüe
+            61. Estado de Conexión desagüe
           </Label>
           <Input
             id="estado-conexion-desague"
-            value={ficha.situacionconex_d?.toString() || ""}
+            value={ficha.situacionconex_d || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -29,11 +28,11 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
 
         <div>
           <Label htmlFor="diametro-desague" className="text-sm font-medium">
-            61. Diámetro
+            62. Diámetro
           </Label>
           <Input
             id="diametro-desague"
-            value={ficha.coddiametro_d?.toString() || ""}
+            value={ficha.coddiametro_d || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -41,11 +40,11 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
 
         <div>
           <Label htmlFor="tipo-material-desague" className="text-sm font-medium">
-            62. Tipo Material
+            63. Tipo Material
           </Label>
           <Input
             id="tipo-material-desague"
-            value={ficha.tipomaterial_d?.toString() || ""}
+            value={ficha.tipomaterial_d || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -54,11 +53,11 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
         {/* Fila 2 */}
         <div>
           <Label htmlFor="caja-desague" className="text-sm font-medium">
-            63. Caja
+            64. Caja
           </Label>
           <Input
             id="caja-desague"
-            value={ficha.concajadesague?.toString() || ""}
+            value={ficha.tipocaja_d || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -66,11 +65,11 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
 
         <div>
           <Label htmlFor="localizacion-caja-desague" className="text-sm font-medium">
-            64. Localización caja
+            65. Localización caja
           </Label>
           <Input
             id="localizacion-caja-desague"
-            value={ficha.loccaja_d?.toString() || ""}
+            value={ficha.loccaja_d || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -78,11 +77,11 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
 
         <div>
           <Label htmlFor="estado-caja-desague" className="text-sm font-medium">
-            65. Estado Caja
+            66. Estado Caja
           </Label>
           <Input
             id="estado-caja-desague"
-            value={ficha.estadocaja_d?.toString() || ""}
+            value={ficha.estadocaja_d || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -91,11 +90,11 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
         {/* Fila 3 */}
         <div>
           <Label htmlFor="tapa-desague" className="text-sm font-medium">
-            66. Tapa
+            67. Tapa
           </Label>
           <Input
             id="tapa-desague"
-            value={ficha.tipotapa_d?.toString() || ""}
+            value={ficha.tipotapa_d || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -103,11 +102,11 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
 
         <div>
           <Label htmlFor="estado-tapa-desague" className="text-sm font-medium">
-            67. Estado de la Tapa
+            68. Estado de la Tapa
           </Label>
           <Input
             id="estado-tapa-desague"
-            value={ficha.esttapa_d?.toString() || ""}
+            value={ficha.esttapa_d || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -115,11 +114,11 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
 
         <div>
           <Label htmlFor="fugas-desague" className="text-sm font-medium">
-            68. Fugas
+            69. Fugas
           </Label>
           <Input
             id="fugas-desague"
-            value={ficha.fugasdesague?.toString() || ""}
+            value={ficha.fugasdesague || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -128,7 +127,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
 
       {/* Información adicional */}
       <div className="mt-6 text-red-600 text-sm">
-        <p>Estado Caja: {ficha.estadocaja_d?.toString() || ""} | Estado Tapa: {ficha.esttapa_d?.toString() || ""}</p>
+        <p>Estado Caja: {ficha.estadocaja_d || "No registrado"} | Estado Tapa: {ficha.esttapa_d || "No registrado"}</p>
       </div>
     </div>
   );
