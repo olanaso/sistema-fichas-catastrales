@@ -7,10 +7,11 @@ import java.util.List;
 
 @Data
 public class FichaUpdateMasivoDto {
-    private List<Integer> idfichas;
-    private String inspector;
-    private String encuestador;
-    private LocalDate fechaVisita;
+    private List<Integer> codclientes;
+    private String codinspector;
+    private String codcreador;
+    private LocalDate fecha_visita;
     private String observacion;  // opcional
     private String codbrigada;
+    private String estado;
 }
