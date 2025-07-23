@@ -3,10 +3,10 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Droplets } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface DatosConexionAguaProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 
@@ -17,11 +17,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
         {/* Fila 1 */}
         <div>
           <Label htmlFor="estado-servicio" className="text-sm font-medium">
-            30. Estado del Servicio
+            33. Estado del Servicio
           </Label>
           <Input
             id="estado-servicio"
-            value={ficha.estservicio_a || ""}
+            value={ficha.estadoservicio || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -29,11 +29,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="pavimentacion" className="text-sm font-medium">
-            31. Pavimentación
+            34. Pavimentación
           </Label>
           <Input
             id="pavimentacion"
-            value={ficha.pavimento_a || ""}
+            value={ficha.pavconagu_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -41,11 +41,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="vereda" className="text-sm font-medium">
-            32. Vereda
+            35. Vereda
           </Label>
           <Input
             id="vereda"
-            value={ficha.vereda_a || ""}
+            value={ficha.vereda_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -54,11 +54,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
         {/* Fila 2 */}
         <div>
           <Label htmlFor="diametro" className="text-sm font-medium">
-            33. Diámetro
+            36. Diámetro
           </Label>
           <Input
             id="diametro"
-            value={ficha.diametrocampo_a || ""}
+            value={ficha.coddiametro_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -66,11 +66,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="tipo-material" className="text-sm font-medium">
-            34. Tipo Material
+            37. Tipo Material
           </Label>
           <Input
             id="tipo-material"
-            value={ficha.materialtubo_a || ""}
+            value={ficha.tipomaterial_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -78,11 +78,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="tipo-ingreso" className="text-sm font-medium">
-            35. Tipo de Ingreso
+            38. Tipo de Ingreso
           </Label>
           <Input
             id="tipo-ingreso"
-            value={ficha.tipoingreso_a || ""}
+            value={ficha.tipoingreso || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -91,11 +91,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
         {/* Fila 3 */}
         <div>
           <Label htmlFor="material-caja" className="text-sm font-medium">
-            36. Material de Caja
+            39. Material de Caja
           </Label>
           <Input
             id="material-caja"
-            value={ficha.materialcaja_a || ""}
+            value={ficha.tipocaja_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -103,11 +103,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="localizacion-caja" className="text-sm font-medium">
-            37. Localización Caja
+            40. Localización Caja
           </Label>
           <Input
             id="localizacion-caja"
-            value={ficha.localizacion_a || ""}
+            value={ficha.loccaja_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -115,11 +115,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="estado-caja" className="text-sm font-medium">
-            38. Estado Caja
+            41. Estado Caja
           </Label>
           <Input
             id="estado-caja"
-            value={ficha.estadocaja_a || ""}
+            value={ficha.estadocaja_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -128,11 +128,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
         {/* Fila 4 */}
         <div>
           <Label htmlFor="material-tapa" className="text-sm font-medium">
-            39. Material de Tapa
+            42. Material de Tapa
           </Label>
           <Input
             id="material-tapa"
-            value={ficha.materialtapa_a || ""}
+            value={ficha.tipotapa_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -140,11 +140,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="estado-tapa" className="text-sm font-medium">
-            40. Estado de la Tapa
+            43. Estado de la Tapa
           </Label>
           <Input
             id="estado-tapa"
-            value={ficha.estadotapa_a || ""}
+            value={ficha.esttapa_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -152,11 +152,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="llaves" className="text-sm font-medium">
-            41. Llaves
+            44. Llaves
           </Label>
           <Input
             id="llaves"
-            value={ficha.llaves || ""}
+            value={ficha.llavemed || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -165,11 +165,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
         {/* Fila 5 */}
         <div>
           <Label htmlFor="posicion-medidor" className="text-sm font-medium">
-            42. Posición medidor
+            45. Posición medidor
           </Label>
           <Input
             id="posicion-medidor"
-            value={ficha.posicionmedidor || ""}
+            value={ficha.posicionmed || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -177,11 +177,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="tipo-corte" className="text-sm font-medium">
-            43. Tipo de Corte
+            46. Tipo de Corte
           </Label>
           <Input
             id="tipo-corte"
-            value={ficha.tipocorte_a || ""}
+            value={ficha.tipocorte_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -189,11 +189,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="razon-corte" className="text-sm font-medium">
-            44. Razón del corte
+            47. Razón del corte
           </Label>
           <Input
             id="razon-corte"
-            value={ficha.razoncorte || ""}
+            value={ficha.tipocerrado || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -202,11 +202,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
         {/* Fila 6 */}
         <div>
           <Label htmlFor="fugas" className="text-sm font-medium">
-            45. Fugas
+            48. Fugas
           </Label>
           <Input
             id="fugas"
-            value={ficha.fugas_a || ""}
+            value={ficha.tipofugas_a || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -214,11 +214,11 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
 
         <div>
           <Label htmlFor="caja-observacion" className="text-sm font-medium">
-            46. Caja observación
+            49. Caja observación
           </Label>
           <Input
             id="caja-observacion"
-            value={ficha.tipocajaobserv_a || ""}
+            value={ficha.tipocajaobserv || "No registrado"}
             readOnly={vistaSupervision}
             className="mt-1"
           />

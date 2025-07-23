@@ -4,25 +4,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface CalidadServicioProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 
 export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServicioProps) {
   const servicios = [
-    { nombre: "Lavatorios", cantidad: ficha.nrolavatorios || "0", estado: "REGULAR" },
-    { nombre: "Lavadora", cantidad: ficha.nrolavadoras || "0", estado: "Seleccionar" },
-    { nombre: "Water", cantidad: ficha.nrowater || "1", estado: "REGULAR" },
-    { nombre: "Duchas", cantidad: ficha.nroduchas || "1", estado: "REGULAR" },
-    { nombre: "Urinarios", cantidad: ficha.nrourinarios || "2", estado: "REGULAR" },
-    { nombre: "Grifo", cantidad: ficha.nrogrifos || "0", estado: "Seleccionar" },
-    { nombre: "Piscina", cantidad: ficha.nropiscina || "0", estado: "Seleccionar" },
-    { nombre: "Tanque Cisterna", cantidad: ficha.nrotanquecisterna || "0", estado: "Seleccionar" },
-    { nombre: "Tanque Elevado", cantidad: ficha.nrotanqueelevado || "0", estado: "Seleccionar" }
+    { nombre: "Lavatorios", cantidad: ficha.nrolavatorios || "-", estado: ficha.estadolavatorios || "No registrado" },
+    { nombre: "Lavadora", cantidad: ficha.nrolavadoras || "-", estado: ficha.estadolavadoras || "No registrado" },
+    { nombre: "Water", cantidad: ficha.nrowater || "-", estado: ficha.estadowater || "No registrado" },
+    { nombre: "Duchas", cantidad: ficha.nroduchas || "-", estado: ficha.estadoduchas || "No registrado" },
+    { nombre: "Urinarios", cantidad: ficha.nrourinarios || "-", estado: ficha.estadourinarios || "No registrado" },
+    { nombre: "Grifo", cantidad: ficha.nrogrifos || "-", estado: ficha.estadogrifos || "No registrado" },
+    { nombre: "Piscina", cantidad: ficha.nropiscina || "-", estado: ficha.estadopiscina || "No registrado" },
+    { nombre: "Tanque Cisterna", cantidad: ficha.nrotanquecisterna || "-", estado: ficha.estadotanquecisterna || "No registrado" },
+    { nombre: "Tanque Elevado", cantidad: ficha.nrotanqueelevado || "-", estado: ficha.estadotanqueelevado || "No registrado" }
   ];
 
   return (
@@ -36,11 +35,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="horas-dia" className="text-sm font-medium">
-                  69. Horas por día
+                  70. Horas/día
                 </Label>
                 <Input
                   id="horas-dia"
-                  value={ficha.horasxdia || "18"}
+                  value={ficha.horasxdia || "No registrado"}
                   readOnly={vistaSupervision}
                   className="mt-1"
                 />
@@ -48,11 +47,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
 
               <div>
                 <Label htmlFor="dias-semana" className="text-sm font-medium">
-                  70. Días por semana
+                  71. Días/sem
                 </Label>
                 <Input
                   id="dias-semana"
-                  value={ficha.diasxsemana || "7"}
+                  value={ficha.diasxsemana || "No registrado"}
                   readOnly={vistaSupervision}
                   className="mt-1"
                 />
@@ -60,11 +59,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
 
               <div>
                 <Label htmlFor="presion-agua" className="text-sm font-medium">
-                  71. Presión agua
+                  72. Presión Agua
                 </Label>
                 <Input
                   id="presion-agua"
-                  value={ficha.presionagu || "MEDIA"}
+                  value={ficha.presionagu || "No registrado"}
                   readOnly={vistaSupervision}
                   className="mt-1"
                 />
@@ -89,11 +88,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="ficha-incompleta" className="text-sm font-medium">
-                  71. Ficha Incompleta
+                  73. Ficha Incompleta
                 </Label>
                 <Input
                   id="ficha-incompleta"
-                  value={ficha.fichaincompleta || ""}
+                  value={ficha.fichaincompleta || "No registrado"}
                   readOnly={vistaSupervision}
                   className="mt-1"
                 />
@@ -101,11 +100,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
 
               <div>
                 <Label htmlFor="tipo-accion-comercial" className="text-sm font-medium">
-                  71. Tipo Acción Comercial
+                  74. Tipo Acción Comercial
                 </Label>
                 <Input
                   id="tipo-accion-comercial"
-                  value={ficha.tipoacccomercial || "NINGUNO"}
+                  value={ficha.tipoacccomercial || "No registrado"}
                   readOnly={vistaSupervision}
                   className="mt-1"
                 />
@@ -119,11 +118,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <Label htmlFor="frente-lote" className="text-sm font-medium">
-                  70. Frente principal de Lote (m)
+                  75. Frente principal de Lote (m)
                 </Label>
                 <Input
                   id="frente-lote"
-                  value={ficha.medidalotefrente || "0.00"}
+                  value={ficha.medidalotefrente || "No registrado"}
                   readOnly={vistaSupervision}
                   className="mt-1"
                 />
@@ -131,11 +130,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
 
               <div>
                 <Label htmlFor="distancia-caja-agua" className="text-sm font-medium">
-                  70. Distancia eje de caja de agua (m)
+                  76. Distancia eje de caja de agua (m)
                 </Label>
                 <Input
                   id="distancia-caja-agua"
-                  value={ficha.medidaejedesague || "0.00"}
+                  value={ficha.medidaejeagua || "No registrado"}
                   readOnly={vistaSupervision}
                   className="mt-1"
                 />
@@ -143,11 +142,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
 
               <div>
                 <Label htmlFor="distancia-caja-desague" className="text-sm font-medium">
-                  70. Distancia eje de caja de desagüe (m)
+                  77. Distancia eje de caja de desagüe (m)
                 </Label>
                 <Input
                   id="distancia-caja-desague"
-                  value={ficha.medidaejedesague || "0.00"}
+                  value={ficha.medidaejedesague || "No registrado"}
                   readOnly={vistaSupervision}
                   className="mt-1"
                 />
@@ -171,13 +170,12 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
               {servicios.map((servicio, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{servicio.nombre}</TableCell>
-                  <TableCell>{servicio.cantidad}</TableCell>
+                  <TableCell className="text-center">{servicio.cantidad}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      servicio.estado === "REGULAR" 
-                        ? "bg-green-100 text-green-800" 
-                        : "bg-gray-100 text-gray-600"
-                    }`}>
+                    <span className={`px-2 py-1 rounded text-xs ${servicio.estado === "REGULAR"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 text-gray-600"
+                      }`}>
                       {servicio.estado}
                     </span>
                   </TableCell>

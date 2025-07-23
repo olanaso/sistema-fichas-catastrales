@@ -7,9 +7,9 @@ import DetalleFichaView from "@/modules/detalle-ficha/views/detalle-ficha.view";
 export default async function GestionFichasPage({
   params,
 }: {
-  params: Promise<{ codclient: string }>;
+  params: Promise<{ codficha: number }>;
 }) {
-  const { codclient } = await params;
+  const { codficha } = await params;
 
   const breadcrumb = [
     {
@@ -25,7 +25,7 @@ export default async function GestionFichasPage({
     {
       icon: <FormInput className="h-3 w-3" />,
       text: "Detalle de la ficha",
-      path: `/gestion-fichas/${codclient}`,
+      path: `/gestion-fichas/${codficha}`,
     },
   ];
 
@@ -38,7 +38,7 @@ export default async function GestionFichasPage({
       />
       <div className="mx-auto p-8 w-full">
         <div className="grid grid-cols-1 gap-8">
-          <DetalleFichaView codCliente={codclient} />
+          <DetalleFichaView codFicha={codficha} />
         </div>
       </div>
     </>

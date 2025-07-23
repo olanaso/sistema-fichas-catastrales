@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Image, Upload, Eye, X, MapPin } from "lucide-react";
-import { DetalleFichaResponse } from "../action/detalle-ficha.action";
+import { FichaCatastro } from "@/models/fichacatastro";
 
 interface ImagenesAdjuntasProps {
-  ficha: DetalleFichaResponse;
+  ficha: FichaCatastro;
   vistaSupervision: boolean;
 }
 
@@ -40,7 +40,7 @@ export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAd
       id: "detalle-2",
       titulo: "Detalle 2",
       icono: "📌",
-      imagen: ficha.fotodetalle4 || null
+      imagen: ficha.fotodetalle5 || null
     },
     {
       id: "detalle-3",
@@ -55,7 +55,7 @@ export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAd
       {/* Sección de conexión nueva o faltante */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Conexión nueva o faltante</h3>
-        
+
         {/* Primera fila de imágenes */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {imagenes.slice(0, 3).map((item) => (
@@ -65,11 +65,11 @@ export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAd
                   <span className="text-2xl">{item.icono}</span>
                   <h4 className="font-medium text-sm">{item.titulo}</h4>
                 </div>
-                
+
                 {item.imagen ? (
                   <div className="relative">
-                    <img 
-                      src={item.imagen} 
+                    <img
+                      src={item.imagen}
                       alt={item.titulo}
                       className="w-full h-32 object-cover rounded border"
                     />
@@ -84,9 +84,9 @@ export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAd
                   </div>
                 ) : (
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       disabled={vistaSupervision}
                       className="w-full"
                     >
@@ -109,11 +109,11 @@ export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAd
                   <span className="text-2xl">{item.icono}</span>
                   <h4 className="font-medium text-sm">{item.titulo}</h4>
                 </div>
-                
+
                 {item.imagen ? (
                   <div className="relative">
-                    <img 
-                      src={item.imagen} 
+                    <img
+                      src={item.imagen}
                       alt={item.titulo}
                       className="w-full h-32 object-cover rounded border"
                     />
@@ -128,9 +128,9 @@ export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAd
                   </div>
                 ) : (
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       disabled={vistaSupervision}
                       className="w-full"
                     >
@@ -151,7 +151,7 @@ export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAd
           <MapPin className="w-5 h-5" />
           <h3 className="text-lg font-semibold">Dibujar croquis mano alzada</h3>
         </div>
-        
+
         <div className="border-2 border-gray-300 rounded-lg p-8 bg-gray-50">
           <div className="w-full h-64 bg-white border border-gray-200 rounded flex items-center justify-center">
             <div className="text-center text-gray-500">
