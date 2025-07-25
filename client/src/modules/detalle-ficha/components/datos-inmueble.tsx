@@ -84,7 +84,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           options={sucursal}
           value={ficha.codsuc || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar..."
+          placeholder="No registrado"
           disabled={vistaSupervision}
           className="h-8 text-xs"
         />
@@ -97,7 +97,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           options={sector}
           value={ficha.codsector_new || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar..."
+          placeholder="No registrado"
           disabled={vistaSupervision}
           className="h-8 text-xs"
         />
@@ -110,7 +110,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           options={mzna}
           value={ficha.codmza_new || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar..."
+          placeholder="No registrado"
           disabled={vistaSupervision}
           className="h-8 text-xs"
         />
@@ -211,7 +211,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           options={urbanizacion}
           value={ficha.urbanizacion || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar..."
+          placeholder="No registrado"
           disabled={vistaSupervision}
           className="h-8 text-xs"
         />
@@ -224,7 +224,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           options={tipoConstruccion}
           value={ficha.tipoconstruccion || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar..."
+          placeholder="No registrado"
           disabled={vistaSupervision}
           className="h-8 text-xs"
         />
@@ -248,7 +248,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           options={tipoServicio}
           value={ficha.tiposervicio || ""}
           onChange={() => { }}
-          placeholder="Seleccionar..."
+          placeholder="No registrado"
           disabled={vistaSupervision}
           className="h-8 text-xs"
         />
@@ -261,7 +261,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           options={abastecimiento}
           value={ficha.tipoaba || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar..."
+          placeholder="No registrado"
           disabled={vistaSupervision}
           className="h-8 text-xs"
         />
@@ -274,7 +274,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           options={opcionesPiscina}
           value={ficha.piscina || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar..."
+          placeholder="No registrado"
           disabled={vistaSupervision}
           className="h-8 text-xs"
         />
@@ -287,7 +287,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           options={almacenaje}
           value={ficha.codalmacenaje || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar..."
+          placeholder="No registrado"
           disabled={vistaSupervision}
           className="h-8 text-xs"
         />

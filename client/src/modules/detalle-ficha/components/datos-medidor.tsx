@@ -3,6 +3,11 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FichaCatastro } from "@/models/fichacatastro";
+import { TipoDiametro, TipoEstadoMedidor, TipoFacturacion, TipoLectura, TipoMarcaMedidor } from "@/models/tipos";
+import { buscarExacto, getData } from "@/service/data.actions";
+import { ComboboxOption } from "@/types/combobox";
+import { useEffect, useState } from "react";
+import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 
 interface DatosMedidorProps {
   ficha: FichaCatastro;
@@ -10,167 +15,213 @@ interface DatosMedidorProps {
 }
 
 export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorProps) {
+
+  const [diametros, setDiametros] = useState<ComboboxOption[]>([]);
+  const [marcas, setMarcas] = useState<ComboboxOption[]>([]);
+  const [tipoFacturacion, setTipoFacturacion] = useState<ComboboxOption[]>([]);
+  const [tipoLectura, setTipoLectura] = useState<ComboboxOption[]>([]);
+  const [estadoMedidor, setEstadoMedidor] = useState<ComboboxOption[]>([]);
+  
+  const opcionesSiNo: ComboboxOption[] = [
+    { value: "1", label: "SÍ" },
+    { value: "0", label: "NO" }
+  ];
+  
+  useEffect(() => {
+    buscarExacto("diametros", ["tipocon"],["001"]).then((res) => {
+      setDiametros(res.data.map((diametro: TipoDiametro) => ({ value: diametro.coddiametro, label: diametro.descripcion })));
+    });
+    getData("tipomarcamedidor").then((res) => {
+      setMarcas(res.data.map((marca: TipoMarcaMedidor) => ({ value: marca.marcamed, label: marca.descripcion })));
+    });
+    getData("tipofacturacion").then((res) => {
+      setTipoFacturacion(res.data.map((tipo: TipoFacturacion) => ({ value: tipo.tipofacturacion, label: tipo.descripcion })));
+    });
+    getData("tipolectura").then((res) => {
+      setTipoLectura(res.data.map((tipo: TipoLectura) => ({ value: tipo.tipolectura, label: tipo.descripcion })));
+    });
+    getData("tipoestmedidor").then((res) => {
+      setEstadoMedidor(res.data.map((estado: TipoEstadoMedidor) => ({ value: estado.estadomed, label: estado.descripcion })));
+    });
+  }, []);
+  
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Fila 1 */}
-        <div>
-          <Label htmlFor="numero-medidor" className="text-sm font-medium">
-            50. Numero medidor
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        {/* Número Medidor */}
+        <div className="space-y-1">
+          <Label htmlFor="numero-medidor" className="text-xs font-medium">
+            50. Número Medidor
           </Label>
           <Input
             id="numero-medidor"
             value={ficha.nromed || "No registrado"}
             readOnly={vistaSupervision}
-            className="mt-1"
+            className="h-8 text-xs"
           />
         </div>
 
-        <div>
-          <Label htmlFor="ano" className="text-sm font-medium">
+        {/* Año */}
+        <div className="space-y-1">
+          <Label htmlFor="ano" className="text-xs font-medium">
             51. Año
           </Label>
           <Input
             id="ano"
             value={ficha.anio || "No registrado"}
             readOnly={vistaSupervision}
-            className="mt-1"
+            className="h-8 text-xs"
           />
         </div>
 
-        <div>
-          <Label htmlFor="lectura-medidor" className="text-sm font-medium">
+        {/* Lectura Medidor */}
+        <div className="space-y-1">
+          <Label htmlFor="lectura-medidor" className="text-xs font-medium">
             52. Lectura Medidor
           </Label>
           <Input
             id="lectura-medidor"
-            value={ficha.lecturaultima || "No registrado"}
+            value={ficha.lecturaultima?.toString() || "No registrado"}
             readOnly={vistaSupervision}
-            className="mt-1"
+            className="h-8 text-xs"
           />
         </div>
 
-        {/* Fila 2 */}
-        <div>
-          <Label htmlFor="numero-medidor-sistema" className="text-sm font-medium text-red-600">
-            Numero medidor Sistema:
+        {/* Número medidor Sistema */}
+        <div className="space-y-1">
+          <Label htmlFor="numero-medidor-sistema" className="text-xs font-medium text-red-600">
+            Número medidor Sistema
           </Label>
           <Input
             id="numero-medidor-sistema"
             value={ficha.nromed_new || "No registrado"}
             readOnly={vistaSupervision}
-            className="mt-1"
+            className="h-8 text-xs"
           />
         </div>
 
-        <div>
-          <Label htmlFor="fecha-instalacion" className="text-sm font-medium">
+        {/* Fecha de Instalación */}
+        <div className="space-y-1">
+          <Label htmlFor="fecha-instalacion" className="text-xs font-medium">
             53. Fecha de Instalación
           </Label>
           <Input
             id="fecha-instalacion"
             value={ficha.fechainstalacion?.toString() || "No registrado"}
             readOnly={vistaSupervision}
-            className="mt-1"
+            className="h-8 text-xs"
           />
         </div>
 
-        <div>
-          <Label htmlFor="marca" className="text-sm font-medium">
+        {/* Marca */}
+        <div className="space-y-1">
+          <Label htmlFor="marca" className="text-xs font-medium">
             54. Marca
           </Label>
-          <Input
-            id="marca"
-            value={ficha.marcamed || "No registrado"}
-            readOnly={vistaSupervision}
-            className="mt-1"
+          <ComboboxControlled
+            options={marcas}
+            value={ficha.marcamed || ""}
+            placeholder="No registrado"
+            disabled={vistaSupervision}
+            className="h-8 text-xs"
           />
         </div>
 
-        {/* Fila 3 */}
-        <div>
-          <Label htmlFor="diametro-medidor" className="text-sm font-medium">
+        {/* Diámetro del Medidor */}
+        <div className="space-y-1">
+          <Label htmlFor="diametro-medidor" className="text-xs font-medium">
             55. Diámetro del Medidor
           </Label>
-          <Input
-            id="diametro-medidor"
-            value={ficha.coddiametro_m || "No registrado"}
-            readOnly={vistaSupervision}
-            className="mt-1"
+          <ComboboxControlled
+            options={diametros}
+            value={ficha.coddiametro_m || ""}
+            placeholder="No registrado"
+            disabled={vistaSupervision}
+            className="h-8 text-xs"
           />
         </div>
 
-        <div>
-          <Label htmlFor="lectura" className="text-sm font-medium">
+        {/* Lectura */}
+        <div className="space-y-1">
+          <Label htmlFor="lectura" className="text-xs font-medium">
             56. Lectura
           </Label>
           <Input
             id="lectura"
             value={ficha.lectura || "No registrado"}
             readOnly={vistaSupervision}
-            className="mt-1"
+            className="h-8 text-xs"
           />
         </div>
 
-        <div>
-          <Label htmlFor="tipo-facturacion" className="text-sm font-medium">
+        {/* Tipo Facturación */}
+        <div className="space-y-1">
+          <Label htmlFor="tipo-facturacion" className="text-xs font-medium">
             57. Tipo Facturación
           </Label>
-          <Input
-            id="tipo-facturacion"
-            value={ficha.tipofacturacion || "No registrado"}
-            readOnly={vistaSupervision}
-            className="mt-1"
+          <ComboboxControlled
+            options={tipoFacturacion}
+            value={ficha.tipofacturacion || ""}
+            placeholder="No registrado"
+            disabled={vistaSupervision}
+            className="h-8 text-xs"
           />
         </div>
 
-        {/* Fila 4 */}
-        <div>
-          <Label htmlFor="tipo-lectura" className="text-sm font-medium">
+        {/* Tipo de Lectura */}
+        <div className="space-y-1">
+          <Label htmlFor="tipo-lectura" className="text-xs font-medium">
             58. Tipo de Lectura
           </Label>
-          <Input
-            id="tipo-lectura"
-            value={ficha.tipolectura || "No registrado"}
-            readOnly={vistaSupervision}
-            className="mt-1"
+          <ComboboxControlled
+            options={tipoLectura}
+            value={ficha.tipolectura || ""}
+            placeholder="Seleccionar tipo"
+            disabled={vistaSupervision}
+            className="h-8 text-xs"
           />
         </div>
 
-        <div>
-          <Label htmlFor="estado-medidor" className="text-sm font-medium">
+        {/* Estado del Medidor */}
+        <div className="space-y-1">
+          <Label htmlFor="estado-medidor" className="text-xs font-medium">
             59. Estado del Medidor
           </Label>
-          <Input
-            id="estado-medidor"
-            value={ficha.estadomed || "No registrado"}
-            readOnly={vistaSupervision}
-            className="mt-1"
+          <ComboboxControlled
+            options={estadoMedidor}
+            value={ficha.estadomed || ""}
+            placeholder="No registrado"
+            disabled={vistaSupervision}
+            className="h-8 text-xs"
           />
         </div>
 
-        <div>
-          <Label htmlFor="operativo" className="text-sm font-medium">
+        {/* Operativo */}
+        <div className="space-y-1">
+          <Label htmlFor="operativo" className="text-xs font-medium">
             60. Operativo
           </Label>
-          <Input
-            id="operativo"
-            value={ficha.medidoroperativo || "No registrado"}
-            readOnly={vistaSupervision}
-            className="mt-1"
+          <ComboboxControlled
+            options={opcionesSiNo}
+            value={ficha.medidoroperativo || ""}
+            placeholder="No registrado"
+            disabled={vistaSupervision}
+            className="h-8 text-xs"
           />
         </div>
-      </div>
 
-      {/* Información adicional */}
-      <div className="mt-6">
-        <Label className="text-sm font-medium">
-          Tiene Medidor:
-        </Label>
-        <div className="mt-2">
-          <span className="text-sm text-muted-foreground">
-            {ficha.tienemedidor ? "SÍ" : "NO"}
-          </span>
+        {/* Tiene Medidor */}
+        <div className="space-y-1">
+          <Label htmlFor="tiene-medidor" className="text-xs font-medium">
+            Tiene Medidor
+          </Label>
+          <ComboboxControlled
+            options={opcionesSiNo}
+            value={ficha.tienemedidor || ""}
+            placeholder="No registrado"
+            disabled={vistaSupervision}
+            className="h-8 text-xs"
+          />
         </div>
       </div>
     </div>
