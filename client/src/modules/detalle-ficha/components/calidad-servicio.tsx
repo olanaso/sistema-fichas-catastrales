@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FichaCatastro } from "@/models/fichacatastro";
 import { useEffect, useState } from "react";
 import { getData } from "@/service/data.actions";
-import { TipoAccionComercial, TipoFichaIncompleta } from "@/models/tipos";
+import { TipoAccionComercial, TipoFichaIncompleta, TipoPresionAgua } from "@/models/tipos";
 import { ComboboxOption } from "@/types/combobox";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 
@@ -20,6 +20,8 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
 
   const [tipoAccionComercial, setTipoAccionComercial] = useState<ComboboxOption[]>([]);
   const [tipoFichaIncompleta, setTipoFichaIncompleta] = useState<ComboboxOption[]>([]);
+  const [tipoPresionAgua, setTipoPresionAgua] = useState<ComboboxOption[]>([]);
+  
 
   useEffect(() => {
     getData("tipoacccomercial").then((res) => {
@@ -27,6 +29,9 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
     });
     getData("tipofichaincompleta").then((res) => {
       setTipoFichaIncompleta(res.data.map((tipo: TipoFichaIncompleta) => ({ value: tipo.tipofichaincompleta, label: tipo.descripcion })));
+    });
+    getData("tipopresionagu").then((res) => {
+      setTipoPresionAgua(res.data.map((tipo: TipoPresionAgua) => ({ value: tipo.tipopresionagu, label: tipo.descripcion })));
     });
   }, []);
 
@@ -85,11 +90,12 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 <Label htmlFor="presion-agua" className="text-xs font-medium">
                   72. Presión Agua
                 </Label>
-                <Input
-                  id="presion-agua"
-                  value={ficha.presionagu || "No registrado"}
-                  readOnly={vistaSupervision}
-                  className="h-8 text-sm mt-1"
+                <ComboboxControlled
+                  options={tipoPresionAgua}
+                  value={ficha.presionagu || ""}
+                  placeholder="No registrado"
+                  className="h-8 text-xs"
+                  disabled={vistaSupervision}
                 />
               </div>
             </div>

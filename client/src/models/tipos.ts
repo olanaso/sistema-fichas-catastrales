@@ -1,4 +1,14 @@
-// ToDo: cambiar a otro archivo
+// Diametros
+export interface TipoDiametro {
+  codemp: string;
+  tipocon: string;
+  coddiametro: string;
+  descripcion: string;
+  estareg: number;
+  creador: string;
+  fechareg: string;
+  orden: number;
+}
 
 // src/models/sector.ts
 export interface Sector {

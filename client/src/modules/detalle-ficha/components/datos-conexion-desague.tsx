@@ -4,8 +4,8 @@ import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FichaCatastro } from "@/models/fichacatastro";
-import { TipoCaja, TipoEstadoCaja, TipoEstadoTapa, TipoFugas, TipoLocalizacionCaja, TipoMaterial, TipoTapa } from "@/models/tipos";
-import { getData } from "@/service/data.actions";
+import { TipoCaja, TipoDiametro, TipoEstadoCaja, TipoEstadoServicio, TipoEstadoTapa, TipoFugas, TipoLocalizacionCaja, TipoMaterial, TipoTapa } from "@/models/tipos";
+import { buscarExacto, getData } from "@/service/data.actions";
 import { ComboboxOption } from "@/types/combobox";
 import { useEffect, useState } from "react";
 
@@ -23,6 +23,8 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
   const [tipoTapa, setTipoTapa] = useState<ComboboxOption[]>([]);
   const [tipoEstadoTapa, setTipoEstadoTapa] = useState<ComboboxOption[]>([]);
   const [tipoFugas, setTipoFugas] = useState<ComboboxOption[]>([]);
+  const [tipoDiametro, setTipoDiametro] = useState<ComboboxOption[]>([]);
+  const [tipoEstadoServicio, setTipoEstadoServicio] = useState<ComboboxOption[]>([]);
 
   useEffect(() => {
     getData("tipomaterial").then((res) => {
@@ -46,127 +48,146 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
     getData("tipofugas").then((res) => {
       setTipoFugas(res.data.map((tipo: TipoFugas) => ({ value: tipo.tipofugas, label: tipo.descripcion })));
     });
+    buscarExacto("diametros", ["tipocon"], ["002"]).then((res) => {
+      setTipoDiametro(res.data.map((tipo: TipoDiametro) => ({ value: tipo.coddiametro, label: tipo.descripcion })));
+    });
+    getData("tipoestservicio").then((res) => {
+      setTipoEstadoServicio(res.data.map((tipo: TipoEstadoServicio) => ({ value: tipo.estadoservicio, label: tipo.descripcion })));
+    });
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Fila 1 */}
-        <div>
-          <Label htmlFor="estado-conexion-desague" className="text-sm font-medium">
-            61. Estado de Conexión desagüe
-          </Label>
-          <Input
-            id="estado-conexion-desague"
-            value={ficha.situacionconex_d || "No registrado"}
-            readOnly={vistaSupervision}
-            className="mt-1"
-          />
-        </div>
+    <div className=" overflow-y-auto">
+      <div className="rounded-lg">
+        <div className="space-y-3">
+          {/* Fila 1 - Estado de conexión (más ancho) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            <div className="lg:col-span-2">
+              <Label htmlFor="estado-conexion-desague" className="text-xs font-medium">
+                61. Estado de Conexión desagüe
+              </Label>
+              <ComboboxControlled
+                options={tipoEstadoServicio}
+                value={ficha.situacionconex_d || ""}
+                placeholder="No registrado"
+                className="h-8 text-xs mt-1"
+                disabled={vistaSupervision}
+              />
+            </div>
 
-        <div>
-          <Label htmlFor="diametro-desague" className="text-sm font-medium">
-            62. Diámetro
-          </Label>
-          <Input
-            id="diametro-desague"
-            value={ficha.coddiametro_d || "No registrado"}
-            readOnly={vistaSupervision}
-            className="mt-1"
-          />
-        </div>
+            <div>
+              <Label htmlFor="diametro-desague" className="text-xs font-medium">
+                62. Diámetro
+              </Label>
+              <ComboboxControlled
+                options={tipoDiametro}
+                value={ficha.coddiametro_d || ""}
+                placeholder="No registrado"
+                className="h-8 text-xs mt-1"
+                disabled={vistaSupervision}
+              />
+            </div>
+          </div>
 
-        <div>
-          <Label htmlFor="tipo-material-desague" className="text-sm font-medium">
-            63. Tipo Material
-          </Label>
-          <ComboboxControlled
-            options={tipoMaterial}
-            value={ficha.tipomaterial_d || ""}
-            placeholder="No registrado"
-            className="h-8 text-xs"
-            disabled={vistaSupervision}
-          />
-        </div>
+          {/* Fila 2 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div>
+              <Label htmlFor="tipo-material-desague" className="text-xs font-medium">
+                63. Tipo Material
+              </Label>
+              <ComboboxControlled
+                options={tipoMaterial}
+                value={ficha.tipomaterial_d || ""}
+                placeholder="No registrado"
+                className="h-8 text-xs mt-1"
+                disabled={vistaSupervision}
+              />
+            </div>
 
-        {/* Fila 2 */}
-        <div>
-          <Label htmlFor="caja-desague" className="text-sm font-medium">
-            64. Caja
-          </Label>
-          <ComboboxControlled
-            options={tipoCaja}
-            value={ficha.tipocaja_d || ""}
-            placeholder="No registrado"
-            className="h-8 text-xs"
-            disabled={vistaSupervision}
-          />
-        </div>
+            <div>
+              <Label htmlFor="caja-desague" className="text-xs font-medium">
+                64. Caja
+              </Label>
+              <ComboboxControlled
+                options={tipoCaja}
+                value={ficha.tipocaja_d || ""}
+                placeholder="No registrado"
+                className="h-8 text-xs mt-1"
+                disabled={vistaSupervision}
+              />
+            </div>
 
-        <div>
-          <Label htmlFor="localizacion-caja-desague" className="text-sm font-medium">
-            65. Localización caja
-          </Label>
-          <ComboboxControlled
-            options={tipoLocalizacionCaja}
-            value={ficha.loccaja_d || ""}
-            placeholder="No registrado"
-            className="h-8 text-xs"
-            disabled={vistaSupervision}
-          />
-        </div>
+            <div>
+              <Label htmlFor="localizacion-caja-desague" className="text-xs font-medium">
+                65. Localización caja
+              </Label>
+              <ComboboxControlled
+                options={tipoLocalizacionCaja}
+                value={ficha.loccaja_d || ""}
+                placeholder="No registrado"
+                className="h-8 text-xs mt-1"
+                disabled={vistaSupervision}
+              />
+            </div>
+          </div>
 
-        <div>
-          <Label htmlFor="estado-caja-desague" className="text-sm font-medium">
-            66. Estado Caja
-          </Label>
-          <ComboboxControlled
-            options={tipoEstadoCaja}
-            value={ficha.estadocaja_d || ""}
-            placeholder="No registrado"
-            className="h-8 text-xs"
-            disabled={vistaSupervision}
-          />
-        </div>
+          {/* Fila 3 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div>
+              <Label htmlFor="estado-caja-desague" className="text-xs font-medium">
+                66. Estado Caja
+              </Label>
+              <ComboboxControlled
+                options={tipoEstadoCaja}
+                value={ficha.estadocaja_d || ""}
+                placeholder="No registrado"
+                className="h-8 text-xs mt-1"
+                disabled={vistaSupervision}
+              />
+            </div>
 
-        {/* Fila 3 */}
-        <div>
-          <Label htmlFor="tapa-desague" className="text-sm font-medium">
-            67. Tapa
-          </Label>
-          <ComboboxControlled
-            options={tipoTapa}
-            value={ficha.tipotapa_d || ""}
-            placeholder="No registrado"
-            className="h-8 text-xs"
-            disabled={vistaSupervision}
-          />
-        </div>
+            <div>
+              <Label htmlFor="tapa-desague" className="text-xs font-medium">
+                67. Tapa
+              </Label>
+              <ComboboxControlled
+                options={tipoTapa}
+                value={ficha.tipotapa_d || ""}
+                placeholder="No registrado"
+                className="h-8 text-xs mt-1"
+                disabled={vistaSupervision}
+              />
+            </div>
 
-        <div>
-          <Label htmlFor="estado-tapa-desague" className="text-sm font-medium">
-            68. Estado de la Tapa
-          </Label>
-          <ComboboxControlled
-            options={tipoEstadoTapa}
-            value={ficha.esttapa_d || ""}
-            placeholder="No registrado"
-            className="h-8 text-xs"
-            disabled={vistaSupervision}
-          />
-        </div>
+            <div>
+              <Label htmlFor="estado-tapa-desague" className="text-xs font-medium">
+                68. Estado de la Tapa
+              </Label>
+              <ComboboxControlled
+                options={tipoEstadoTapa}
+                value={ficha.esttapa_d || ""}
+                placeholder="No registrado"
+                className="h-8 text-xs mt-1"
+                disabled={vistaSupervision}
+              />
+            </div>
+          </div>
 
-        <div>
-          <Label htmlFor="fugas-desague" className="text-sm font-medium">
-            69. Fugas
-          </Label>
-          <ComboboxControlled
-            options={tipoFugas}
-            value={ficha.fugasdesague || ""}
-            placeholder="No registrado"
-            className="h-8 text-xs"
-            disabled={vistaSupervision}
-          />
+          {/* Fila 4 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="lg:col-span-2">
+              <Label htmlFor="fugas-desague" className="text-xs font-medium">
+                69. Fugas
+              </Label>
+              <ComboboxControlled
+                options={tipoFugas}
+                value={ficha.fugasdesague || ""}
+                placeholder="No registrado"
+                className="h-8 text-xs mt-1"
+                disabled={vistaSupervision}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
