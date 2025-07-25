@@ -338,7 +338,7 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           </Label>
           <Input
             id="razon-corte"
-            value={ficha.tipocerrado || "No registrado"}
+            defaultValue={ficha.tipocerrado || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
