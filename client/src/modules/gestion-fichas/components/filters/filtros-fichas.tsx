@@ -160,10 +160,10 @@ export function FiltrosFichas({
   };
 
   return (
-    <div className="mb-6">
+    <div className="mb-4">
       <div>
-        <Label className="text-lg font-bold">Filtros</Label>
-        <div className="flex gap-2 justify-center items-center lg:flex-row flex-col">
+        <Label className="text-base font-semibold">Filtros</Label>
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 mt-2">
           <ComboboxControlled
             options={grupos}
             value={filtros.grupo}
@@ -171,7 +171,7 @@ export function FiltrosFichas({
             placeholder="Seleccionar..."
             searchPlaceholder="Buscar grupo..."
             emptyMessage="No se encontraron grupos"
-            label="Equipos de trabajo"
+            label="Equipos"
             loading={loading}
             disabled={loading}
           />
@@ -188,22 +188,23 @@ export function FiltrosFichas({
             disabled={!filtros.grupo || loadingInspectores}
           />
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="fecha-inicio">F. Inicio</Label>
+          <div className="space-y-1">
+            <Label>F. Inicio</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
+                  size="sm"
                   className={cn(
-                    "w-[200px] justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal h-9",
                     !fechaInicio && "text-muted-foreground"
                   )}
                 >
-                  <Calendar className="mr-2 h-4 w-4" />
+                  <Calendar className="mr-2 h-3 w-3" />
                   {fechaInicio ? (
-                    format(fechaInicio, "PPP", { locale: es })
+                    format(fechaInicio, "dd/MM/yyyy")
                   ) : (
-                    <span>Seleccionar</span>
+                    <span className="text-xs">Seleccionar</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -218,23 +219,24 @@ export function FiltrosFichas({
             </Popover>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="space-y-1">
             <Label htmlFor="fecha-fin">F. Fin</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
+                  size="sm"
                   disabled={!fechaInicio}
                   className={cn(
-                    "w-[200px] justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal h-9",
                     !fechaFin && "text-muted-foreground"
                   )}
                 >
-                  <Calendar className="mr-2 h-4 w-4" />
+                  <Calendar className="mr-2 h-3 w-3" />
                   {fechaFin ? (
-                    format(fechaFin, "PPP", { locale: es })
+                    format(fechaFin, "dd/MM/yyyy")
                   ) : (
-                    <span>Seleccionar</span>
+                    <span className="text-xs">Seleccionar</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -244,9 +246,7 @@ export function FiltrosFichas({
                   selected={fechaFin}
                   onSelect={setFechaFin}
                   disabled={(date) => {
-                    // Deshabilitar si no hay fecha inicio seleccionada
                     if (!fechaInicio) return true;
-                    // Deshabilitar fechas anteriores a la fecha inicio
                     return date < fechaInicio;
                   }}
                   locale={es}
@@ -267,26 +267,28 @@ export function FiltrosFichas({
             disabled={loading}
           />
 
-          <div className="flex items-end gap-2 justify-center mt-0 lg:mt-6">
+          <div className="flex items-end gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={handleLimpiar}
               disabled={!tieneFiltrosAplicados() || externalLoading}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1 h-9 px-3"
             >
-              <X className="h-4 w-4" />
-              Limpiar
+              <X className="h-3 w-3" />
+              <span className="text-xs">Limpiar</span>
             </Button>
 
             <Button
               size="sm"
               onClick={handleFiltrar}
               disabled={!tieneFiltrosAplicados() || externalLoading}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1 h-9 px-3"
             >
-              <Search className="h-4 w-4" />
-              {externalLoading ? "Filtrando..." : "Filtrar"}
+              <Search className="h-3 w-3" />
+              <span className="text-xs">
+                {externalLoading ? "Filtrando..." : "Filtrar"}
+              </span>
             </Button>
           </div>
         </div>

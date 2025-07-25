@@ -19,12 +19,14 @@ interface FiltrosAsignacionProps {
   onFiltrar: (filtros: FiltrosAsignacion) => void;
   onLimpiar: () => void;
   loading?: boolean;
+  filtrosExternos?: FiltrosAsignacion;
 }
 
 export function FiltrosAsignacion({
   onFiltrar,
   onLimpiar,
   loading: externalLoading = false,
+  filtrosExternos,
 }: FiltrosAsignacionProps) {
   const [loading, setLoading] = useState(false);
   const [sucursales, setSucursales] = useState<ComboboxOption[]>([]);
@@ -110,6 +112,13 @@ export function FiltrosAsignacion({
 
     cargarManzanas();
   }, [filtros.sucursal, filtros.sector]);
+
+  // Aplicar filtros externos
+  useEffect(() => {
+    if (filtrosExternos) {
+      setFiltros(filtrosExternos);
+    }
+  }, [filtrosExternos]);
 
   const handleSucursalChange = (value: string | number) => {
     setFiltros((prev) => ({

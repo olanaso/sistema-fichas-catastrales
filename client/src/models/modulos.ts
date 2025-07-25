@@ -132,3 +132,14 @@ export interface Sucursal {
     loginjefatura?: string | null;
     idotass?: string | null;
 }
+
+export interface Urbanizacion {
+    codemp: string;
+    codsuc: string;
+    codurbaso: string;
+    descripcionurba?: string | null;
+    tipourba?: string | null;
+    estareg: number;
+    creador: string;
+    fechareg: string | null; // timestamp en string ISO o null
+}

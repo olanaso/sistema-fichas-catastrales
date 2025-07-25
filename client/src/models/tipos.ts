@@ -620,3 +620,46 @@ export interface TipoAccionComercial {
   fechareg: string | null;
   orden?: number | null;
 }
+
+// ============================================================================
+// 💧 ABASTECIMIENTO Y ALMACENAJE
+// ============================================================================
+
+// src/models/tipoabastecimiento.ts
+export interface TipoAbastecimiento {
+  codemp: string;
+  tipoaba: string;
+  descripcion?: string | null;
+  estareg: number;
+  creador: string;
+  fechareg: string | null; // timestamp en string ISO o null
+  orden?: number | null;
+  codequivalencia?: string | null;
+}
+
+// src/models/tipoalmacenaje.ts
+export interface TipoAlmacenaje {
+  codemp: string;
+  codalmacenaje: string;
+  descripcion?: string | null;
+  estareg: number;
+  creador: string;
+  fechareg: string | null; // timestamp en string ISO o null
+  orden?: number | null;
+  codequivalencia?: string | null;
+}
+
+// src/models/tipoactividad.ts
+export interface TipoActividad {
+  codemp: string;
+  actividad: string;
+  descripcion?: string | null;
+  estareg: number;
+  creador: string;
+  fechareg: string | null; // timestamp en string ISO o null
+  ciiu?: string | null;
+  descripcion_ciiu?: string | null;
+  orden?: number | null;
+  codprov: string;
+  tipocategoria: string;
+}

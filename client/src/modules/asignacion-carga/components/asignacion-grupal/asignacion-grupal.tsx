@@ -13,6 +13,7 @@ import {
   ChevronUp,
   CheckSquare,
   SquareDashedMousePointer,
+  X,
 } from "lucide-react";
 import {
   Popover,
@@ -38,23 +39,32 @@ import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { CustomBadge } from "@/components/custom/custom-badge";
 import { useAuth } from "@/hooks/use-auth";
+import { AsignacionTrabajo } from "@/models/asignacion-trabajo";
+import { buscarExacto } from "@/service/data.actions";
 
 interface AsignacionGrupalProps {
   cantidadFichas: number;
   fichasSeleccionadas: number[];
   onAsignacionCompleta: () => void;
+  grupoPreseleccionado?: string;
+  asignacionesProgramadas?: AsignacionTrabajo[];
 }
 
 export function AsignacionGrupal({
   cantidadFichas,
   fichasSeleccionadas,
   onAsignacionCompleta,
+  grupoPreseleccionado,
+  asignacionesProgramadas = [],
 }: AsignacionGrupalProps) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [loadingInspectores, setLoadingInspectores] = useState(false);
   const [loadingGrupos, setLoadingGrupos] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false); // Estado para controlar expansión
+  const [isAsignacionesExpanded, setIsAsignacionesExpanded] = useState(false); // Estado para colapso de asignaciones
+  const [loadingGrabar, setLoadingGrabar] = useState(false);
+  const [loadingCancelar, setLoadingCancelar] = useState(false);
   const [gruposTrabajo, setGruposTrabajo] = useState<GrupoTrabajoDto[]>([]);
   const [grupoSeleccionado, setGrupoSeleccionado] =
     useState<GrupoTrabajoDto | null>(null);
@@ -94,6 +104,19 @@ export function AsignacionGrupal({
       setLiderGrupo(null);
     }
   }, [asignacion.codgrupo, gruposTrabajo]);
+
+  // Preseleccionar grupo de trabajo cuando se proporcione la prop
+  useEffect(() => {
+    if (grupoPreseleccionado && gruposTrabajo.length > 0) {
+      const grupo = gruposTrabajo.find(g => g.codgrupo === grupoPreseleccionado);
+      if (grupo) {
+        setAsignacion(prev => ({
+          ...prev,
+          codgrupo: grupoPreseleccionado
+        }));
+      }
+    }
+  }, [grupoPreseleccionado, gruposTrabajo]);
 
   // Actualizar fecha_visita cuando cambie fechaVisita
   useEffect(() => {
@@ -162,6 +185,63 @@ export function AsignacionGrupal({
     } catch (error) {
       console.error("Error al cargar datos del líder:", error);
       setLiderGrupo(null);
+    }
+  };
+
+  // Función para agrupar asignaciones por inspector
+  const getAsignacionesAgrupadasPorInspector = () => {
+    const agrupadas = new Map();
+    
+    asignacionesProgramadas.forEach((asignacion) => {
+      const key = `${asignacion.codinspector}-${asignacion.codbrigada}`;
+      
+      if (!agrupadas.has(key)) {
+        agrupadas.set(key, {
+          codinspector: asignacion.codinspector,
+          codbrigada: asignacion.codbrigada,
+          cantidadClientes: 0,
+          fechas: new Set()
+        });
+      }
+      
+      const grupo = agrupadas.get(key);
+      grupo.cantidadClientes++;
+      
+      if (asignacion.fecha_visita) {
+        grupo.fechas.add(asignacion.fecha_visita);
+      }
+    });
+    
+    return Array.from(agrupadas.values());
+  };
+
+  const handleGrabarProgramacion = async () => {
+    try {
+      setLoadingGrabar(true);
+      // TODO: Implementar acción de grabar programación en el backend
+      console.log("Grabando programación...");
+      toast.success("Programación grabada exitosamente");
+      onAsignacionCompleta();
+    } catch (error) {
+      console.error("Error al grabar programación:", error);
+      toast.error("Error al grabar la programación");
+    } finally {
+      setLoadingGrabar(false);
+    }
+  };
+
+  const handleCancelarProgramacion = async () => {
+    try {
+      setLoadingCancelar(true);
+      // TODO: Implementar acción de cancelar programación en el backend
+      console.log("Cancelando programación...");
+      toast.success("Programación cancelada exitosamente");
+      onAsignacionCompleta();
+    } catch (error) {
+      console.error("Error al cancelar programación:", error);
+      toast.error("Error al cancelar la programación");
+    } finally {
+      setLoadingCancelar(false);
     }
   };
 
@@ -393,6 +473,118 @@ export function AsignacionGrupal({
         <CustomBadge color="orange" className="text-xs">
             {Math.ceil(cantidadFichas/inspectores.length) - 1} fichas por inspector - {cantidadFichas % inspectores.length} fichas restantes
           </CustomBadge>
+        </div>
+      )}
+
+      {/* Sección de Asignaciones Programadas */}
+      {asignacionesProgramadas.length > 0 && (
+        <div className="mt-4 space-y-3">
+          <Separator />
+          
+          {/* Resumen de Asignaciones - Más compacto */}
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-950/20 dark:border-blue-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <CalendarIcon className="w-4 h-4 text-blue-600" />
+                <div>
+                  <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                    {asignacionesProgramadas.length} asignaciones programadas
+                  </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <CustomBadge color="blue" className="text-xs">
+                      Pendiente de confirmación
+                    </CustomBadge>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {/* Botón para expandir/colapsar */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsAsignacionesExpanded(!isAsignacionesExpanded)}
+                  className="h-6 w-6 p-0"
+                >
+                  {isAsignacionesExpanded ? (
+                    <ChevronUp className="h-3 w-3" />
+                  ) : (
+                    <ChevronDown className="h-3 w-3" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Detalle de Asignaciones (Colapsable) - Más compacto */}
+            {isAsignacionesExpanded && (
+              <div className="mt-3 space-y-2">
+                {getAsignacionesAgrupadasPorInspector().map((grupo, index) => (
+                  <div
+                    key={`${grupo.codinspector}-${grupo.codbrigada}-${index}`}
+                    className="p-2 bg-white border border-gray-200 rounded dark:bg-gray-800 dark:border-gray-700"
+                  >
+                    <div className="grid grid-cols-4 gap-2 text-xs">
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Inspector:</span>
+                        <p className="text-gray-600 dark:text-gray-400 truncate">
+                          {grupo.codinspector}
+                        </p>
+                        <p className="text-gray-500">Cód: {grupo.codinspector}</p>
+                      </div>
+                      
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Grupo:</span>
+                        <p className="text-gray-600 dark:text-gray-400 truncate">
+                          {grupo.codbrigada}
+                        </p>
+                        <p className="text-gray-500">Cód: {grupo.codbrigada}</p>
+                      </div>
+                      
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Fechas:</span>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {grupo.fechas.size > 0 ? Array.from(grupo.fechas).map(f => format(new Date(f as string), "dd/MM/yyyy")).join(", ") : "No definida"}
+                        </p>
+                        <p className="text-gray-500">Clientes: {grupo.cantidadClientes}</p>
+                      </div>
+
+                      <div>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Clientes:</span>
+                        <p className="text-gray-600 dark:text-gray-400 text-xs truncate">
+                          {grupo.cantidadClientes} clientes asignados
+                        </p>
+                        <p className="text-gray-500">Estado: Programado</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Botones de Acción - Más compactos */}
+            <div className="flex gap-2 justify-end mt-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancelarProgramacion}
+                disabled={loadingCancelar}
+                className="flex items-center gap-1 h-8 px-3"
+              >
+                <X className="h-3 w-3" />
+                {loadingCancelar ? "Cancelando..." : "Cancelar"}
+              </Button>
+              
+              <Button
+                size="sm"
+                onClick={handleGrabarProgramacion}
+                disabled={loadingGrabar}
+                className="flex items-center gap-1 h-8 px-3 bg-green-600 hover:bg-green-700"
+              >
+                <CheckSquare className="h-3 w-3" />
+                {loadingGrabar ? "Grabando..." : "Grabar"}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

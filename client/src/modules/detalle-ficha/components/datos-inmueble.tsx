@@ -5,6 +5,10 @@ import { Label } from "@/components/ui/label";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { ComboboxOption } from "@/types/combobox";
 import { FichaCatastro } from "@/models/fichacatastro";
+import { Calle, Manzana, Sector, Sucursal, Urbanizacion } from "@/models/modulos";
+import { useEffect, useState } from "react";
+import { TipoAbastecimiento, TipoAlmacenaje, TipoConstruccion, TipoServicio } from "@/models/tipos";
+import { buscarExacto, getData } from "@/service/data.actions";
 
 interface DatosInmuebleProps {
   ficha: FichaCatastro;
@@ -13,267 +17,279 @@ interface DatosInmuebleProps {
 
 export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmuebleProps) {
   // Opciones para los combobox (estos datos vendrían del backend)
-  const opcionesSucursal: ComboboxOption[] = [
-    { value: "004", label: "SAN SEBASTIAN" },
-    { value: "001", label: "OTRA SUCURSAL" }
-  ];
+  const [region, setRegion] = useState<string>("CUSCO");
+  const [sucursal, setSucursal] = useState<ComboboxOption[]>([]);
+  const [sector, setSector] = useState<ComboboxOption[]>([]);
+  const [mzna, setMzna] = useState<ComboboxOption[]>([]);
+  const [calle, setCalle] = useState<ComboboxOption[]>([]);
+  const [tipoConstruccion, setTipoConstruccion] = useState<ComboboxOption[]>([]);
+  const [tipoServicio, setTipoServicio] = useState<ComboboxOption[]>([]);
+  const [abastecimiento, setAbastecimiento] = useState<ComboboxOption[]>([]);
+  const [almacenaje, setAlmacenaje] = useState<ComboboxOption[]>([]);
+  const [urbanizacion, setUrbanizacion] = useState<ComboboxOption[]>([]);
 
-  const opcionesSector: ComboboxOption[] = [
-    { value: "000", label: "SECTOR 011" },
-    { value: "001", label: "SECTOR 012" }
-  ];
-
-  const opcionesCalle: ComboboxOption[] = [
-    { value: "104", label: "LA MOLINA" },
-    { value: "105", label: "OTRA CALLE" }
-  ];
-
-  const opcionesUrbanizacion: ComboboxOption[] = [
-    { value: "937", label: "LA MOLINA" },
-    { value: "938", label: "OTRA URBANIZACIÓN" }
-  ];
-
-  const opcionesTipoConstruccion: ComboboxOption[] = [
-    { value: "013", label: "CASA" },
-    { value: "014", label: "DEPARTAMENTO" }
-  ];
-
-  const opcionesTipoServicio: ComboboxOption[] = [
-    { value: "001", label: "AGUA" },
-    { value: "004", label: "AGUA Y DESAGÜE" }
-  ];
-
-  const opcionesAbastecimiento: ComboboxOption[] = [
-    { value: "001", label: "RED PÚBLICA" },
-    { value: "002", label: "POZO" }
-  ];
+  useEffect(() => {
+    getData("sucursales").then((res) => {
+      setSucursal(res.data.map((sucursal: Sucursal) => ({ value: sucursal.codsuc, label: sucursal.nombre })));
+    });
+    buscarExacto("sectores", ["codsuc"], [ficha.codsuc || ""]).then((res) => {
+      setSector(res.data.map((sector: Sector) => ({ value: sector.codsector, label: sector.descripcion })));
+    });
+    buscarExacto("manzanas", ["codsuc", "codsector"], [ficha.codsuc || "", ficha.codsector_new || ""]).then((res) => {
+      setMzna(res.data.map((mzna: Manzana) => ({ value: mzna.codmza, label: mzna.descripcion })));
+    });
+    getData("calles").then((res) => {
+      setCalle(res.data.map((calle: Calle) => ({ value: calle.codcalle, label: calle.descripcioncalle })));
+    });
+    getData("tipoconstruccion").then((res) => {
+      setTipoConstruccion(res.data.map((tipo: TipoConstruccion) => ({ value: tipo.tipoconstruccion, label: tipo.descripcion })));
+    });
+    getData("tiposervicio").then((res) => {
+      setTipoServicio(res.data.map((tipo: TipoServicio) => ({ value: tipo.tiposervicio, label: tipo.descripcion })));
+    });
+    getData("tipoabastecimiento").then((res) => {
+      setAbastecimiento(res.data.map((tipo: TipoAbastecimiento) => ({ value: tipo.tipoaba, label: tipo.descripcion })));
+    });
+    getData("tipoalmacenaje").then((res) => {
+      setAlmacenaje(res.data.map((tipo: TipoAlmacenaje) => ({ value: tipo.codalmacenaje, label: tipo.descripcion })));
+    });
+    buscarExacto("urbanmae", ["codsuc"], [ficha.codsuc || ""]).then((res) => {
+      setUrbanizacion(res.data.map((urbanizacion: Urbanizacion) => ({ value: urbanizacion.codurbaso, label: urbanizacion.tipourba + " " + urbanizacion.descripcionurba })));
+    });
+  }, []);
 
   const opcionesPiscina: ComboboxOption[] = [
+    { value: "000", label: "N.D." },
     { value: "002", label: "NO" },
     { value: "001", label: "SI" }
   ];
 
-  const opcionesAlmacenaje: ComboboxOption[] = [
-    { value: "000", label: "NO TIENE" },
-    { value: "001", label: "TIENE" }
-  ];
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
       {/* 1. Región */}
-      <div className="space-y-2">
-        <Label htmlFor="region">1. Región</Label>
+      <div className="space-y-1">
+        <Label htmlFor="region" className="text-xs font-medium">1. Región</Label>
         <Input
           id="region"
-          value={"-----No atributos-----"}
+          value={region}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
       {/* 2. Sucursal */}
-      <div className="space-y-2">
-        <Label htmlFor="sucursal">2. Sucursal</Label>
+      <div className="space-y-1">
+        <Label htmlFor="sucursal" className="text-xs font-medium">2. Sucursal</Label>
         <ComboboxControlled
-          options={opcionesSucursal}
+          options={sucursal}
           value={ficha.codsuc || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar sucursal..."
+          placeholder="Seleccionar..."
           disabled={vistaSupervision}
+          className="h-8 text-xs"
         />
       </div>
 
       {/* 3. Sector */}
-      <div className="space-y-2">
-        <Label htmlFor="sector">3. Sector</Label>
+      <div className="space-y-1">
+        <Label htmlFor="sector" className="text-xs font-medium">3. Sector</Label>
         <ComboboxControlled
-          options={opcionesSector}
+          options={sector}
           value={ficha.codsector_new || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar sector..."
+          placeholder="Seleccionar..."
           disabled={vistaSupervision}
+          className="h-8 text-xs"
         />
       </div>
 
       {/* 4. Mzna */}
-      <div className="space-y-2">
-        <Label htmlFor="mzna">4. Mzna</Label>
-        <Input
-          id="mzna"
+      <div className="space-y-1">
+        <Label htmlFor="mzna" className="text-xs font-medium">4. Mzna</Label>
+        <ComboboxControlled
+          options={mzna}
           value={ficha.codmza_new || "No registrado"}
-          readOnly={vistaSupervision}
-          className="bg-muted"
+          onChange={() => { }}
+          placeholder="Seleccionar..."
+          disabled={vistaSupervision}
+          className="h-8 text-xs"
         />
       </div>
 
       {/* 5. Lote */}
-      <div className="space-y-2">
-        <Label htmlFor="lote">5. Lote</Label>
+      <div className="space-y-1">
+        <Label htmlFor="lote" className="text-xs font-medium">5. Lote</Label>
         <Input
           id="lote"
           value={ficha.nrolote_new || "No registrado"}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
       {/* 6. Sub lote */}
-      <div className="space-y-2">
-        <Label htmlFor="sublote">6. Sub lote</Label>
+      <div className="space-y-1">
+        <Label htmlFor="sublote" className="text-xs font-medium">6. Sub lote</Label>
         <Input
           id="sublote"
           value={ficha.nrosublote_new || "No registrado"}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
       {/* 7. N° de Suministro */}
-      <div className="space-y-2">
-        <Label htmlFor="suministro">7. N° de Suministro</Label>
+      <div className="space-y-1">
+        <Label htmlFor="suministro" className="text-xs font-medium">7. N° Suministro</Label>
         <Input
           id="suministro"
           value={ficha.codcliente || "No registrado"}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
-      {/* 7. Calle/Jiron/Avenida/Pasaje */}
-      <div className="space-y-2">
-        <Label htmlFor="calle">8. Calle/Jiron/Avenida/Pasaje</Label>
+      {/* 8. Calle/Jiron/Avenida/Pasaje */}
+      <div className="space-y-1 sm:col-span-2">
+        <Label htmlFor="calle" className="text-xs font-medium">8. Calle/Jiron/Avenida/Pasaje</Label>
         <Input
           id="calle"
           value={ficha.direccion || "No registrado"}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
-      {/* 8. Cuadra */}
-      <div className="space-y-2">
-        <Label htmlFor="cuadra">9. Cuadra</Label>
+      {/* 9. Cuadra */}
+      <div className="space-y-1">
+        <Label htmlFor="cuadra" className="text-xs font-medium">9. Cuadra</Label>
         <Input
           id="cuadra"
           value={ficha.cuadra?.toString() || "No registrado"}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
-      {/* 9. N Muni */}
-      <div className="space-y-2">
-        <Label htmlFor="nromuni">10. N Muni</Label>
+      {/* 10. N Muni */}
+      <div className="space-y-1">
+        <Label htmlFor="nromuni" className="text-xs font-medium">10. N Muni</Label>
         <Input
           id="nromuni"
           value={ficha.nromunic?.toString() || "No registrado"}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
-      {/* 10. Mz Muni */}
-      <div className="space-y-2">
-        <Label htmlFor="mzmuni">11. Mz Muni</Label>
+      {/* 11. Mz Muni */}
+      <div className="space-y-1">
+        <Label htmlFor="mzmuni" className="text-xs font-medium">11. Mz Muni</Label>
         <Input
           id="mzmuni"
           value={ficha.mzamunic?.toString() || "No registrado"}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
-      {/* 11. Lt Muni */}
-      <div className="space-y-2">
-        <Label htmlFor="ltmuni">12. Lt Muni</Label>
+      {/* 12. Lt Muni */}
+      <div className="space-y-1">
+        <Label htmlFor="ltmuni" className="text-xs font-medium">12. Lt Muni</Label>
         <Input
           id="ltmuni"
           value={ficha.ltemunic?.toString() || "No registrado"}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
-      {/* 12. Urbanización/Asociación/AA.HH. */}
-      <div className="space-y-2">
-        <Label htmlFor="urbanizacion">13. Urbanización/Asociación/AA.HH.</Label>
+      {/* 13. Urbanización/Asociación/AA.HH. */}
+      <div className="space-y-1 sm:col-span-2">
+        <Label htmlFor="urbanizacion" className="text-xs font-medium">13. Urbanización/Asociación/AA.HH.</Label>
         <ComboboxControlled
-          options={opcionesUrbanizacion}
+          options={urbanizacion}
           value={ficha.urbanizacion || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar urbanización..."
+          placeholder="Seleccionar..."
           disabled={vistaSupervision}
+          className="h-8 text-xs"
         />
       </div>
 
-      {/* 13. Tipo de Construcción */}
-      <div className="space-y-2">
-        <Label htmlFor="tipoconstruccion">14. Tipo de Construcción</Label>
+      {/* 14. Tipo de Construcción */}
+      <div className="space-y-1 sm:col-span-2">
+        <Label htmlFor="tipoconstruccion" className="text-xs font-medium">14. Tipo de Construcción</Label>
         <ComboboxControlled
-          options={opcionesTipoConstruccion}
-          value={ficha.tipoconstruccion?.toString() || "No registrado"}
+          options={tipoConstruccion}
+          value={ficha.tipoconstruccion || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar tipo..."
+          placeholder="Seleccionar..."
           disabled={vistaSupervision}
+          className="h-8 text-xs"
         />
       </div>
 
-      {/* 14. Numero de Pisos */}
-      <div className="space-y-2">
-        <Label htmlFor="nropisos">15. Numero de Pisos</Label>
+      {/* 15. Numero de Pisos */}
+      <div className="space-y-1">
+        <Label htmlFor="nropisos" className="text-xs font-medium">15. N° Pisos</Label>
         <Input
           id="nropisos"
           value={ficha.nropisos || "No registrado"}
           readOnly={vistaSupervision}
-          className="bg-muted"
+          className="bg-muted h-8 text-xs"
         />
       </div>
 
-      {/* 15. Tipo Servicio */}
-      <div className="space-y-2">
-        <Label htmlFor="tiposervicio">16. Tipo Servicio</Label>
+      {/* 16. Tipo Servicio */}
+      <div className="space-y-1 sm:col-span-2">
+        <Label htmlFor="tiposervicio" className="text-xs font-medium">16. Tipo Servicio</Label>
         <ComboboxControlled
-          options={opcionesTipoServicio}
+          options={tipoServicio}
           value={ficha.tiposervicio || ""}
           onChange={() => { }}
-          placeholder="Seleccionar servicio..."
+          placeholder="Seleccionar..."
           disabled={vistaSupervision}
+          className="h-8 text-xs"
         />
       </div>
 
-      {/* 16. Abastecimiento */}
-      <div className="space-y-2">
-        <Label htmlFor="abastecimiento">17. Abastecimiento</Label>
+      {/* 17. Abastecimiento */}
+      <div className="space-y-1 sm:col-span-2">
+        <Label htmlFor="abastecimiento" className="text-xs font-medium">17. Abastecimiento</Label>
         <ComboboxControlled
-          options={opcionesAbastecimiento}
+          options={abastecimiento}
           value={ficha.tipoaba || "No registrado"}
           onChange={() => { }}
-          placeholder="Seleccionar abastecimiento..."
+          placeholder="Seleccionar..."
           disabled={vistaSupervision}
+          className="h-8 text-xs"
         />
       </div>
 
-      {/* 17. Piscina */}
-      <div className="space-y-2">
-        <Label htmlFor="piscina">18. Piscina</Label>
+      {/* 18. Piscina */}
+      <div className="space-y-1">
+        <Label htmlFor="piscina" className="text-xs font-medium">18. Piscina</Label>
         <ComboboxControlled
           options={opcionesPiscina}
           value={ficha.piscina || "No registrado"}
           onChange={() => { }}
           placeholder="Seleccionar..."
           disabled={vistaSupervision}
+          className="h-8 text-xs"
         />
       </div>
 
-      {/* 18. Reservorio/Almacenaje */}
-      <div className="space-y-2">
-        <Label htmlFor="almacenaje">19. Reservorio/Almacenaje</Label>
+      {/* 19. Reservorio/Almacenaje */}
+      <div className="space-y-1 sm:col-span-2">
+        <Label htmlFor="almacenaje" className="text-xs font-medium">19. Reservorio/Almacenaje</Label>
         <ComboboxControlled
-          options={opcionesAlmacenaje}
+          options={almacenaje}
           value={ficha.codalmacenaje || "No registrado"}
           onChange={() => { }}
           placeholder="Seleccionar..."
           disabled={vistaSupervision}
+          className="h-8 text-xs"
         />
       </div>
     </div>

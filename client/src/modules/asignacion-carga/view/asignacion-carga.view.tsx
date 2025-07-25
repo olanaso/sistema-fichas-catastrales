@@ -11,10 +11,11 @@ import {
   type FiltrosAsignacion as FiltrosAsignacionType,
 } from "../action/asignacion-carga.actions";
 import TitlePage from "@/components/custom/title-page";
-import { getData } from "@/service/data.actions";
+import { buscarExacto, getData } from "@/service/data.actions";
 import { Inspector } from "@/models/inspector";
 import { Cliente } from "@/models/cliente";
-
+import { AsignacionTrabajo } from "@/models/asignacion-trabajo";
+import { Button } from "@/components/ui/button";
 
 export default function AsignacionCargaView() {
   const [fichasSeleccionadas, setFichasSeleccionadas] = useState<number[]>([]);
@@ -24,11 +25,26 @@ export default function AsignacionCargaView() {
   const [mostrarResultados, setMostrarResultados] = useState(false);
   const [loadingFiltros, setLoadingFiltros] = useState(false);
   const [inspectores, setInspectores] = useState<Inspector[]>([]);
+  const [asignaciones, setAsignaciones] = useState<AsignacionTrabajo[]>([]);
+  const [loadingVerAsignaciones, setLoadingVerAsignaciones] = useState(false);
+  const [filtrosExternos, setFiltrosExternos] = useState<FiltrosAsignacionType | undefined>(undefined);
+
+  // Función para recargar asignaciones
+  const recargarAsignaciones = async () => {
+    try {
+      const data = await buscarExacto("usp_programacion_trabajo", ["estado"], ["Programado"]);
+      setAsignaciones(data.data);
+      console.log("Asignaciones recargadas:", data.data.length, "asignaciones encontradas");
+    } catch (error) {
+      console.error("Error al recargar asignaciones:", error);
+    }
+  };
 
   useEffect(() => {
     getData("inspectores").then((data) => {
       setInspectores(data.data);
     });
+    recargarAsignaciones();
   }, []);
 
   const handleFiltrar = async (filtros: FiltrosAsignacionType) => {
@@ -68,7 +84,6 @@ export default function AsignacionCargaView() {
       );
       setFichasFiltradas(fichasResultado);
       setMostrarResultados(true);
-
     } catch (error) {
       console.error("Error al aplicar filtros:", error);
     } finally {
@@ -81,6 +96,8 @@ export default function AsignacionCargaView() {
     setFichasFiltradas([]);
     setMostrarResultados(false);
     setFichasSeleccionadas([]);
+    setFiltrosExternos(undefined);
+    setGrupoTrabajoSeleccionado("");
   };
 
   const handleSelectionChange = (selectedIds: number[]) => {
@@ -90,10 +107,68 @@ export default function AsignacionCargaView() {
   const handleAsignacionCompleta = async () => {
     // Limpiar selección y recargar datos filtrados
     setFichasSeleccionadas([]);
+    
+    // Recargar asignaciones para mostrar los cambios inmediatamente
+    await recargarAsignaciones();
+    
     if (Object.keys(filtrosAplicados).length > 0) {
       await handleFiltrar(filtrosAplicados);
     }
   };
+
+  const handleVerAsignaciones = async () => {
+    try {
+      setLoadingVerAsignaciones(true);
+      
+      // Obtener el último registro de asignaciones
+      if (asignaciones.length === 0) {
+        console.warn("No hay asignaciones disponibles");
+        return;
+      }
+
+      const ultimaAsignacion = asignaciones[asignaciones.length - 1];
+      
+      // Buscar el cliente correspondiente usando buscarExacto
+      const clienteData = await buscarExacto(
+        "clientes", 
+        ["codcliente"], 
+        [ultimaAsignacion.codcliente.toString()]
+      );
+
+      if (!clienteData.data || clienteData.data.length === 0) {
+        console.error("No se encontró el cliente correspondiente");
+        return;
+      }
+
+      const cliente = clienteData.data[0] as Cliente;
+      
+      // Aplicar filtros automáticamente con los datos del cliente
+      const filtrosAutomaticos: FiltrosAsignacionType = {
+        sucursal: cliente.codsuc,
+        sector: cliente.codsector,
+        manzana: cliente.codmza || "",
+        estadoRegistro: "SIN ASIGNAR"
+      };
+
+      // Establecer filtros externos para que se muestren en la interfaz
+      setFiltrosExternos(filtrosAutomaticos);
+
+      // Aplicar los filtros
+      await handleFiltrar(filtrosAutomaticos);
+
+      // Setear el grupo de trabajo en la asignación grupal
+      // Esto se manejará a través de un callback que pasaremos al componente AsignacionGrupal
+      setGrupoTrabajoSeleccionado(ultimaAsignacion.codbrigada);
+
+    } catch (error) {
+      console.error("Error al recuperar asignación:", error);
+    } finally {
+      setLoadingVerAsignaciones(false);
+    }
+  };
+
+  // Estado para el grupo de trabajo seleccionado
+  const [grupoTrabajoSeleccionado, setGrupoTrabajoSeleccionado] = useState<string>("");
 
   return (
     <div className="space-y-6">
@@ -107,6 +182,7 @@ export default function AsignacionCargaView() {
         onFiltrar={handleFiltrar}
         onLimpiar={handleLimpiarFiltros}
         loading={loadingFiltros}
+        filtrosExternos={filtrosExternos}
       />
 
       {/* Mostrar resultados solo después de filtrar */}
@@ -114,11 +190,13 @@ export default function AsignacionCargaView() {
         <>
           {/* Asignación Grupal */}
           {filtrosAplicados.estadoRegistro === "SIN ASIGNAR" && (
-          <AsignacionGrupal
-            cantidadFichas={fichasFiltradas.length}
-            fichasSeleccionadas={fichasSeleccionadas}
-            onAsignacionCompleta={handleAsignacionCompleta}
-          />
+            <AsignacionGrupal
+              cantidadFichas={fichasFiltradas.length}
+              fichasSeleccionadas={fichasSeleccionadas}
+              onAsignacionCompleta={handleAsignacionCompleta}
+              grupoPreseleccionado={grupoTrabajoSeleccionado}
+              asignacionesProgramadas={asignaciones}
+            />
           )}
 
           {/* Tabla de fichas */}
@@ -145,6 +223,26 @@ export default function AsignacionCargaView() {
             />
           )}
         </>
+      )}
+
+      {asignaciones.length > 0 && !mostrarResultados && (
+        <Alert className="mt-4 border-2 border-purple-500 text-purple-500 bg-purple-100 dark:bg-gray-950 flex gap-2 justify-between">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 !text-purple-500" />
+            <AlertDescription>
+              <p className="font-semibold">
+                Se encontraron {asignaciones.length} asignaciones programadas
+              </p>
+            </AlertDescription>
+          </div>
+          <Button 
+            variant="default" 
+            onClick={handleVerAsignaciones}
+            disabled={loadingVerAsignaciones}
+          >
+            {loadingVerAsignaciones ? "Cargando..." : "Ver asignaciones"}
+          </Button>
+        </Alert>
       )}
 
       {/* Mensaje inicial cuando no se han aplicado filtros */}

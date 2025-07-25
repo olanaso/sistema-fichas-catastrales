@@ -14,6 +14,11 @@ import {
   Building2
 } from "lucide-react";
 import { FichaCatastro } from "@/models/fichacatastro";
+import { ComboboxOption } from "@/types/combobox";
+import { useEffect, useState } from "react";
+import { getData } from "@/service/data.actions";
+import { TipoActividad, TipoCategoria, TipoResponsable, TipoUsuario } from "@/models/tipos";
+import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 
 interface DatosUsuarioProps {
   ficha: FichaCatastro;
@@ -21,163 +26,172 @@ interface DatosUsuarioProps {
 }
 
 export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioProps) {
+
+  const [tipoUsuario, setTipoUsuario] = useState<ComboboxOption[]>([]);
+  const [tipoResponsable, setTipoResponsable] = useState<ComboboxOption[]>([]);
+  const [tipoCategoria, setTipoCategoria] = useState<ComboboxOption[]>([]);
+  const [tipoActividad, setTipoActividad] = useState<ComboboxOption[]>([]);
+  const [sectorAbastecimiento, setSectorAbastecimiento] = useState<ComboboxOption[]>([]);
+
+  useEffect(() => {
+    getData("tipousuario").then((res) => {
+      setTipoUsuario(res.data.map((tipo: TipoUsuario) => ({ value: tipo.tipousuario, label: tipo.descripcion })));
+    });
+    getData("tiporesponsable").then((res) => {
+      setTipoResponsable(res.data.map((tipo: TipoResponsable) => ({ value: tipo.tiporesponsable, label: tipo.descripcion })));
+    });
+    getData("tipocategoria").then((res) => {
+      setTipoCategoria(res.data.map((tipo: TipoCategoria) => ({ value: tipo.tipocategoria, label: tipo.descripcion })));
+    });
+    getData("tipoactividad").then((res) => {
+      setTipoActividad(res.data.map((tipo: TipoActividad) => ({ value: tipo.actividad, label: tipo.descripcion })));
+    });
+    // getData("sectorabastecimiento").then((res) => {
+    //   setSectorAbastecimiento(res.data.map((tipo: ) => ({ value: tipo.sectorabastecimiento, label: tipo.descripcion })));
+    // });
+  }, []);
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Información del usuario */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Columna 1 */}
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="tipo-usuario" className="text-sm font-medium">
-              20. Tipo de Usuario
-            </Label>
-            <Input
-              id="tipo-usuario"
-              value={ficha.tipousuario || "ACTIVO"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="nombres" className="text-sm font-medium">
-              21. Usuario/Nombres/Razón Social
-            </Label>
-            <Input
-              id="nombres"
-              value={ficha.propietario || "No registrado"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="dni" className="text-sm font-medium">
-              22. DNI/RUC
-            </Label>
-            <Input
-              id="dni"
-              value={ficha.dni || "No registrado"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="habitantes" className="text-sm font-medium">
-              23. Nº habitantes
-            </Label>
-            <Input
-              id="habitantes"
-              value={ficha.habitantes || "No registrado"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="responsable" className="text-sm font-medium">
-              24. Responsable
-            </Label>
-            <Input
-              id="responsable"
-              value={ficha.tiporesponsable || "PROPIETARIO"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        {/* 20. Tipo de Usuario */}
+        <div className="space-y-1">
+          <Label htmlFor="tipo-usuario" className="text-xs font-medium">20. Tipo Usuario</Label>
+          <ComboboxControlled
+            options={tipoUsuario}
+            value={ficha.tipousuario || "ACTIVO"}
+            placeholder="Seleccionar..."
+            className="h-8 text-xs"
+            disabled={vistaSupervision}
+          />
         </div>
 
-        {/* Columna 2 */}
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="telefono" className="text-sm font-medium">
-              25. Teléfono
-            </Label>
-            <Input
-              id="telefono"
-              value={ficha.celular || "No registrado"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="contrato" className="text-sm font-medium">
-              26. Nº Contrato
-            </Label>
-            <Input
-              id="contrato"
-              value={ficha.nrocontrato || "No registrado"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="reservorio" className="text-sm font-medium">
-              27. Reservorio Conectado
-            </Label>
-            <Input
-              id="reservorio"
-              value={ficha.codreservorio?.toString() || "No registrado"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="sector" className="text-sm font-medium">
-              28. Sector Abastecimiento
-            </Label>
-            <Input
-              id="sector"
-              value={ficha.codsectorabast || "No registrado"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="categoria" className="text-sm font-medium">
-              29. Categoría
-            </Label>
-            <Input
-              id="categoria"
-              value={ficha.catetar || "No registrado"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
+        {/* 21. Usuario/Nombres/Razón Social */}
+        <div className="space-y-1 sm:col-span-2">
+          <Label htmlFor="nombres" className="text-xs font-medium">21. Usuario/Nombres/Razón Social</Label>
+          <Input
+            id="nombres"
+            value={ficha.propietario || "No registrado"}
+            readOnly={vistaSupervision}
+            className="h-8 text-xs"
+          />
         </div>
 
-        {/* Columna 3 */}
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="razon-social" className="text-sm font-medium">
-              30. Razón Social
-            </Label>
-            <Input
-              id="razon-social"
-              value={ficha.razonsocial || "No registrado"}
-              readOnly={vistaSupervision}
-              className="mt-1"
-            />
-          </div>
+        {/* 22. DNI/RUC */}
+        <div className="space-y-1">
+          <Label htmlFor="dni" className="text-xs font-medium">22. DNI/RUC</Label>
+          <Input
+            id="dni"
+            value={ficha.dni || "No registrado"}
+            readOnly={vistaSupervision}
+            className="h-8 text-xs"
+          />
+        </div>
+
+        {/* 23. Nº habitantes */}
+        <div className="space-y-1">
+          <Label htmlFor="habitantes" className="text-xs font-medium">23. Nº Habitantes</Label>
+          <Input
+            id="habitantes"
+            value={ficha.habitantes || "No registrado"}
+            readOnly={vistaSupervision}
+            className="h-8 text-xs"
+          />
+        </div>
+
+        {/* 24. Responsable */}
+        <div className="space-y-1">
+          <Label htmlFor="responsable" className="text-xs font-medium">24. Responsable</Label>
+          <ComboboxControlled
+            options={tipoResponsable}
+            value={ficha.tiporesponsable || "PROPIETARIO"}
+            placeholder="Seleccionar..."
+            className="h-8 text-xs"
+            disabled={vistaSupervision}
+          />
+        </div>
+
+        {/* 25. Teléfono */}
+        <div className="space-y-1">
+          <Label htmlFor="telefono" className="text-xs font-medium">25. Teléfono</Label>
+          <Input
+            id="telefono"
+            value={ficha.celular || "No registrado"}
+            readOnly={vistaSupervision}
+            className="h-8 text-xs"
+          />
+        </div>
+
+        {/* 26. Nº Contrato */}
+        <div className="space-y-1">
+          <Label htmlFor="contrato" className="text-xs font-medium">26. Nº Contrato</Label>
+          <Input
+            id="contrato"
+            value={ficha.nrocontrato || "No registrado"}
+            readOnly={vistaSupervision}
+            className="h-8 text-xs"
+          />
+        </div>
+
+        {/* 27. Reservorio Conectado */}
+        <div className="space-y-1">
+          <Label htmlFor="reservorio" className="text-xs font-medium">27. Reservorio Conectado</Label>
+          <Input
+            id="reservorio"
+            value={ficha.codreservorio?.toString() || "No registrado"}
+            readOnly={vistaSupervision}
+            className="h-8 text-xs"
+          />
+        </div>
+
+        {/* 28. Sector Abastecimiento */}
+        <div className="space-y-1">
+          <Label htmlFor="sector" className="text-xs font-medium">28. Sector Abastecimiento</Label>
+          <ComboboxControlled
+            options={tipoResponsable}
+            value={ficha.codsectorabast || "No registrado"}
+            placeholder="Seleccionar..."
+            className="h-8 text-xs"
+            disabled={vistaSupervision}
+          />
+        </div>
+
+        {/* 29. Categoría */}
+        <div className="space-y-1">
+          <Label htmlFor="categoria" className="text-xs font-medium">29. Categoría</Label>
+          <ComboboxControlled
+            options={tipoCategoria}
+            value={ficha.catetar_new || "No registrado"}
+            placeholder="Seleccionar..."
+            className="h-8 text-xs"
+            disabled={vistaSupervision}
+          />
+        </div>
+
+        {/* 30. Razón Social */}
+        <div className="space-y-1 sm:col-span-2">
+          <Label htmlFor="razon-social" className="text-xs font-medium">30. Razón Social</Label>
+          <Input
+            id="razon-social"
+            value={ficha.razonsocial || "No registrado"}
+            readOnly={vistaSupervision}
+            className="h-8 text-xs"
+          />
         </div>
       </div>
 
       {/* Información del sistema */}
       <Card className="bg-red-50 border-red-200 dark:bg-gray-900 dark:border-gray-800">
-        <CardContent className="p-4">
-          <div className="space-y-2 text-red-700 dark:text-gray-300">
-            <p className="text-sm">
+        <CardContent className="p-3">
+          <div className="space-y-1 flex items-center justify-between text-red-700 dark:text-gray-300">
+            <p className="text-xs">
               <span className="font-semibold">Categoria Sistema:</span> {ficha.catetar || "DOMESTICO I"}
             </p>
-            <p className="text-sm">
+            <p className="text-xs">
               <span className="font-semibold">Actividad Sistema:</span> {ficha.actividad || "VIVIENDA"}
             </p>
-            <p className="text-sm">
+            <p className="text-xs">
               <span className="font-semibold">Unidades de Uso Sistema:</span> {"No atributos"}
             </p>
           </div>
@@ -185,73 +199,70 @@ export default function DatosUsuario({ ficha, vistaSupervision }: DatosUsuarioPr
       </Card>
 
       {/* Sección de tarifas */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">ASIGNAR TARIFAS</h3>
-          <Button size="sm" variant="outline">
-            <Plus className="w-4 h-4" />
+          <h3 className="text-base font-semibold">ASIGNAR TARIFAS</h3>
+          <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+            <Plus className="w-3 h-3" />
           </Button>
         </div>
 
         <Separator />
 
-        <div className="space-y-4">
-          <h4 className="text-md font-medium">DETALLE DE TARIFAS</h4>
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium">DETALLE DE TARIFAS</h4>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="categoria-tarifa" className="text-sm font-medium">
-                31. Categoría
-              </Label>
-              <Input
-                id="categoria-tarifa"
-                value={ficha.catetar || "DOMESTICO I"}
-                readOnly={vistaSupervision}
-                className="mt-1"
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {/* 31. Categoría */}
+            <div className="space-y-1">
+              <Label htmlFor="categoria-tarifa" className="text-xs font-medium">31. Categoría {ficha.catetar}</Label>
+              <ComboboxControlled
+                options={tipoCategoria}
+                value={ficha.catetar}
+                placeholder="Seleccionar..."
+                className="h-8 text-xs"
+                disabled={vistaSupervision}
               />
             </div>
 
-            <div>
-              <Label htmlFor="tipo-actividad" className="text-sm font-medium">
-                32. Tipo Actividad
-              </Label>
-              <Input
-                id="tipo-actividad"
+            {/* 32. Tipo Actividad */}
+            <div className="space-y-1">
+              <Label htmlFor="tipo-actividad" className="text-xs font-medium">32. Tipo Actividad</Label>
+              <ComboboxControlled
+                options={tipoActividad}
                 value={ficha.actividad || "VIVIENDA"}
-                readOnly={vistaSupervision}
-                className="mt-1"
+                placeholder="Seleccionar..."
+                className="h-8 text-xs"
+                disabled={vistaSupervision}
               />
             </div>
 
-            <div>
-              <Label htmlFor="razon-social-tarifa" className="text-sm font-medium">
-                Razón Social
-              </Label>
+            {/* Razón Social */}
+            <div className="space-y-1 sm:col-span-2">
+              <Label htmlFor="razon-social-tarifa" className="text-xs font-medium">Razón Social</Label>
               <Input
                 id="razon-social-tarifa"
                 value={ficha.razonsocial || "No registrado"}
                 readOnly={vistaSupervision}
-                className="mt-1"
+                className="h-8 text-xs"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="referencia" className="text-sm font-medium">
-                Referencia
-              </Label>
+            {/* Referencia */}
+            <div className="space-y-1">
+              <Label htmlFor="referencia" className="text-xs font-medium">Referencia</Label>
               <Input
                 id="referencia"
                 value=""
                 readOnly={vistaSupervision}
-                className="mt-1"
+                className="h-8 text-xs"
               />
             </div>
 
+            {/* Botón eliminar */}
             <div className="flex items-end">
-              <Button size="sm" variant="outline" className="w-10 h-10">
-                <Minus className="w-4 h-4" />
+              <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                <Minus className="w-3 h-3" />
               </Button>
             </div>
           </div>

@@ -173,62 +173,63 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
   const ComponenteSeccion = SECCIONES.find(s => s.id === seccionActiva)?.componente;
 
   return (
-    <div className="space-y-6">
-      {/* Header con información de la ficha */}
-      <Card className="bg-gray-100 dark:bg-stone-900">
-        <CardHeader className="pb-4">
+    <div className="space-y-4">
+      {/* Header compacto con información relevante */}
+      <Card className="bg-gray-50 dark:bg-stone-900">
+        <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-            <div className="w-full lg:w-auto">
-              <h1 className="text-xl lg:text-2xl font-bold">Ficha catastral - Estado actual</h1>
-              <div className="flex items-center gap-2 mt-2">
-                <div className={`w-3 h-3 rounded-full bg-${estado.color}-500`}></div>
-                <Badge variant="outline" className={`text-${estado.color}-600 border-${estado.color}-200`}>
-                  {estado.texto}
-                </Badge>
+            {/* Información principal */}
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full bg-${estado.color}-500`}></div>
+              <div>
+                <h2 className="text-lg font-semibold">Ficha #{ficha.idficha}</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline" className={`text-${estado.color}-600 border-${estado.color}-200 text-xs`}>
+                    {estado.texto}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {ficha.encuestador && `por ${ficha.encuestador}`}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full sm:w-auto">
-                <div className="text-left sm:text-right">
-                  <p className="text-sm text-muted-foreground">Encuestador</p>
-                  <p className="font-medium">{ficha.encuestador}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatearFecha(ficha.encuestador || "")}
-                  </p>
+            {/* Información de fechas y acciones */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                <div className="text-left">
+                  <p className="text-xs text-muted-foreground">Encuestador</p>
+                  <p className="font-medium text-xs">{ficha.encuestador || "-"}</p>
                 </div>
-
-                <div className="text-left sm:text-right">
-                  <p className="text-sm text-muted-foreground">Modificado por</p>
-                  <p className="font-medium">{ficha.usermodificador}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatearFecha(ficha.fechamodificacion?.toString() || "")}
-                  </p>
+                <div className="text-left">
+                  <p className="text-xs text-muted-foreground">Modificado</p>
+                  <p className="font-medium text-xs">{ficha.usermodificador || "-"}</p>
                 </div>
-
-                <div className="text-left sm:text-right">
-                  <p className="text-sm text-muted-foreground">Fecha Finalización</p>
-                  <p className="font-medium">
+                <div className="text-left sm:col-span-2 lg:col-span-1">
+                  <p className="text-xs text-muted-foreground">Finalización</p>
+                  <p className="font-medium text-xs">
                     {ficha.fechaaprobacion ? formatearFecha(ficha.fechaaprobacion.toString()) : "-"}
                   </p>
                 </div>
               </div>
 
-              <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                <Printer className="w-4 h-4 mr-2" />
-                Imprimir
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" className="h-8 px-3">
+                  <Printer className="w-3 h-3 mr-1" />
+                  <span className="text-xs">Imprimir</span>
+                </Button>
+              </div>
             </div>
           </div>
-        </CardHeader>
+        </CardContent>
       </Card>
 
       {/* Contenido principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Menú lateral */}
         <Card className="lg:col-span-1 bg-sidebar-accent">
-          <CardContent className="p-4">
-            <nav className="space-y-2">
+          <CardContent className="p-2">
+            <nav className="space-y-1">
               {SECCIONES.map((seccion) => {
                 const Icono = seccion.icono;
                 const isActive = seccionActiva === seccion.id;
@@ -237,14 +238,17 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
                   <button
                     key={seccion.id}
                     onClick={() => setSeccionActiva(seccion.id)}
-                    className={`w-full text-left p-3 rounded-lg transition-colors ${isActive
+                    className={`w-full text-left p-1.5 rounded transition-colors text-xs ${
+                      isActive
                         ? "bg-primary text-primary-foreground"
                         : "hover:bg-muted"
-                      }`}
+                    }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <Icono className="w-4 h-4" />
-                      <span className="text-sm font-medium">{seccion.titulo}</span>
+                    <div className="flex items-start gap-1.5">
+                      <Icono className="w-3 h-3 flex-shrink-0 mt-0.5" />
+                      <span className="font-medium leading-tight break-words">
+                        {seccion.titulo}
+                      </span>
                     </div>
                   </button>
                 );
@@ -254,33 +258,34 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
         </Card>
 
         {/* Contenido de la sección */}
-        <Card className="lg:col-span-3">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+        <Card className="lg:col-span-4">
+          <CardHeader className="pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
                 {(() => {
                   const Icono = SECCIONES.find(s => s.id === seccionActiva)?.icono || Home;
-                  return <Icono className="w-5 h-5" />;
+                  return <Icono className="w-4 h-4" />;
                 })()}
-                <h2 className="text-xl font-semibold">
+                <h3 className="text-lg font-semibold">
                   {SECCIONES.find(s => s.id === seccionActiva)?.titulo}
-                </h2>
+                </h3>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Vista supervisión</span>
+                <span className="text-xs text-muted-foreground">Vista supervisión</span>
                 <Button
                   variant={vistaSupervision ? "default" : "outline"}
                   size="sm"
                   onClick={() => setVistaSupervision(!vistaSupervision)}
+                  className="h-8 px-3"
                 >
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-3 h-3" />
                 </Button>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="pt-0">
             {ComponenteSeccion && (
               <ComponenteSeccion
                 ficha={ficha}
@@ -292,14 +297,14 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
       </div>
 
       {/* Botones de acción */}
-      <div className="flex justify-end gap-4">
-        <Button variant="outline">
-          <X className="w-4 h-4 mr-2" />
-          Cancelar
+      <div className="flex flex-col sm:flex-row justify-end gap-2">
+        <Button variant="outline" size="sm" className="h-9">
+          <X className="w-3 h-3 mr-1" />
+          <span className="text-xs">Cancelar</span>
         </Button>
-        <Button>
-          <CheckCircle className="w-4 h-4 mr-2" />
-          Guardar
+        <Button size="sm" className="h-9">
+          <CheckCircle className="w-3 h-3 mr-1" />
+          <span className="text-xs">Guardar</span>
         </Button>
       </div>
     </div>

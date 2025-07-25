@@ -381,7 +381,7 @@ export async function getFichasConFiltrosGestion(filtros: FiltrosGestionFichas):
  */
 export async function descargarFichaDoc(id: number): Promise<{ success: boolean; message?: string }> {
     try {
-        const response = await apiClient.get(`/ficha-catastral/docx?codcliente=${id}`, {
+        const response = await apiClient.get(`/ficha-catastral/docx3`, {
             responseType: 'blob',
             headers: {
                 'Accept': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
