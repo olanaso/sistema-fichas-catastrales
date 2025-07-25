@@ -5,6 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FichaCatastro } from "@/models/fichacatastro";
+import { useEffect, useState } from "react";
+import { getData } from "@/service/data.actions";
+import { TipoAccionComercial, TipoFichaIncompleta } from "@/models/tipos";
+import { ComboboxOption } from "@/types/combobox";
+import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 
 interface CalidadServicioProps {
   ficha: FichaCatastro;
@@ -12,177 +17,216 @@ interface CalidadServicioProps {
 }
 
 export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServicioProps) {
+
+  const [tipoAccionComercial, setTipoAccionComercial] = useState<ComboboxOption[]>([]);
+  const [tipoFichaIncompleta, setTipoFichaIncompleta] = useState<ComboboxOption[]>([]);
+
+  useEffect(() => {
+    getData("tipoacccomercial").then((res) => {
+      setTipoAccionComercial(res.data.map((tipo: TipoAccionComercial) => ({ value: tipo.tipoacccomercial, label: tipo.descripcion })));
+    });
+    getData("tipofichaincompleta").then((res) => {
+      setTipoFichaIncompleta(res.data.map((tipo: TipoFichaIncompleta) => ({ value: tipo.tipofichaincompleta, label: tipo.descripcion })));
+    });
+  }, []);
+
   const servicios = [
-    { nombre: "Lavatorios", cantidad: ficha.nrolavatorios || "-", estado: ficha.estadolavatorios || "No registrado" },
-    { nombre: "Lavadora", cantidad: ficha.nrolavadoras || "-", estado: ficha.estadolavadoras || "No registrado" },
-    { nombre: "Water", cantidad: ficha.nrowater || "-", estado: ficha.estadowater || "No registrado" },
-    { nombre: "Duchas", cantidad: ficha.nroduchas || "-", estado: ficha.estadoduchas || "No registrado" },
-    { nombre: "Urinarios", cantidad: ficha.nrourinarios || "-", estado: ficha.estadourinarios || "No registrado" },
-    { nombre: "Grifo", cantidad: ficha.nrogrifos || "-", estado: ficha.estadogrifos || "No registrado" },
-    { nombre: "Piscina", cantidad: ficha.nropiscina || "-", estado: ficha.estadopiscina || "No registrado" },
-    { nombre: "Tanque Cisterna", cantidad: ficha.nrotanquecisterna || "-", estado: ficha.estadotanquecisterna || "No registrado" },
-    { nombre: "Tanque Elevado", cantidad: ficha.nrotanqueelevado || "-", estado: ficha.estadotanqueelevado || "No registrado" }
+    { nombre: "Lavatorios", cantidad: ficha.nrolavatorios || "-", estado: ficha.estadolavatorios || "-" },
+    { nombre: "Lavadora", cantidad: ficha.nrolavadoras || "-", estado: ficha.estadolavadoras || "-" },
+    { nombre: "Water", cantidad: ficha.nrowater || "-", estado: ficha.estadowater || "-" },
+    { nombre: "Duchas", cantidad: ficha.nroduchas || "-", estado: ficha.estadoduchas || "-" },
+    { nombre: "Urinarios", cantidad: ficha.nrourinarios || "-", estado: ficha.estadourinarios || "-" },
+    { nombre: "Grifo", cantidad: ficha.nrogrifos || "-", estado: ficha.estadogrifos || "-" },
+    { nombre: "Piscina", cantidad: ficha.nropiscina || "-", estado: ficha.estadopiscina || "-" },
+    { nombre: "Tanque Cisterna", cantidad: ficha.nrotanquecisterna || "-", estado: ficha.estadotanquecisterna || "-" },
+    { nombre: "Tanque Elevado", cantidad: ficha.nrotanqueelevado || "-", estado: ficha.estadotanqueelevado || "-" }
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="overflow-y-auto space-y-4">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         {/* Columna izquierda */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Calidad de Servicio */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">CALIDAD DE SERVICIO</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-lg">
+            <h3 className="text-base font-semibold mb-3">CALIDAD DE SERVICIO</h3>
+            <div className="grid grid-cols-3 gap-3">
               <div>
-                <Label htmlFor="horas-dia" className="text-sm font-medium">
+                <Label htmlFor="horas-dia" className="text-xs font-medium">
                   70. Horas/día
                 </Label>
                 <Input
                   id="horas-dia"
                   value={ficha.horasxdia || "No registrado"}
                   readOnly={vistaSupervision}
-                  className="mt-1"
+                  className="h-8 text-sm mt-1"
+                  type="number"
+                  max="24"
+                  min="0"
                 />
               </div>
 
               <div>
-                <Label htmlFor="dias-semana" className="text-sm font-medium">
+                <Label htmlFor="dias-semana" className="text-xs font-medium">
                   71. Días/sem
                 </Label>
                 <Input
                   id="dias-semana"
                   value={ficha.diasxsemana || "No registrado"}
                   readOnly={vistaSupervision}
-                  className="mt-1"
+                  className="h-8 text-sm mt-1"
+                  type="number"
+                  max="7"
+                  min="0"
                 />
               </div>
 
               <div>
-                <Label htmlFor="presion-agua" className="text-sm font-medium">
+                <Label htmlFor="presion-agua" className="text-xs font-medium">
                   72. Presión Agua
                 </Label>
                 <Input
                   id="presion-agua"
                   value={ficha.presionagu || "No registrado"}
                   readOnly={vistaSupervision}
-                  className="mt-1"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Observación */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">OBSERVACION</h3>
-            <Textarea
-              value={ficha.observacion || ""}
-              readOnly={vistaSupervision}
-              placeholder="Ingrese observaciones..."
-              className="min-h-[100px]"
-            />
-          </div>
-
-          {/* Ficha Incompleta / Tipo Acción Comercial */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">FICHA INCOMPLETA / TIPO ACCION COMERCIAL</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="ficha-incompleta" className="text-sm font-medium">
-                  73. Ficha Incompleta
-                </Label>
-                <Input
-                  id="ficha-incompleta"
-                  value={ficha.fichaincompleta || "No registrado"}
-                  readOnly={vistaSupervision}
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="tipo-accion-comercial" className="text-sm font-medium">
-                  74. Tipo Acción Comercial
-                </Label>
-                <Input
-                  id="tipo-accion-comercial"
-                  value={ficha.tipoacccomercial || "No registrado"}
-                  readOnly={vistaSupervision}
-                  className="mt-1"
+                  className="h-8 text-sm mt-1"
                 />
               </div>
             </div>
           </div>
 
           {/* Medidas */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">MEDIDAS</h3>
-            <div className="grid grid-cols-1 gap-4">
+          <div className="rounded-lg">
+            <h3 className="text-base font-semibold mb-3">MEDIDAS</h3>
+            <div className="space-y-3">
               <div>
-                <Label htmlFor="frente-lote" className="text-sm font-medium">
+                <Label htmlFor="frente-lote" className="text-xs font-medium">
                   75. Frente principal de Lote (m)
                 </Label>
                 <Input
                   id="frente-lote"
                   value={ficha.medidalotefrente || "No registrado"}
                   readOnly={vistaSupervision}
-                  className="mt-1"
+                  className="h-8 text-sm mt-1"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
                 />
               </div>
 
               <div>
-                <Label htmlFor="distancia-caja-agua" className="text-sm font-medium">
+                <Label htmlFor="distancia-caja-agua" className="text-xs font-medium">
                   76. Distancia eje de caja de agua (m)
                 </Label>
                 <Input
                   id="distancia-caja-agua"
                   value={ficha.medidaejeagua || "No registrado"}
                   readOnly={vistaSupervision}
-                  className="mt-1"
+                  className="h-8 text-sm mt-1"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
                 />
               </div>
 
               <div>
-                <Label htmlFor="distancia-caja-desague" className="text-sm font-medium">
+                <Label htmlFor="distancia-caja-desague" className="text-xs font-medium">
                   77. Distancia eje de caja de desagüe (m)
                 </Label>
                 <Input
                   id="distancia-caja-desague"
                   value={ficha.medidaejedesague || "No registrado"}
                   readOnly={vistaSupervision}
-                  className="mt-1"
+                  className="h-8 text-sm mt-1"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Ficha Incompleta / ACCIÓN COMERCIAL */}
+          <div className="rounded-lg">
+            <h3 className="text-base font-semibold mb-3">FICHA INCOMPLETA / ACCIÓN COMERCIAL</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="ficha-incompleta" className="text-xs font-medium">
+                  73. Ficha Incompleta
+                </Label>
+                <ComboboxControlled
+                  options={tipoFichaIncompleta}
+                  value={ficha.fichaincompleta || ""}
+                  placeholder="No registrado"
+                  className="h-8 text-xs"
+                  disabled={vistaSupervision}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="tipo-accion-comercial" className="text-xs font-medium">
+                  74. Tipo Acción Comercial
+                </Label>
+                <ComboboxControlled
+                  options={tipoAccionComercial}
+                  value={ficha.tipoacccomercial || ""}
+                  placeholder="No registrado"
+                  className="h-8 text-xs"
+                  disabled={vistaSupervision}
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Columna derecha - Número de Servicio */}
+        {/* Columna derecha */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">NUMERO DE SERVICIO</h3>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>SERVICIO</TableHead>
-                <TableHead>CANTIDAD</TableHead>
-                <TableHead>ESTADO</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {servicios.map((servicio, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">{servicio.nombre}</TableCell>
-                  <TableCell className="text-center">{servicio.cantidad}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded text-xs ${servicio.estado === "REGULAR"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-600"
-                      }`}>
-                      {servicio.estado}
-                    </span>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {/* Número de Servicio */}
+          <div className="rounded-lg p-1">
+            <h3 className="text-base font-semibold mb-3">NÚMERO DE SERVICIO</h3>
+            <div className="overflow-x-auto">
+              <Table className="text-sm">
+                <TableHeader>
+                  <TableRow className="h-8">
+                    <TableHead className="text-xs font-semibold">SERVICIO</TableHead>
+                    <TableHead className="text-xs font-semibold text-center w-20">CANT.</TableHead>
+                    <TableHead className="text-xs font-semibold text-center">ESTADO</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {servicios.map((servicio, index) => (
+                    <TableRow key={index} className="h-8">
+                      <TableCell className="font-medium text-xs py-1">{servicio.nombre}</TableCell>
+                      <TableCell className="text-center text-xs py-1">{servicio.cantidad}</TableCell>
+                      <TableCell className="py-1 text-center">
+                        <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${servicio.estado === "REGULAR"
+                          ? "bg-green-100 text-green-800"
+                          : servicio.estado === "1"
+                            ? "bg-blue-100 text-blue-800"
+                            : servicio.estado === "0"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-gray-100 text-gray-600"
+                          }`}>
+                          {servicio.estado}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          {/* Observación */}
+          <div className="rounded-lg p-1">
+            <h3 className="text-base font-semibold mb-3">OBSERVACIÓN</h3>
+            <Textarea
+              value={ficha.observacion || ""}
+              readOnly={vistaSupervision}
+              placeholder="Ingrese observaciones..."
+              className="min-h-[80px] text-sm resize-none"
+            />
+          </div>
         </div>
       </div>
     </div>
