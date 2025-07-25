@@ -1,7 +1,7 @@
 "use client";
 
 import { DataProvider, useData } from '@/context/data-context';
-import { TipoUsuarioDto } from '@/models/tipousuario';
+import { TipoUsuario } from '@/models/tipos';
 
 interface TipoUsuarioProviderProps {
     children: React.ReactNode;
@@ -9,7 +9,7 @@ interface TipoUsuarioProviderProps {
 
 export function TipoUsuarioProvider({ children }: TipoUsuarioProviderProps) {
     return (
-        <DataProvider<TipoUsuarioDto>
+        <DataProvider<TipoUsuario>
             tableName="tipousuario"
             autoLoad={true}
         >
@@ -19,12 +19,12 @@ export function TipoUsuarioProvider({ children }: TipoUsuarioProviderProps) {
 }
 
 export function useTipoUsuario() {
-    return useData<TipoUsuarioDto>();
+    return useData<TipoUsuario>();
 }
 
 // Hook adicional para obtener datos ordenados
 export function useTipoUsuarioOrdenado() {
-    const { data, isLoading, error, refreshData } = useData<TipoUsuarioDto>();
+    const { data, isLoading, error, refreshData } = useData<TipoUsuario>();
 
     // Ordenar por el campo 'orden' o por descripción
     const dataOrdenada = data.sort((a, b) => {
