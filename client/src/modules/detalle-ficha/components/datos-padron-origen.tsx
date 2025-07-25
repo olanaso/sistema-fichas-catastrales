@@ -20,7 +20,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="padron"
-            value={ficha.nrocatastro?.toString() || ""}
+            defaultValue={ficha.nrocatastro?.toString() || ""}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -32,7 +32,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="sector"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -44,7 +44,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="manzana"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -57,7 +57,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="lote"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -69,7 +69,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="sub-lote"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -81,7 +81,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="edificio"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -94,7 +94,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="piso"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -106,7 +106,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="unidad"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -118,7 +118,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="codigo-catastral"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -131,7 +131,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="direccion"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -143,7 +143,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="distrito"
-            value={"No atributos"}
+              defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -155,7 +155,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="provincia"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -168,7 +168,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="departamento"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -180,7 +180,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="coordenada-x"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />
@@ -192,7 +192,7 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="coordenada-y"
-            value={"No atributos"}
+            defaultValue={"No atributos"}
             readOnly={vistaSupervision}
             className="mt-1"
           />

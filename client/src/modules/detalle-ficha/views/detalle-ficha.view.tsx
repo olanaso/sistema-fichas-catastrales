@@ -225,9 +225,9 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
       </Card>
 
       {/* Contenido principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <div className={`grid grid-cols-1 gap-4 ${vistaSupervision ? 'lg:grid-cols-12' : 'lg:grid-cols-10'}`}>
         {/* Menú lateral */}
-        <Card className="lg:col-span-1 bg-sidebar-accent">
+        <Card className={`${vistaSupervision ? 'lg:col-span-1' : 'lg:col-span-2'} bg-sidebar-accent transition-all duration-300`}>
           <CardContent className="p-2">
             <nav className="space-y-1">
               {SECCIONES.map((seccion) => {
@@ -238,17 +238,19 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
                   <button
                     key={seccion.id}
                     onClick={() => setSeccionActiva(seccion.id)}
-                    className={`w-full text-left p-1.5 rounded transition-colors text-xs ${
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-muted"
-                    }`}
+                    className={`w-full text-left p-1.5 rounded transition-colors text-xs ${isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-muted"
+                      }`}
+                    title={vistaSupervision ? seccion.titulo : undefined}
                   >
-                    <div className="flex items-start gap-1.5">
-                      <Icono className="w-3 h-3 flex-shrink-0 mt-0.5" />
-                      <span className="font-medium leading-tight break-words">
-                        {seccion.titulo}
-                      </span>
+                    <div className={`flex items-start ${vistaSupervision ? 'justify-center' : 'gap-1.5'}`}>
+                      <Icono className={`${vistaSupervision ? 'w-4 h-4' : 'w-3 h-3'} flex-shrink-0 mt-0.5`} />
+                      {!vistaSupervision && (
+                        <span className="font-medium leading-tight break-words">
+                          {seccion.titulo}
+                        </span>
+                      )}
                     </div>
                   </button>
                 );
@@ -258,7 +260,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
         </Card>
 
         {/* Contenido de la sección */}
-        <Card className="lg:col-span-4">
+        <Card className={`${vistaSupervision ? 'lg:col-span-11' : 'lg:col-span-8'} transition-all duration-300`}>
           <CardHeader className="pb-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2">
@@ -293,6 +295,19 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
               />
             )}
           </CardContent>
+
+          {vistaSupervision && (
+            <>
+              <CardContent className="pt-4 dark:bg-gray-900 bg-gray-200 border-t border-gray-300">
+                {ComponenteSeccion && (
+                  <ComponenteSeccion
+                    ficha={ficha}
+                    vistaSupervision={vistaSupervision}
+                  />
+                )}
+              </CardContent>
+            </>
+          )}
         </Card>
       </div>
 

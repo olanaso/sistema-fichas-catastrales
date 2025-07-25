@@ -105,7 +105,7 @@ export default function DatosUsuario({
           </Label>
           <Input
             id="nombres"
-            value={ficha.propietario || "No registrado"}
+            defaultValue={ficha.propietario || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -118,7 +118,7 @@ export default function DatosUsuario({
           </Label>
           <Input
             id="dni"
-            value={ficha.dni || "No registrado"}
+            defaultValue={ficha.dni || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -131,7 +131,7 @@ export default function DatosUsuario({
           </Label>
           <Input
             id="habitantes"
-            value={ficha.habitantes || "No registrado"}
+            defaultValue={ficha.habitantes || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -158,7 +158,7 @@ export default function DatosUsuario({
           </Label>
           <Input
             id="telefono"
-            value={ficha.celular || "No registrado"}
+            defaultValue={ficha.celular || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -171,7 +171,7 @@ export default function DatosUsuario({
           </Label>
           <Input
             id="contrato"
-            value={ficha.nrocontrato || "No registrado"}
+            defaultValue={ficha.nrocontrato || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -184,7 +184,7 @@ export default function DatosUsuario({
           </Label>
           <Input
             id="reservorio"
-            value={ficha.codreservorio?.toString() || "No registrado"}
+            defaultValue={ficha.codreservorio?.toString() || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -225,7 +225,7 @@ export default function DatosUsuario({
           </Label>
           <Input
             id="razon-social"
-            value={ficha.razonsocial || "No registrado"}
+            defaultValue={ficha.razonsocial || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />

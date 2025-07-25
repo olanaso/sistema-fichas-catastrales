@@ -71,7 +71,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="region" className="text-xs font-medium">1. Región</Label>
         <Input
           id="region"
-          value={region}
+          defaultValue={region}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -121,7 +121,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="lote" className="text-xs font-medium">5. Lote</Label>
         <Input
           id="lote"
-          value={ficha.nrolote_new || "No registrado"}
+          defaultValue={ficha.nrolote_new || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -132,7 +132,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="sublote" className="text-xs font-medium">6. Sub lote</Label>
         <Input
           id="sublote"
-          value={ficha.nrosublote_new || "No registrado"}
+          defaultValue={ficha.nrosublote_new || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -143,7 +143,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="suministro" className="text-xs font-medium">7. N° Suministro</Label>
         <Input
           id="suministro"
-          value={ficha.codcliente || "No registrado"}
+          defaultValue={ficha.codcliente || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -154,7 +154,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="calle" className="text-xs font-medium">8. Calle/Jiron/Avenida/Pasaje</Label>
         <Input
           id="calle"
-          value={ficha.direccion || "No registrado"}
+          defaultValue={ficha.direccion || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -165,7 +165,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="cuadra" className="text-xs font-medium">9. Cuadra</Label>
         <Input
           id="cuadra"
-          value={ficha.cuadra?.toString() || "No registrado"}
+          defaultValue={ficha.cuadra?.toString() || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -176,7 +176,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="nromuni" className="text-xs font-medium">10. N Muni</Label>
         <Input
           id="nromuni"
-          value={ficha.nromunic?.toString() || "No registrado"}
+          defaultValue={ficha.nromunic?.toString() || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -187,7 +187,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="mzmuni" className="text-xs font-medium">11. Mz Muni</Label>
         <Input
           id="mzmuni"
-          value={ficha.mzamunic?.toString() || "No registrado"}
+          defaultValue={ficha.mzamunic?.toString() || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -198,7 +198,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="ltmuni" className="text-xs font-medium">12. Lt Muni</Label>
         <Input
           id="ltmuni"
-          value={ficha.ltemunic?.toString() || "No registrado"}
+          defaultValue={ficha.ltemunic?.toString() || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -235,7 +235,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="nropisos" className="text-xs font-medium">15. N° Pisos</Label>
         <Input
           id="nropisos"
-          value={ficha.nropisos || "No registrado"}
+          defaultValue={ficha.nropisos || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />

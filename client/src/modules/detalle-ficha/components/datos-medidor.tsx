@@ -55,7 +55,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="numero-medidor"
-            value={ficha.nromed || "No registrado"}
+            defaultValue={ficha.nromed || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -68,7 +68,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="ano"
-            value={ficha.anio || "No registrado"}
+            defaultValue={ficha.anio || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -81,7 +81,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="lectura-medidor"
-            value={ficha.lecturaultima?.toString() || "No registrado"}
+            defaultValue={ficha.lecturaultima?.toString() || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -94,7 +94,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="numero-medidor-sistema"
-            value={ficha.nromed_new || "No registrado"}
+            defaultValue={ficha.nromed_new || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -107,7 +107,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="fecha-instalacion"
-            value={ficha.fechainstalacion?.toString() || "No registrado"}
+            defaultValue={ficha.fechainstalacion?.toString() || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
@@ -148,7 +148,7 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           </Label>
           <Input
             id="lectura"
-            value={ficha.lectura || "No registrado"}
+            defaultValue={ficha.lectura || "No registrado"}
             readOnly={vistaSupervision}
             className="h-8 text-xs"
           />

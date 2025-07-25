@@ -62,7 +62,7 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <Input
                   id="horas-dia"
-                  value={ficha.horasxdia || "No registrado"}
+                  defaultValue={ficha.horasxdia || "No registrado"}
                   readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
@@ -77,7 +77,7 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <Input
                   id="dias-semana"
-                  value={ficha.diasxsemana || "No registrado"}
+                  defaultValue={ficha.diasxsemana || "No registrado"}
                   readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
@@ -111,7 +111,7 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <Input
                   id="frente-lote"
-                  value={ficha.medidalotefrente || "No registrado"}
+                  defaultValue={ficha.medidalotefrente || "No registrado"}
                   readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
@@ -126,7 +126,7 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <Input
                   id="distancia-caja-agua"
-                  value={ficha.medidaejeagua || "No registrado"}
+                  defaultValue={ficha.medidaejeagua || "No registrado"}
                   readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
@@ -141,7 +141,7 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <Input
                   id="distancia-caja-desague"
-                  value={ficha.medidaejedesague || "No registrado"}
+                  defaultValue={ficha.medidaejedesague || "No registrado"}
                   readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
@@ -227,7 +227,7 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
           <div className="rounded-lg p-1">
             <h3 className="text-base font-semibold mb-3">OBSERVACIÓN</h3>
             <Textarea
-              value={ficha.observacion || ""}
+              defaultValue={ficha.observacion || ""}
               readOnly={vistaSupervision}
               placeholder="Ingrese observaciones..."
               className="min-h-[80px] text-sm resize-none"
