@@ -1,14 +1,15 @@
 "use client";
 
+import { DataMigra } from "@/models/conexion-migra";
+import { columns } from "./columns";
 import { BackendTable } from "@/components/table/table";
 import { TableToolbar } from "@/components/table/table-toolbar";
 import { PaginatedData } from "@/components/table/table";
-import { ClienteDto } from "@/models/cliente";
-import { columns } from "./columns";
 import ImportForm from "../form/import-form";
+import { useImportarPadron } from "../../context/importarpadron-context";
 
 interface TableImportarPadronProps {
-  importarPadronClientes: PaginatedData<ClienteDto>;
+  importarPadronClientes: PaginatedData<DataMigra>;
   loading?: boolean;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
@@ -20,6 +21,11 @@ export default function TableImportarPadron({
   onPageChange,
   onPageSizeChange 
 }: TableImportarPadronProps) {
+  const { searchData, searchParams } = useImportarPadron();
+
+  const handleSearch = (searchValue: string) => {
+    searchData(searchValue, searchParams.searchColumns);
+  };
 
   return (
     <>
@@ -33,8 +39,11 @@ export default function TableImportarPadron({
           toolbar={(table) => (
             <TableToolbar 
               table={table} 
-              searchKey="propietario"
-              searchPlaceholder="Buscar propietario..."
+              searchKey="cliente"
+              searchPlaceholder="Buscar por cliente, RUC, suministro, medidor..."
+              onSearch={handleSearch}
+              searchColumns={searchParams.searchColumns}
+              currentSearchValue={searchParams.searchValue}
               actions={<ImportForm />}
             />
           )}

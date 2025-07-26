@@ -1,125 +1,155 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { TableHeaderColumn } from "@/components/table/table-header-column"
-import { User } from "lucide-react"
+import { User, MapPin, Building, Droplets, Gauge } from "lucide-react"
 import { CustomBadge } from "@/components/custom/custom-badge"
-import { ClienteDto } from "@/models/cliente"
 import { format } from "date-fns"
+import { DataMigra } from "@/models/conexion-migra"
 
-
-export const columns = (): ColumnDef<ClienteDto>[] => [
-
+export const columns = (): ColumnDef<DataMigra>[] => [
   {
-    id: "codcatastral",
-    accessorKey: "codcatastral",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Código Catastral" />
-    },
+    id: "index",
+    accessorKey: "index",
+    header: "#",
     cell: ({ row }) => {
+      return <div className="text-start">{row.index + 1}</div>
+    },
+  },
+  {
+    id: "ubicacion",
+    accessorKey: "sector",
+    header: "Ubicación",
+    cell: ({ row }) => {
+      const data = row.original;
       return (
-        <div className="text-start">
-          <CustomBadge color="purple" className="text-xs">{row.original.codcatastral}</CustomBadge>
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-blue-900">
+            {data.provincia} - {data.sucursal}
+          </div>
+          <div className="text-xs text-gray-600">
+            Zona: {data.prezona} | Sector: {data.sector || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Mz: {data.manzana} | Lt: {data.lote}
+            {data.sublote && ` | SubLt: ${data.sublote}`}
+          </div>
+          <div className="text-xs text-gray-600">
+            {data.calle} {data.cuadra}
+          </div>
+          {data.urbanizacion && (
+            <div className="text-xs text-gray-600">
+              Urb: {data.urbanizacion}
+            </div>
+          )}
         </div>
       );
     },
   },
   {
-    id: "codcliente",
-    accessorKey: "codcliente",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Código" />
-    },
+    id: "cliente",
+    accessorKey: "cliente",
+    header: "Cliente",
     cell: ({ row }) => {
-      const codigo = row.original.codcliente;
+      const data = row.original;
       return (
-        <div className="text-start">
-          <CustomBadge color="purple" className="text-xs">{codigo}</CustomBadge>
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-green-900">
+            {data.cliente || "Sin cliente"}
+          </div>
+          <div className="text-xs text-gray-600">
+            RUC: {data.ruc || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Tel: {data.telefono || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Hab: {data.nro_habitantes || "-"}
+          </div>
+          <CustomBadge color="blue" className="text-xs">
+            {data.tipo_responsable || "Sin tipo"}
+          </CustomBadge>
         </div>
       );
     },
   },
   {
-    id: "codsector",
-    accessorKey: "codsector",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Sector" />
-    },
+    id: "predio",
+    accessorKey: "suministro",
+    header: "Predio",
     cell: ({ row }) => {
+      const data = row.original;
       return (
-        <div className="text-start">
-          <CustomBadge color="purple" className="text-xs">{row.original.codsector || "Sin código sector"}</CustomBadge>
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-purple-900">
+            Sum: {data.suministro || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Const: {data.tipo_construccion || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Piso: {data.piso || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Serv: {data.tipo_servicio || "-"}
+          </div>
+          {data.piscina && (
+            <div className="text-xs text-blue-600">
+              Piscina: {data.piscina}
+            </div>
+          )}
         </div>
       );
     },
   },
   {
-    id: "codcalle",
-    accessorKey: "codcalle",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Calle" />
-    },
+    id: "conexion",
+    accessorKey: "tipo_abastecimiento",
+    header: "Conexión",
     cell: ({ row }) => {
+      const data = row.original;
       return (
-        <div className="text-start">
-          <CustomBadge color="purple" className="text-xs">{row.original.codcalle + " - " + row.original.nrocalle || "Sin código calle"}</CustomBadge>
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-cyan-900">
+            Agua: {data.tipo_abastecimiento || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Reserv: {data.tipo_reservorio || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Usuario: {data.tipo_usuarioa || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Desagüe: {data.situacion_desague || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Material: {data.tipo_material_d || "-"}
+          </div>
         </div>
       );
     },
   },
   {
-    id: "tiposervicio",
-    accessorKey: "tiposervicio",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Tipo de Servicio" />
-    },
+    id: "medidor",
+    accessorKey: "medidor",
+    header: "Medidor",
     cell: ({ row }) => {
+      const data = row.original;
       return (
-        <div className="text-start">
-          <CustomBadge color="purple" className="text-xs">{row.original.tiposervicio || "Sin tipo de servicio"}</CustomBadge>
-        </div>
-      );
-    },
-  },
-  {
-    id: "propietario",
-    accessorKey: "propietario",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Propietario" />
-    },
-    cell: ({ row }) => {
-      return (
-        <div className="text-start flex items-center gap-2">
-          <User className="w-4 h-4 text-blue-600" />
-          {row.original.propietario || "Sin propietario"}
-          <br />
-          {row.original.dni}
-        </div>
-      );
-    },
-  },
-  {
-    id: "telefono",
-    accessorKey: "telefono",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Teléfono" />
-    },
-    cell: ({ row }) => {
-      return (
-        <div className="text-start">
-          <CustomBadge color="purple" className="text-xs">{row.original.telefono || "Sin teléfono"}</CustomBadge>
-        </div>
-      );
-    },
-  },
-  {
-    id: "fechareg",
-    accessorKey: "fechareg",
-    header: ({ column }) => {
-      return <TableHeaderColumn column={column} title="Fecha Registro" />
-    },
-    cell: ({ row }) => {
-      return (
-        <div className="text-start">
-          {row.original.fechareg ? format(new Date(row.original.fechareg), "dd/MM/yyyy HH:mm") : "Sin fecha de registro"}
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-orange-900">
+            N° {data.medidor || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Inst: {data.fecha_instalacion || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Diám: {data.diametro_medidor || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Usos: {data.cant_uso || "-"}
+          </div>
+          <div className="text-xs text-gray-600">
+            Loc: {data.localizacion_desague || "-"}
+          </div>
         </div>
       );
     },

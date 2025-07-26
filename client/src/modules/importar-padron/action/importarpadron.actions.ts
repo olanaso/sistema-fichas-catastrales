@@ -6,7 +6,7 @@ export async function getImportarPadronClientes(page: number = 0, size: number =
   try {
     // Convertir page a offset (page * size)
     const offset = page * size;
-    const response = await apiClient.get(`/tipos/obtener-paginado?tabla=clientes&limit=${size}&offset=${offset}`);
+    const response = await apiClient.get(`/tipos/obtener-paginado?tabla=vw_datamigra&limit=${size}&offset=${offset}`);
     
     // El backend devuelve un string JSON, necesitamos parsearlo
     const responseData = typeof response.data === 'string' ? JSON.parse(response.data) : response.data;

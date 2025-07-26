@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from "react";
 import TableImportarPadron from "../components/table/table-importarpadron";
+import { ImportarPadronProvider, useImportarPadron } from "../context/importarpadron-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { Usuario } from "@/models/usuario";
-import { Inspector } from "@/models/inspector";
-import { ImportarPadronClientesProvider, useImportarPadronClientes } from "../context/importarpadron-context";
 import { getHistorialImportarPadronClientes } from "../action/importarpadron.actions";
 import { PadronHistorico } from "@/models/padronhistorico";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +13,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale/es";
 
 // Componente de carga
-function ImportarPadronClientesSkeleton() {
+function ImportarPadronSkeleton() {
   return (
     <div className="space-y-6">
       <Skeleton className="h-[600px] w-full" />
@@ -24,22 +22,22 @@ function ImportarPadronClientesSkeleton() {
 }
 
 // Componente interno que usa el contexto
-function ImportarPadronClientesContent() {
+function ImportarPadronContent() {
   const { 
-    importarPadronClientes, 
+    data: importarPadronData, 
     isLoading, 
     error, 
-    refreshImportarPadronClientes,
+    refreshData,
     pagination,
     handlePageChange,
     handlePageSizeChange
-  } = useImportarPadronClientes();
+  } = useImportarPadron();
 
   const [historial, setHistorial] = useState<PadronHistorico | null>(null);
 
   useEffect(() => {
-    refreshImportarPadronClientes();
-  }, [refreshImportarPadronClientes]);
+    refreshData();
+  }, [refreshData]);
 
   useEffect(() => {
     getHistorialImportarPadronClientes().then((data) => {
@@ -47,8 +45,8 @@ function ImportarPadronClientesContent() {
     });
   }, []);
 
-  if (isLoading && importarPadronClientes.data.length === 0) {
-    return <ImportarPadronClientesSkeleton />;
+  if (isLoading && importarPadronData.data.length === 0) {
+    return <ImportarPadronSkeleton />;
   }
 
   if (error) {
@@ -111,7 +109,7 @@ function ImportarPadronClientesContent() {
         </div>
       )}
       
-      {importarPadronClientes.data.length === 0 && !isLoading ? (
+      {importarPadronData.data.length === 0 && !isLoading ? (
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -120,7 +118,7 @@ function ImportarPadronClientesContent() {
         </Alert>
       ) : (
         <TableImportarPadron 
-          importarPadronClientes={importarPadronClientes}
+          importarPadronClientes={importarPadronData}
           loading={isLoading}
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
@@ -131,10 +129,10 @@ function ImportarPadronClientesContent() {
 }
 
 // Componente principal que envuelve con el provider
-export default function ImportarPadronClientesView() {
+export default function ImportarPadronView() {
   return (
-    <ImportarPadronClientesProvider>
-      <ImportarPadronClientesContent />
-    </ImportarPadronClientesProvider>
+    <ImportarPadronProvider>
+      <ImportarPadronContent />
+    </ImportarPadronProvider>
   );
 } 
