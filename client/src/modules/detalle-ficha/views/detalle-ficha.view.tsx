@@ -28,15 +28,23 @@ import { es } from "date-fns/locale";
 
 // Componentes de las secciones
 import DatosInmueble from "../components/datos-inmueble";
+import DatosInmuebleSupervision from "../components/supervision/datos-inmueble-supervision";
 import DatosUsuario from "../components/datos-usuario";
+import DatosUsuarioSupervision from "../components/supervision/datos-usuario-supervision";
 import DatosConexionAgua from "../components/datos-conexion-agua";
+import DatosConexionAguaSupervision from "../components/supervision/datos-conexion-agua-supervision";
 import DatosMedidor from "../components/datos-medidor";
+import DatosMedidorSupervision from "../components/supervision/datos-medidor-supervision";
 import DatosConexionDesague from "../components/datos-conexion-desague";
+import DatosConexionDesagueSupervision from "../components/supervision/datos-conexion-desague-supervision";
 import CalidadServicio from "../components/calidad-servicio";
+import CalidadServicioSupervision from "../components/supervision/calidad-servicio-supervision";
 import ImagenesAdjuntas from "../components/imagenes-adjuntas";
 import DatosPadronOrigen from "../components/datos-padron-origen";
+import DatosPadronOrigenSupervision from "../components/supervision/datos-padron-origen-supervision";
 import { buscarExacto } from "@/service/data.actions";
 import { FichaCatastro } from "@/models/fichacatastro";
+import { Cliente } from "@/models/cliente";
 
 // Definir las secciones disponibles
 const SECCIONES = [
@@ -44,55 +52,63 @@ const SECCIONES = [
     id: "inmueble",
     titulo: "1. Datos del inmueble / predio",
     icono: Home,
-    componente: DatosInmueble
+    componente: DatosInmueble,
+    componenteSupervision: DatosInmuebleSupervision
   },
   {
     id: "usuario",
     titulo: "2. Datos del usuario",
     icono: User,
-    componente: DatosUsuario
+    componente: DatosUsuario,
+    componenteSupervision: DatosUsuarioSupervision
   },
   {
     id: "conexion-agua",
     titulo: "3. Datos de la conexión de agua",
     icono: Droplets,
-    componente: DatosConexionAgua
+    componente: DatosConexionAgua,
+    componenteSupervision: DatosConexionAguaSupervision
   },
   {
     id: "medidor",
     titulo: "4. Datos del medidor",
     icono: Gauge,
-    componente: DatosMedidor
+    componente: DatosMedidor,
+    componenteSupervision: DatosMedidorSupervision
   },
   {
     id: "conexion-desague",
     titulo: "5. Datos de la conexión de desagüe",
     icono: Waves,
-    componente: DatosConexionDesague
+    componente: DatosConexionDesague,
+    componenteSupervision: DatosConexionDesagueSupervision
   },
   {
     id: "calidad-servicio",
     titulo: "6. Calidad de servicio / Numero de Servicio / Observaciones",
     icono: FileText,
-    componente: CalidadServicio
+    componente: CalidadServicio,
+    componenteSupervision: CalidadServicioSupervision
   },
   {
     id: "imagenes",
     titulo: "7. Imágenes adjuntas",
     icono: Image,
-    componente: ImagenesAdjuntas
+    componente: ImagenesAdjuntas,
   },
   {
     id: "padron-origen",
     titulo: "8. Datos de padrón origen",
     icono: Database,
-    componente: DatosPadronOrigen
+    componente: DatosPadronOrigen,
+    componenteSupervision: DatosPadronOrigenSupervision
   }
 ];
 
 export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
 
   const [ficha, setFicha] = useState<FichaCatastro | null>(null);
+  const [cliente, setCliente] = useState<Cliente | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [seccionActiva, setSeccionActiva] = useState("inmueble");
@@ -141,6 +157,18 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
     }
   };
 
+  const handleVistaSupervision = async () => {
+    const nuevaVistaSupervision = !vistaSupervision;
+    setVistaSupervision(nuevaVistaSupervision);
+    
+    if (nuevaVistaSupervision && ficha) {
+      const resultado = await buscarExacto("clientes", ["codcliente"], [ficha.codcliente.toString()]);
+      if (resultado.success && resultado.data) {
+        setCliente(resultado.data[0]);
+      }
+    }
+  }
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -171,6 +199,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
 
   const estado = obtenerEstadoFicha();
   const ComponenteSeccion = SECCIONES.find(s => s.id === seccionActiva)?.componente;
+  const ComponenteSeccionSupervision = SECCIONES.find(s => s.id === seccionActiva)?.componenteSupervision;
 
   return (
     <div className="space-y-4">
@@ -278,7 +307,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
                 <Button
                   variant={vistaSupervision ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setVistaSupervision(!vistaSupervision)}
+                  onClick={() => handleVistaSupervision()}
                   className="h-8 px-3"
                 >
                   <Eye className="w-3 h-3" />
@@ -296,12 +325,14 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
             )}
           </CardContent>
 
+          {/* Vista de supervisión */}
           {vistaSupervision && (
             <>
               <CardContent className="pt-4 dark:bg-gray-900 bg-gray-200 border-t border-gray-300">
-                {ComponenteSeccion && (
-                  <ComponenteSeccion
+                {ComponenteSeccionSupervision && (
+                  <ComponenteSeccionSupervision
                     ficha={ficha}
+                    cliente={cliente}
                     vistaSupervision={vistaSupervision}
                   />
                 )}

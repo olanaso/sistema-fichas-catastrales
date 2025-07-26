@@ -4,18 +4,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { ComboboxOption } from "@/types/combobox";
-import { FichaCatastro } from "@/models/fichacatastro";
 import { Calle, Manzana, Sector, Sucursal, Urbanizacion } from "@/models/modulos";
 import { useEffect, useState } from "react";
 import { TipoAbastecimiento, TipoAlmacenaje, TipoConstruccion, TipoServicio } from "@/models/tipos";
 import { buscarExacto, getData } from "@/service/data.actions";
+import { Cliente } from "@/models/cliente";
+import { FichaCatastro } from "@/models/fichacatastro";
 
-interface DatosInmuebleProps {
+interface DatosInmuebleSupervisionProps {
   ficha: FichaCatastro;
+  cliente: Cliente | null;
   vistaSupervision: boolean;
 }
 
-export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmuebleProps) {
+export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervision }: DatosInmuebleSupervisionProps) {
   // Opciones para los combobox (estos datos vendrían del backend)
   const [region, setRegion] = useState<string>("CUSCO");
   const [sucursal, setSucursal] = useState<ComboboxOption[]>([]);
@@ -82,7 +84,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="sucursal" className="text-xs font-medium">2. Sucursal</Label>
         <ComboboxControlled
           options={sucursal}
-          value={ficha.codsuc || "No registrado"}
+          value={cliente?.codsuc || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
           disabled={vistaSupervision}
@@ -95,7 +97,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="sector" className="text-xs font-medium">3. Sector</Label>
         <ComboboxControlled
           options={sector}
-          value={ficha.codsector_new || "No registrado"}
+          value={cliente?.codsector || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
           disabled={vistaSupervision}
@@ -108,7 +110,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="mzna" className="text-xs font-medium">4. Mzna</Label>
         <ComboboxControlled
           options={mzna}
-          value={ficha.codmza_new || "No registrado"}
+          value={cliente?.codmza || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
           disabled={vistaSupervision}
@@ -121,7 +123,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="lote" className="text-xs font-medium">5. Lote</Label>
         <Input
           id="lote"
-          defaultValue={ficha.nrolote_new || "No registrado"}
+          defaultValue={cliente?.nrolote || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -132,7 +134,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="sublote" className="text-xs font-medium">6. Sub lote</Label>
         <Input
           id="sublote"
-          defaultValue={ficha.nrosublote_new || "No registrado"}
+          defaultValue={cliente?.nrosublote || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -143,7 +145,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="suministro" className="text-xs font-medium">7. N° Suministro</Label>
         <Input
           id="suministro"
-          defaultValue={ficha.codcliente || "No registrado"}
+          defaultValue={cliente?.codcliente || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -154,7 +156,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="calle" className="text-xs font-medium">8. Calle/Jiron/Avenida/Pasaje</Label>
         <Input
           id="calle"
-          defaultValue={ficha.direccion || "No registrado"}
+          defaultValue={cliente?.direcc || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -165,7 +167,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="cuadra" className="text-xs font-medium">9. Cuadra</Label>
         <Input
           id="cuadra"
-          defaultValue={ficha.cuadra || "No registrado"}
+          defaultValue={"No atributo"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -176,7 +178,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="nromuni" className="text-xs font-medium">10. N Muni</Label>
         <Input
           id="nromuni"
-          defaultValue={ficha.nromunic?.toString() || "No registrado"}
+          defaultValue={"No atributo"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -187,7 +189,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="mzmuni" className="text-xs font-medium">11. Mz Muni</Label>
         <Input
           id="mzmuni"
-          defaultValue={ficha.mzamunic || "No registrado"}
+          defaultValue={"No atributo"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -195,10 +197,10 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
 
       {/* 12. Lt Muni */}
       <div className="space-y-1">
-        <Label htmlFor="ltmuni" className="text-xs font-medium">12. Lt Muni</Label>
+        <Label htmlFor="ltmuni" className="text-xs font-medium">12. Lt Munis</Label>
         <Input
           id="ltmuni"
-          defaultValue={ficha.ltemunic?.toString() || "No registrado"}
+          defaultValue={"No atributo"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -209,7 +211,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="urbanizacion" className="text-xs font-medium">13. Urbanización/Asociación/AA.HH.</Label>
         <ComboboxControlled
           options={urbanizacion}
-          value={ficha.urbanizacion || "No registrado"}
+          value={cliente?.codurbaso || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
           disabled={vistaSupervision}
@@ -222,7 +224,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="tipoconstruccion" className="text-xs font-medium">14. Tipo de Construcción</Label>
         <ComboboxControlled
           options={tipoConstruccion}
-          value={ficha.tipoconstruccion || "No registrado"}
+          value={cliente?.constru || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
           disabled={vistaSupervision}
@@ -235,7 +237,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="nropisos" className="text-xs font-medium">15. N° Pisos</Label>
         <Input
           id="nropisos"
-          defaultValue={ficha.nropisos || "No registrado"}
+          defaultValue={cliente?.piso || "No registrado"}
           readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
@@ -246,11 +248,13 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="tiposervicio" className="text-xs font-medium">16. Tipo Servicio</Label>
         <ComboboxControlled
           options={tipoServicio}
-          value={ficha.tiposervicio || ""}
+          value={cliente?.tiposervicio || ""}
           onChange={() => { }}
           placeholder="No registrado"
           disabled={vistaSupervision}
-          className="h-8 text-xs"
+          className={`h-8 text-xs text-white
+            ${!(cliente?.tiposervicio == ficha.tiposervicio) &&
+            "dark:bg-red-500 bg-red-500"}`}
         />
       </div>
 
@@ -259,7 +263,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="abastecimiento" className="text-xs font-medium">17. Abastecimiento</Label>
         <ComboboxControlled
           options={abastecimiento}
-          value={ficha.tipoaba || "No registrado"}
+          value={cliente?.codmzaab || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
           disabled={vistaSupervision}
@@ -272,7 +276,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="piscina" className="text-xs font-medium">18. Piscina</Label>
         <ComboboxControlled
           options={opcionesPiscina}
-          value={ficha.piscina || "No registrado"}
+          value={cliente?.piscina || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
           disabled={vistaSupervision}
@@ -285,7 +289,7 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Label htmlFor="almacenaje" className="text-xs font-medium">19. Reservorio/Almacenaje</Label>
         <ComboboxControlled
           options={almacenaje}
-          value={ficha.codalmacenaje || "No registrado"}
+          value={"No atributo"}
           onChange={() => { }}
           placeholder="No registrado"
           disabled={vistaSupervision}
