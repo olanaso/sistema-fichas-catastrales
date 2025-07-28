@@ -13,10 +13,9 @@ import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 interface DatosMedidorSupervisionProps {
     ficha: FichaCatastro;
     cliente: Cliente | null;
-    vistaSupervision: boolean;
 }
 
-export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervision }: DatosMedidorSupervisionProps) {
+export default function DatosMedidorSupervision({ ficha, cliente }: DatosMedidorSupervisionProps) {
 
     const [diametros, setDiametros] = useState<ComboboxOption[]>([]);
     const [marcas, setMarcas] = useState<ComboboxOption[]>([]);
@@ -55,7 +54,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                 <Input
                     id="numero-medidor"
                     defaultValue={cliente?.nro_medidor || "No registrado"}
-                    readOnly={vistaSupervision}
+                    readOnly
                     className={`h-8 text-xs text-white
             ${!(cliente?.nro_medidor == ficha.nromed) &&
                         "dark:bg-red-500 bg-red-500"}`}
@@ -68,7 +67,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                 <Input
                     id="ano"
                     defaultValue={"No atributos"}
-                    readOnly={vistaSupervision}
+                    readOnly
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -79,7 +78,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                 <Input
                     id="lectura-medidor"
                     defaultValue={"No atributos"}
-                    readOnly={vistaSupervision}
+                    readOnly
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -90,7 +89,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                 <Input
                     id="numero-medidor-sistema"
                     defaultValue={cliente?.nro_medidor || "No registrado"}
-                    readOnly={vistaSupervision}
+                    readOnly
                     className="h-8 text-xs"
                 />
             </div>
@@ -101,7 +100,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                 <Input
                     id="fecha-instalacion"
                     defaultValue={cliente?.fecha_inst || "No registrado"}
-                    readOnly={vistaSupervision}
+                    readOnly
                     className="h-8 text-xs"
                 />
             </div>
@@ -113,7 +112,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                     options={marcas}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -125,7 +124,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                     options={diametros}
                     value={cliente?.diametro_m || "No registrado"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="h-8 text-xs"
                 />
             </div>
@@ -136,7 +135,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                 <Input
                     id="lectura"
                     defaultValue={"No atributos"}
-                    readOnly={vistaSupervision}
+                    readOnly
                     className={`bg-muted h-8 text-xs text-white
             ${!(ficha.lectura == "No atributos") &&
                         "dark:bg-red-500 bg-red-500"}`}
@@ -150,7 +149,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                     options={tipoFacturacion}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className={`bg-muted h-8 text-xs text-white
             ${!(ficha.tipofacturacion == "No atributos") &&
                         "dark:bg-red-500 bg-red-500"}`}
@@ -164,7 +163,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                     options={tipoLectura}
                     value={"No atributos"}
                     placeholder="Seleccionar tipo"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -176,7 +175,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                     options={estadoMedidor}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className={`bg-muted h-8 text-xs text-white
             ${!(ficha.estadomed == "No atributos") &&
                         "dark:bg-red-500 bg-red-500"}`}
@@ -190,7 +189,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                     options={opcionesSiNo}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -202,7 +201,7 @@ export default function DatosMedidorSupervision({ ficha, cliente, vistaSupervisi
                     options={opcionesSiNo}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>

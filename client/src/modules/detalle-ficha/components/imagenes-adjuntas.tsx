@@ -7,10 +7,9 @@ import { FichaCatastro } from "@/models/fichacatastro";
 
 interface ImagenesAdjuntasProps {
   ficha: FichaCatastro;
-  vistaSupervision: boolean;
 }
 
-export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAdjuntasProps) {
+export default function ImagenesAdjuntas({ ficha }: ImagenesAdjuntasProps) {
   const imagenes = [
     {
       id: "caja-agua",
@@ -87,7 +86,6 @@ export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAd
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={vistaSupervision}
                       className="w-full"
                     >
                       <Upload className="w-4 h-4 mr-2" />
@@ -131,7 +129,6 @@ export default function ImagenesAdjuntas({ ficha, vistaSupervision }: ImagenesAd
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={vistaSupervision}
                       className="w-full"
                     >
                       <Upload className="w-4 h-4 mr-2" />

@@ -11,10 +11,9 @@ import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 
 interface DatosMedidorProps {
   ficha: FichaCatastro;
-  vistaSupervision: boolean;
 }
 
-export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorProps) {
+export default function DatosMedidor({ ficha }: DatosMedidorProps) {
 
   const [diametros, setDiametros] = useState<ComboboxOption[]>([]);
   const [marcas, setMarcas] = useState<ComboboxOption[]>([]);
@@ -56,7 +55,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           <Input
             id="numero-medidor"
             defaultValue={ficha.nromed || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -69,7 +67,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           <Input
             id="ano"
             defaultValue={ficha.anio || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -82,7 +79,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           <Input
             id="lectura-medidor"
             defaultValue={ficha.lecturaultima?.toString() || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -95,7 +91,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           <Input
             id="numero-medidor-sistema"
             defaultValue={ficha.nromed_new || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -108,7 +103,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           <Input
             id="fecha-instalacion"
             defaultValue={ficha.fechainstalacion?.toString() || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -122,7 +116,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
             options={marcas}
             value={ficha.marcamed || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -136,7 +129,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
             options={diametros}
             value={ficha.coddiametro_m || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -149,7 +141,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
           <Input
             id="lectura"
             defaultValue={ficha.lectura || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -163,7 +154,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
             options={tipoFacturacion}
             value={ficha.tipofacturacion || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -177,7 +167,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
             options={tipoLectura}
             value={ficha.tipolectura || ""}
             placeholder="Seleccionar tipo"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -191,7 +180,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
             options={estadoMedidor}
             value={ficha.estadomed || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -205,7 +193,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
             options={opcionesSiNo}
             value={ficha.medidoroperativo || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -219,7 +206,6 @@ export default function DatosMedidor({ ficha, vistaSupervision }: DatosMedidorPr
             options={opcionesSiNo}
             value={ficha.tienemedidor || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>

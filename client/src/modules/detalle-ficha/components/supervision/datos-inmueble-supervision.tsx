@@ -14,10 +14,9 @@ import { FichaCatastro } from "@/models/fichacatastro";
 interface DatosInmuebleSupervisionProps {
   ficha: FichaCatastro;
   cliente: Cliente | null;
-  vistaSupervision: boolean;
 }
 
-export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervision }: DatosInmuebleSupervisionProps) {
+export default function DatosInmuebleSupervision({ ficha, cliente }: DatosInmuebleSupervisionProps) {
   // Opciones para los combobox (estos datos vendrían del backend)
   const [region, setRegion] = useState<string>("CUSCO");
   const [sucursal, setSucursal] = useState<ComboboxOption[]>([]);
@@ -74,7 +73,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="region"
           defaultValue={region}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -87,7 +86,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
           value={cliente?.codsuc || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
+          disabled
           className="h-8 text-xs"
         />
       </div>
@@ -100,7 +99,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
           value={cliente?.codsector || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
+          disabled
           className="h-8 text-xs"
         />
       </div>
@@ -113,7 +112,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
           value={cliente?.codmza || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
+          disabled
           className="h-8 text-xs"
         />
       </div>
@@ -124,7 +123,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="lote"
           defaultValue={cliente?.nrolote || "No registrado"}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -135,7 +134,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="sublote"
           defaultValue={cliente?.nrosublote || "No registrado"}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -146,7 +145,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="suministro"
           defaultValue={cliente?.codcliente || "No registrado"}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -157,7 +156,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="calle"
           defaultValue={cliente?.direcc || "No registrado"}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -168,7 +167,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="cuadra"
           defaultValue={"No atributo"}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -179,7 +178,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="nromuni"
           defaultValue={"No atributo"}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -190,7 +189,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="mzmuni"
           defaultValue={"No atributo"}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -201,7 +200,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="ltmuni"
           defaultValue={"No atributo"}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -214,7 +213,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
           value={cliente?.codurbaso || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
+          disabled
           className="h-8 text-xs"
         />
       </div>
@@ -227,7 +226,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
           value={cliente?.constru || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
+          disabled
           className="h-8 text-xs"
         />
       </div>
@@ -238,7 +237,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
         <Input
           id="nropisos"
           defaultValue={cliente?.piso || "No registrado"}
-          readOnly={vistaSupervision}
+          readOnly
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -251,7 +250,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
           value={cliente?.tiposervicio || ""}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
+          disabled
           className={`h-8 text-xs text-white
             ${!(cliente?.tiposervicio == ficha.tiposervicio) &&
             "dark:bg-red-500 bg-red-500"}`}
@@ -266,7 +265,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
           value={cliente?.codmzaab || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
+          disabled
           className="h-8 text-xs"
         />
       </div>
@@ -279,7 +278,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
           value={cliente?.piscina || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
+          disabled
           className="h-8 text-xs"
         />
       </div>
@@ -292,7 +291,7 @@ export default function DatosInmuebleSupervision({ ficha, cliente, vistaSupervis
           value={"No atributo"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
+          disabled
           className="h-8 text-xs"
         />
       </div>

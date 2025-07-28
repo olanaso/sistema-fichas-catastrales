@@ -15,10 +15,9 @@ import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 interface CalidadServicioSupervisionProps {
     ficha: FichaCatastro;
     cliente: Cliente | null;
-    vistaSupervision: boolean;
 }
 
-export default function CalidadServicioSupervision({ ficha, cliente, vistaSupervision }: CalidadServicioSupervisionProps) {
+export default function CalidadServicioSupervision({ ficha, cliente }: CalidadServicioSupervisionProps) {
 
     const [tipoAccionComercial, setTipoAccionComercial] = useState<ComboboxOption[]>([]);
     const [tipoFichaIncompleta, setTipoFichaIncompleta] = useState<ComboboxOption[]>([]);
@@ -37,13 +36,13 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
     }, []);
 
     const servicios = [
-        { nombre: "Lavatorios", cantidad: cliente?.cant_uso || "-", estado: "No atributos" },
+        { nombre: "Lavatorios", cantidad: "No atributos", estado: "No atributos" },
         { nombre: "Lavadora", cantidad: "No atributos", estado: "No atributos" },
         { nombre: "Water", cantidad: "No atributos", estado: "No atributos" },
         { nombre: "Duchas", cantidad: "No atributos", estado: "No atributos" },
         { nombre: "Urinarios", cantidad: "No atributos", estado: "No atributos" },
         { nombre: "Grifo", cantidad: "No atributos", estado: "No atributos" },
-        { nombre: "Piscina", cantidad: cliente?.piscina || "-", estado: "No atributos" },
+        { nombre: "Piscina", cantidad: "No atributos", estado: "No atributos" },
         { nombre: "Tanque Cisterna", cantidad: "No atributos", estado: "No atributos" },
         { nombre: "Tanque Elevado", cantidad: "No atributos", estado: "No atributos" }
     ];
@@ -64,8 +63,9 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
                                 <Input
                                     id="horas-dia"
                                     defaultValue={"No atributos"}
-                                    readOnly={vistaSupervision}
+                                    readOnly
                                     className="h-8 text-sm mt-1 bg-muted"
+                                    placeholder="0.00"
                                     type="number"
                                     max="24"
                                     min="0"
@@ -79,9 +79,10 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
                                 <Input
                                     id="dias-semana"
                                     defaultValue={"No atributos"}
-                                    readOnly={vistaSupervision}
+                                    readOnly
                                     className="h-8 text-sm mt-1 bg-muted"
                                     type="number"
+                                    placeholder="0.00"
                                     max="7"
                                     min="0"
                                 />
@@ -94,9 +95,9 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
                                 <ComboboxControlled
                                     options={tipoPresionAgua}
                                     value={"No atributos"}
-                                    placeholder="No registrado"
+                                    placeholder="No atributos"
                                     className="h-8 text-xs bg-muted"
-                                    disabled={vistaSupervision}
+                                    disabled
                                 />
                             </div>
                         </div>
@@ -113,7 +114,7 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
                                 <Input
                                     id="frente-lote"
                                     defaultValue={"No atributos"}
-                                    readOnly={vistaSupervision}
+                                    readOnly
                                     className="h-8 text-sm mt-1 bg-muted"
                                     type="number"
                                     step="0.01"
@@ -128,7 +129,7 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
                                 <Input
                                     id="distancia-caja-agua"
                                     defaultValue={"No atributos"}
-                                    readOnly={vistaSupervision}
+                                    readOnly
                                     className="h-8 text-sm mt-1 bg-muted"
                                     type="number"
                                     step="0.01"
@@ -143,7 +144,7 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
                                 <Input
                                     id="distancia-caja-desague"
                                     defaultValue={"No atributos"}
-                                    readOnly={vistaSupervision}
+                                    readOnly
                                     className="h-8 text-sm mt-1 bg-muted"
                                     type="number"
                                     step="0.01"
@@ -166,7 +167,7 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
                                     value={"No atributos"}
                                     placeholder="No registrado"
                                     className="h-8 text-xs bg-muted"
-                                    disabled={vistaSupervision}
+                                    disabled
                                 />
                             </div>
 
@@ -179,7 +180,7 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
                                     value={"No atributos"}
                                     placeholder="No registrado"
                                     className="h-8 text-xs bg-muted"
-                                    disabled={vistaSupervision}
+                                    disabled
                                 />
                             </div>
                         </div>
@@ -228,8 +229,8 @@ export default function CalidadServicioSupervision({ ficha, cliente, vistaSuperv
                     <div className="rounded-lg p-1">
                         <h3 className="text-base font-semibold mb-3">OBSERVACIÓN</h3>
                         <Textarea
-                            defaultValue={"No atributos"}
-                            readOnly={vistaSupervision}
+                            defaultValue={cliente?.obs || "Sin observaciones"}
+                            readOnly
                             placeholder="Ingrese observaciones..."
                             className="min-h-[80px] text-sm resize-none bg-muted"
                         />

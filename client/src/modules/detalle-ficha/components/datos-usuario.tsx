@@ -23,12 +23,10 @@ import { IconButton } from "@/components/custom/icon-button";
 
 interface DatosUsuarioProps {
   ficha: FichaCatastro;
-  vistaSupervision: boolean;
 }
 
 export default function DatosUsuario({
   ficha,
-  vistaSupervision,
 }: DatosUsuarioProps) {
   const [tipoUsuario, setTipoUsuario] = useState<ComboboxOption[]>([]);
   const [tipoResponsable, setTipoResponsable] = useState<ComboboxOption[]>([]);
@@ -94,7 +92,6 @@ export default function DatosUsuario({
             value={ficha.tipousuario || "ACTIVO"}
             placeholder="No registrado"
             className="h-8 text-xs"
-            disabled={vistaSupervision}
           />
         </div>
 
@@ -106,7 +103,6 @@ export default function DatosUsuario({
           <Input
             id="nombres"
             defaultValue={ficha.propietario || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -119,7 +115,6 @@ export default function DatosUsuario({
           <Input
             id="dni"
             defaultValue={ficha.dni || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -132,7 +127,6 @@ export default function DatosUsuario({
           <Input
             id="habitantes"
             defaultValue={ficha.habitantes || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -147,7 +141,6 @@ export default function DatosUsuario({
             value={ficha.tiporesponsable || ""}
             placeholder="No registrado"
             className="h-8 text-xs"
-            disabled={vistaSupervision}
           />
         </div>
 
@@ -159,7 +152,6 @@ export default function DatosUsuario({
           <Input
             id="telefono"
             defaultValue={ficha.celular || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -172,7 +164,6 @@ export default function DatosUsuario({
           <Input
             id="contrato"
             defaultValue={ficha.nrocontrato || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -185,7 +176,6 @@ export default function DatosUsuario({
           <Input
             id="reservorio"
             defaultValue={ficha.codreservorio?.toString() || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -200,7 +190,6 @@ export default function DatosUsuario({
             value={ficha.codsectorabast || "No registrado"}
             placeholder="No registrado"
             className="h-8 text-xs"
-            disabled={vistaSupervision}
           />
         </div>
 
@@ -214,7 +203,6 @@ export default function DatosUsuario({
             value={ficha.catetar_new || "No registrado"}
             placeholder="No registrado"
             className="h-8 text-xs"
-            disabled={vistaSupervision}
           />
         </div>
 
@@ -226,7 +214,6 @@ export default function DatosUsuario({
           <Input
             id="razon-social"
             defaultValue={ficha.razonsocial || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>

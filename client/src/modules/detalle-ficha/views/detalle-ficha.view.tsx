@@ -320,7 +320,6 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
             {ComponenteSeccion && (
               <ComponenteSeccion
                 ficha={ficha}
-                vistaSupervision={vistaSupervision}
               />
             )}
           </CardContent>
@@ -333,7 +332,6 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
                   <ComponenteSeccionSupervision
                     ficha={ficha}
                     cliente={cliente}
-                    vistaSupervision={vistaSupervision}
                   />
                 )}
               </CardContent>

@@ -11,10 +11,9 @@ import { useEffect, useState } from "react";
 
 interface DatosConexionDesagueProps {
   ficha: FichaCatastro;
-  vistaSupervision: boolean;
 }
 
-export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosConexionDesagueProps) {
+export default function DatosConexionDesague({ ficha }: DatosConexionDesagueProps) {
 
   const [tipoLocalizacionCaja, setTipoLocalizacionCaja] = useState<ComboboxOption[]>([]);
   const [tipoCaja, setTipoCaja] = useState<ComboboxOption[]>([]);
@@ -60,7 +59,7 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
     <div className=" overflow-y-auto">
       <div className="rounded-lg">
         <div className="space-y-3">
-          {/* Fila 1 - Estado de conexión (más ancho) */}
+          {/* Fila 1 - Estado de conexión */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
             <div className="lg:col-span-2">
               <Label htmlFor="estado-conexion-desague" className="text-xs font-medium">
@@ -71,7 +70,6 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
                 value={ficha.situacionconex_d || ""}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
-                disabled={vistaSupervision}
               />
             </div>
 
@@ -84,7 +82,6 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
                 value={ficha.coddiametro_d || ""}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
-                disabled={vistaSupervision}
               />
             </div>
           </div>
@@ -100,7 +97,6 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
                 value={ficha.tipomaterial_d || ""}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
-                disabled={vistaSupervision}
               />
             </div>
 
@@ -113,7 +109,6 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
                 value={ficha.tipocaja_d || ""}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
-                disabled={vistaSupervision}
               />
             </div>
 
@@ -126,7 +121,6 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
                 value={ficha.loccaja_d || ""}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
-                disabled={vistaSupervision}
               />
             </div>
           </div>
@@ -142,7 +136,6 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
                 value={ficha.estadocaja_d || ""}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
-                disabled={vistaSupervision}
               />
             </div>
 
@@ -155,7 +148,6 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
                 value={ficha.tipotapa_d || ""}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
-                disabled={vistaSupervision}
               />
             </div>
 
@@ -168,7 +160,6 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
                 value={ficha.esttapa_d || ""}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
-                disabled={vistaSupervision}
               />
             </div>
           </div>
@@ -184,7 +175,6 @@ export default function DatosConexionDesague({ ficha, vistaSupervision }: DatosC
                 value={ficha.fugasdesague || ""}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
-                disabled={vistaSupervision}
               />
             </div>
           </div>

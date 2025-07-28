@@ -30,10 +30,9 @@ import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 interface DatosConexionAguaSupervisionProps {
     ficha: FichaCatastro;
     cliente: Cliente | null;
-    vistaSupervision: boolean;
 }
 
-export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupervision }: DatosConexionAguaSupervisionProps) {
+export default function DatosConexionAguaSupervision({ ficha, cliente }: DatosConexionAguaSupervisionProps) {
 
     const [estadoServicio, setEstadoServicio] = useState<ComboboxOption[]>([]);
     const [pavimentacion, setPavimentacion] = useState<ComboboxOption[]>([]);
@@ -112,7 +111,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={estadoServicio}
                     value={cliente?.estadoservicio_a || "No registrado"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className={`h-8 text-xs text-white
             ${!(cliente?.estadoservicio_a == ficha.estadoservicio) &&
                         "dark:bg-red-500 bg-red-500"}`}
@@ -126,7 +125,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={pavimentacion}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -138,7 +137,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={vereda}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -150,7 +149,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={diametros}
                     value={cliente?.diametro_a || "No registrado"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="h-8 text-xs"
                 />
             </div>
@@ -162,7 +161,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={tipoMaterial}
                     value={cliente?.tipomterial || "No registrado"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="h-8 text-xs"
                 />
             </div>
@@ -174,7 +173,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={tipoIngreso}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -186,7 +185,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={tipoCaja}
                     value={cliente?.materialc || "No registrado"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="h-8 text-xs"
                 />
             </div>
@@ -198,7 +197,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={localizacionCaja}
                     value={cliente?.loccaja_a || "No registrado"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="h-8 text-xs"
                 />
             </div>
@@ -210,7 +209,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={estadoCaja}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -222,7 +221,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={tipoTapa}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -234,7 +233,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={estadoTapa}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -246,7 +245,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={llaves}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -258,7 +257,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={posicionMedidor}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -270,7 +269,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={tipoCorte}
                     value={cliente?.codmotivocorte || "No registrado"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -281,7 +280,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                 <Input
                     id="razon-corte"
                     defaultValue={"No atributos"}
-                    readOnly={vistaSupervision}
+                    readOnly
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -293,7 +292,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={fugas}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -305,7 +304,7 @@ export default function DatosConexionAguaSupervision({ ficha, cliente, vistaSupe
                     options={cajaObservacion}
                     value={"No atributos"}
                     placeholder="No registrado"
-                    disabled={vistaSupervision}
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>

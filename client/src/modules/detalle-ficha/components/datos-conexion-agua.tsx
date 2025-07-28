@@ -29,10 +29,9 @@ import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 
 interface DatosConexionAguaProps {
   ficha: FichaCatastro;
-  vistaSupervision: boolean;
 }
 
-export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosConexionAguaProps) {
+export default function DatosConexionAgua({ ficha }: DatosConexionAguaProps) {
   const [estadoServicio, setEstadoServicio] = useState<ComboboxOption[]>([]);
   const [pavimentacion, setPavimentacion] = useState<ComboboxOption[]>([]);
   const [vereda, setVereda] = useState<ComboboxOption[]>([]);
@@ -144,7 +143,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={estadoServicio}
             value={ficha.estadoservicio || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -158,7 +156,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={pavimentacion}
             value={ficha.pavconagu_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -172,7 +169,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={vereda}
             value={ficha.vereda_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -186,7 +182,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={diametros}
             value={ficha.coddiametro_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -200,7 +195,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={tipoMaterial}
             value={ficha.tipomaterial_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -214,7 +208,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={tipoIngreso}
             value={ficha.tipoingreso || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -228,7 +221,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={tipoCaja}
             value={ficha.tipocaja_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -242,7 +234,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={localizacionCaja}
             value={ficha.loccaja_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -256,7 +247,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={estadoCaja}
             value={ficha.estadocaja_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -270,7 +260,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={tipoTapa}
             value={ficha.tipotapa_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -284,7 +273,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={estadoTapa}
             value={ficha.esttapa_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -298,7 +286,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={llaves}
             value={ficha.llavemed || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -312,7 +299,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={posicionMedidor}
             value={ficha.posicionmed || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -326,7 +312,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={tipoCorte}
             value={ficha.tipocorte_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -339,7 +324,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
           <Input
             id="razon-corte"
             defaultValue={ficha.tipocerrado || "No registrado"}
-            readOnly={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -353,7 +337,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={fugas}
             value={ficha.tipofugas_a || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>
@@ -367,7 +350,6 @@ export default function DatosConexionAgua({ ficha, vistaSupervision }: DatosCone
             options={cajaObservacion}
             value={ficha.tipocajaobserv || ""}
             placeholder="No registrado"
-            disabled={vistaSupervision}
             className="h-8 text-xs"
           />
         </div>

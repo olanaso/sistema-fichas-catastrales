@@ -1,7 +1,12 @@
 "use client";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { User, Settings, Plus, Minus, Building2, Trash } from "lucide-react";
 import { FichaCatastro } from "@/models/fichacatastro";
 import { Cliente } from "@/models/cliente";
 import { ComboboxOption } from "@/types/combobox";
@@ -14,22 +19,23 @@ import {
     TipoUsuario,
 } from "@/models/tipos";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
+import { FichaCatastralUnidadUso } from "@/models/fichacatastral_unidaduso";
+import { IconButton } from "@/components/custom/icon-button";
 
 interface DatosUsuarioSupervisionProps {
     ficha: FichaCatastro;
     cliente: Cliente | null;
-    vistaSupervision: boolean;
 }
 
 export default function DatosUsuarioSupervision({
     ficha,
     cliente,
-    vistaSupervision,
 }: DatosUsuarioSupervisionProps) {
     const [tipoUsuario, setTipoUsuario] = useState<ComboboxOption[]>([]);
     const [tipoResponsable, setTipoResponsable] = useState<ComboboxOption[]>([]);
     const [tipoCategoria, setTipoCategoria] = useState<ComboboxOption[]>([]);
     const [tipoActividad, setTipoActividad] = useState<ComboboxOption[]>([]);
+    const [unidadesUso, setUnidadesUso] = useState<FichaCatastralUnidadUso[]>([]);
 
     useEffect(() => {
         getData("tipousuario").then((res) => {
@@ -64,232 +70,257 @@ export default function DatosUsuarioSupervision({
                 }))
             );
         });
+        buscarExacto("fichacatastro_epsuniduso", ["idficha", "estareg"], [ficha.idficha.toString(), "1"]).then((res) => {
+            setUnidadesUso(res.data);
+        });
     }, []);
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {/* 20. Tipo de Usuario */}
-            <div className="space-y-1">
-                <Label htmlFor="tipo-usuario" className="text-xs font-medium">20. Tipo Usuario</Label>
-                <ComboboxControlled
-                    options={tipoUsuario}
-                    value={cliente?.tipousuario || "No registrado"}
-                    placeholder="No registrado"
-                    className={`h-8 text-xs text-white
+        <div className="space-y-4">
+            {/* Información del usuario */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                {/* 20. Tipo de Usuario */}
+                <div className="space-y-1">
+                    <Label htmlFor="tipo-usuario" className="text-xs font-medium">
+                        20. Tipo Usuario
+                    </Label>
+                    <ComboboxControlled
+                        options={tipoUsuario}
+                        value={cliente?.tipousuario || "No registrado"}
+                        placeholder="No registrado"
+                        className={`h-8 text-xs text-white
             ${!(cliente?.tipousuario == ficha.tipousuario) &&
-                        "dark:bg-red-500 bg-red-500"}`}
-                    disabled={vistaSupervision}
-                />
-            </div>
+                            "dark:bg-red-500 bg-red-500"}`}
+                        disabled
+                    />
+                </div>
 
-            {/* 21. Usuario/Nombres/Razón Social */}
-            <div className="space-y-1 sm:col-span-2">
-                <Label htmlFor="nombres" className="text-xs font-medium">21. Usuario/Nombres/Razón Social</Label>
-                <Input
-                    id="nombres"
-                    defaultValue={cliente?.propietario || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+                {/* 21. Usuario/Nombres/Razón Social */}
+                <div className="space-y-1 sm:col-span-2">
+                    <Label htmlFor="nombres" className="text-xs font-medium">
+                        21. Usuario/Nombres/Razón Social
+                    </Label>
+                    <Input
+                        id="nombres"
+                        defaultValue={cliente?.propietario || "No registrado"}
+                        readOnly
+                        className="h-8 text-xs"
+                    />
+                </div>
 
-            {/* 22. DNI/RUC */}
-            <div className="space-y-1">
-                <Label htmlFor="dni" className="text-xs font-medium">22. DNI/RUC</Label>
-                <Input
-                    id="dni"
-                    defaultValue={cliente?.dni || cliente?.ruc || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+                {/* 22. DNI/RUC */}
+                <div className="space-y-1">
+                    <Label htmlFor="dni" className="text-xs font-medium">
+                        22. DNI/RUC
+                    </Label>
+                    <Input
+                        id="dni"
+                        defaultValue={cliente?.dni || cliente?.ruc || "No registrado"}
+                        readOnly
+                        className="h-8 text-xs"
+                    />
+                </div>
 
-            {/* 23. Nº habitantes */}
-            <div className="space-y-1">
-                <Label htmlFor="habitantes" className="text-xs font-medium">23. Nº Habitantes</Label>
-                <Input
-                    id="habitantes"
-                    defaultValue={"No atributos"}
-                    readOnly={vistaSupervision}
-                    className="bg-muted h-8 text-xs"
-                />
-            </div>
+                {/* 23. Nº habitantes */}
+                <div className="space-y-1">
+                    <Label htmlFor="habitantes" className="text-xs font-medium">
+                        23. Nº Habitantes
+                    </Label>
+                    <Input
+                        id="habitantes"
+                        defaultValue={"No atributos"}
+                        readOnly
+                        className="bg-muted h-8 text-xs"
+                    />
+                </div>
 
-            {/* 24. Responsable */}
-            <div className="space-y-1">
-                <Label htmlFor="responsable" className="text-xs font-medium">24. Responsable</Label>
-                <ComboboxControlled
-                    options={tipoResponsable}
-                    value={cliente?.tiporesponsable || "No registrado"}
-                    placeholder="No registrado"
-                    className="h-8 text-xs"
-                    disabled={vistaSupervision}
-                />
-            </div>
+                {/* 24. Responsable */}
+                <div className="space-y-1">
+                    <Label htmlFor="responsable" className="text-xs font-medium">
+                        24. Responsable
+                    </Label>
+                    <ComboboxControlled
+                        options={tipoResponsable}
+                        value={cliente?.tiporesponsable || "No registrado"}
+                        placeholder="No registrado"
+                        className="h-8 text-xs"
+                        disabled
+                    />
+                </div>
 
-            {/* 25. Teléfono */}
-            <div className="space-y-1">
-                <Label htmlFor="telefono" className="text-xs font-medium">25. Teléfono</Label>
-                <Input
-                    id="telefono"
-                    defaultValue={cliente?.telefono || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+                {/* 25. Teléfono */}
+                <div className="space-y-1">
+                    <Label htmlFor="telefono" className="text-xs font-medium">
+                        25. Teléfono
+                    </Label>
+                    <Input
+                        id="telefono"
+                        defaultValue={cliente?.telefono || "No registrado"}
+                        readOnly
+                        className="h-8 text-xs"
+                    />
+                </div>
 
-            {/* 26. Nº Contrato */}
-            <div className="space-y-1">
-                <Label htmlFor="contrato" className="text-xs font-medium">26. Nº Contrato</Label>
-                <Input
-                    id="contrato"
-                    defaultValue={cliente?.nrocontrato?.toString() || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+                {/* 26. Nº Contrato */}
+                <div className="space-y-1">
+                    <Label htmlFor="contrato" className="text-xs font-medium">
+                        26. Nº Contrato
+                    </Label>
+                    <Input
+                        id="contrato"
+                        defaultValue={cliente?.nrocontrato || "No registrado"}
+                        readOnly
+                        className="h-8 text-xs"
+                    />
+                </div>
 
-            {/* 27. Reservorio Conectado */}
-            <div className="space-y-1">
-                <Label htmlFor="reservorio" className="text-xs font-medium">27. Reservorio Conectado</Label>
-                <Input
-                    id="reservorio"
-                    defaultValue={cliente?.tiporeser || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+                {/* 27. Reservorio Conectado */}
+                <div className="space-y-1">
+                    <Label htmlFor="reservorio" className="text-xs font-medium">
+                        27. Reservorio Conectado
+                    </Label>
+                    <Input
+                        id="reservorio"
+                        defaultValue={cliente?.tiporeser || "No registrado"}
+                        readOnly
+                        className="h-8 text-xs"
+                    />
+                </div>
 
-            {/* 28. Sector Abastecimiento */}
-            <div className="space-y-1">
-                <Label htmlFor="sector" className="text-xs font-medium">28. Sector Abastecimiento</Label>
-                <Input
-                    id="sector"
-                    defaultValue={"No atributos"}
-                    readOnly={vistaSupervision}
-                    className="bg-muted h-8 text-xs"
-                />
-            </div>
+                {/* 28. Sector Abastecimiento */}
+                <div className="space-y-1">
+                    <Label htmlFor="sector" className="text-xs font-medium">
+                        28. Sector Abastecimiento
+                    </Label>
+                    <ComboboxControlled
+                        options={tipoResponsable}
+                        value={"No atributos"}
+                        placeholder="No registrado"
+                        className="bg-muted h-8 text-xs"
+                        disabled
+                    />
+                </div>
 
-            {/* 29. Categoría */}
-            <div className="space-y-1">
-                <Label htmlFor="categoria" className="text-xs font-medium">29. Categoría</Label>
-                <ComboboxControlled
-                    options={tipoCategoria}
-                    value={cliente?.catetar || "No registrado"}
-                    placeholder="No registrado"
-                    className={`h-8 text-xs text-white
+                {/* 29. Categoría */}
+                <div className="space-y-1">
+                    <Label htmlFor="categoria" className="text-xs font-medium">
+                        29. Categoría
+                    </Label>
+                    <ComboboxControlled
+                        options={tipoCategoria}
+                        value={cliente?.catetar || "No registrado"}
+                        placeholder="No registrado"
+                        className={`h-8 text-xs text-white
             ${!(cliente?.catetar == ficha.catetar_new) &&
-                        "dark:bg-red-500 bg-red-500"}`}
-                    disabled={vistaSupervision}
-                />
+                            "dark:bg-red-500 bg-red-500"}`}
+                        disabled
+                    />
+                </div>
+
+                {/* 30. Razón Social */}
+                <div className="space-y-1 sm:col-span-2">
+                    <Label htmlFor="razon-social" className="text-xs font-medium">
+                        30. Razón Social
+                    </Label>
+                    <Input
+                        id="razon-social"
+                        defaultValue={cliente?.nombrecomercial || "No registrado"}
+                        readOnly
+                        className="h-8 text-xs"
+                    />
+                </div>
             </div>
 
-            {/* 30. Razón Social */}
-            <div className="space-y-1 sm:col-span-2">
-                <Label htmlFor="razon-social" className="text-xs font-medium">30. Razón Social</Label>
-                <Input
-                    id="razon-social"
-                    defaultValue={cliente?.nombrecomercial || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+            {/* Información del sistema */}
+            <Card className="bg-red-50 border-red-200 dark:bg-gray-900 dark:border-gray-800">
+                <CardContent className="p-3">
+                    <div className="space-y-1 flex items-center justify-between text-red-700 dark:text-gray-300">
+                        <p className="text-xs">
+                            <span className="font-semibold">Categoria Sistema:</span>{" "}
+                            {cliente?.catetar || "No registrado"}
+                        </p>
+                        <p className="text-xs">
+                            <span className="font-semibold">Actividad Sistema:</span>{" "}
+                            {cliente?.actividad || "No registrado"}
+                        </p>
+                        <p className="text-xs">
+                            <span className="font-semibold">Unidades de Uso Sistema:</span>{" "}
+                            {"No atributos"}
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
 
-            {/* Actividad */}
-            <div className="space-y-1">
-                <Label htmlFor="actividad" className="text-xs font-medium">Actividad</Label>
-                <ComboboxControlled
-                    options={tipoActividad}
-                    value={cliente?.actividad || "No registrado"}
-                    placeholder="No registrado"
-                    className="h-8 text-xs"
-                    disabled={vistaSupervision}
-                />
-            </div>
+            {/* Sección de tarifas */}
+            <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold">ASIGNAR TARIFAS</h4>
+                    <Button size="sm" variant="outline" className="h-8" disabled>
+                        <Plus className="w-3 h-3" /> Agregar
+                    </Button>
+                </div>
 
-            {/* Email */}
-            <div className="space-y-1 sm:col-span-2">
-                <Label htmlFor="email" className="text-xs font-medium">Email</Label>
-                <Input
-                    id="email"
-                    defaultValue={cliente?.email || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+                <Separator />
 
-            {/* Estado Registro */}
-            <div className="space-y-1">
-                <Label htmlFor="estado-registro" className="text-xs font-medium">Estado Registro</Label>
-                <Input
-                    id="estado-registro"
-                    defaultValue={cliente?.estadoregistro?.toString() || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+                <div className="mt-3 space-y-2">
+                    {unidadesUso.map((unidad, index) => (
+                        <div
+                            key={`${unidad.idficha}-${unidad.codcliente}-${index}`}
+                            className="p-2 border bg-lime-50 border-lime-500 dark:bg-stone-900 dark:border-stone-800"
+                        >
+                            <div className="grid grid-cols-6 gap-2 text-xs">
+                                <div>
+                                    <span className="font-medium text-gray-700 dark:text-gray-300">
+                                        Categoría:
+                                    </span>
+                                    <p className="text-gray-600 dark:text-gray-400 truncate">
+                                        {unidad.tarifa || "No registrado"}
+                                    </p>
+                                </div>
 
-            {/* Estado Servicio */}
-            <div className="space-y-1">
-                <Label htmlFor="estado-servicio" className="text-xs font-medium">Estado Servicio</Label>
-                <Input
-                    id="estado-servicio"
-                    defaultValue={cliente?.estadoservicio || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+                                <div>
+                                    <span className="font-medium text-gray-700 dark:text-gray-300">
+                                        Tipo de actividad:
+                                    </span>
+                                    <p className="text-gray-600 dark:text-gray-400 truncate">
+                                        {unidad.actividad ? tipoActividad.find(t => t.value === unidad.actividad)?.label : "No registrado"}
+                                    </p>
+                                </div>
 
-            {/* Unidades de Uso */}
-            <div className="space-y-1">
-                <Label htmlFor="unidad-dom" className="text-xs font-medium">Unidad Doméstica</Label>
-                <Input
-                    id="unidad-dom"
-                    defaultValue={cliente?.unidaddom?.toString() || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
+                                <div>
+                                    <span className="font-medium text-gray-700 dark:text-gray-300">
+                                        Razón social:
+                                    </span>
+                                    <p className="text-gray-600 dark:text-gray-400">
+                                        {unidad.razonsocial || "No registrado"}
+                                    </p>
+                                </div>
 
-            <div className="space-y-1">
-                <Label htmlFor="unidad-com" className="text-xs font-medium">Unidad Comercial</Label>
-                <Input
-                    id="unidad-com"
-                    defaultValue={cliente?.unidadcom?.toString() || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
-
-            <div className="space-y-1">
-                <Label htmlFor="unidad-ind" className="text-xs font-medium">Unidad Industrial</Label>
-                <Input
-                    id="unidad-ind"
-                    defaultValue={cliente?.unidadind?.toString() || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
-
-            <div className="space-y-1">
-                <Label htmlFor="unidad-soc" className="text-xs font-medium">Unidad Social</Label>
-                <Input
-                    id="unidad-soc"
-                    defaultValue={cliente?.unidadsoc?.toString() || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
-            </div>
-
-            <div className="space-y-1">
-                <Label htmlFor="unidad-est" className="text-xs font-medium">Unidad Estatal</Label>
-                <Input
-                    id="unidad-est"
-                    defaultValue={cliente?.unidadest?.toString() || "No registrado"}
-                    readOnly={vistaSupervision}
-                    className="h-8 text-xs"
-                />
+                                <div>
+                                    <span className="font-medium text-gray-700 dark:text-gray-300">
+                                        Referencia:
+                                    </span>
+                                    <p className="text-gray-600 dark:text-gray-400 text-xs truncate">
+                                        {unidad.referencia || "No registrado"}
+                                    </p>
+                                </div>
+                                <div>
+                                    <span className="font-medium text-gray-700 dark:text-gray-300">
+                                        Item / Cantidad:
+                                    </span>
+                                    <p className="text-gray-600 dark:text-gray-400 text-xs truncate">
+                                        {unidad.item || "No registrado"} / {unidad.cantidad || "No registrado"}
+                                    </p>
+                                </div>
+                                <div className="flex justify-end">
+                                    <IconButton tooltip="Eliminar" color="red" disabled>
+                                        <Trash className="w-3 h-3" />
+                                    </IconButton>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

@@ -12,10 +12,9 @@ import { useEffect, useState } from "react";
 interface DatosConexionDesagueSupervisionProps {
     ficha: FichaCatastro;
     cliente: Cliente | null;
-    vistaSupervision: boolean;
 }
 
-export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaSupervision }: DatosConexionDesagueSupervisionProps) {
+export default function DatosConexionDesagueSupervision({ ficha, cliente }: DatosConexionDesagueSupervisionProps) {
 
     const [tipoLocalizacionCaja, setTipoLocalizacionCaja] = useState<ComboboxOption[]>([]);
     const [tipoCaja, setTipoCaja] = useState<ComboboxOption[]>([]);
@@ -69,7 +68,7 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaS
                     className={`h-8 text-xs text-white
             ${!(cliente?.estadoservicio_d == ficha.situacionconex_d) &&
                         "dark:bg-red-500 bg-red-500"}`}
-                    disabled={vistaSupervision}
+                    disabled
                 />
             </div>
 
@@ -81,7 +80,7 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaS
                     value={cliente?.diametro_d || "No registrado"}
                     placeholder="No registrado"
                     className="h-8 text-xs"
-                    disabled={vistaSupervision}
+                    disabled
                 />
             </div>
 
@@ -93,7 +92,7 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaS
                     value={cliente?.tipomterial_d || "No registrado"}
                     placeholder="No registrado"
                     className="h-8 text-xs"
-                    disabled={vistaSupervision}
+                    disabled
                 />
             </div>
 
@@ -105,7 +104,7 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaS
                     value={cliente?.caja_d || "No registrado"}
                     placeholder="No registrado"
                     className="h-8 text-xs"
-                    disabled={vistaSupervision}
+                    disabled
                 />
             </div>
 
@@ -117,7 +116,7 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaS
                     value={"No atributos"}
                     placeholder="No registrado"
                     className="bg-muted h-8 text-xs"
-                    disabled={vistaSupervision}
+                    disabled
                 />
             </div>
 
@@ -129,7 +128,7 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaS
                     value={"No atributos"}
                     placeholder="No registrado"
                     className="bg-muted h-8 text-xs"
-                    disabled={vistaSupervision}
+                    disabled
                 />
             </div>
 
@@ -141,7 +140,7 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaS
                     value={"No atributos"}
                     placeholder="No registrado"
                     className="bg-muted h-8 text-xs"
-                    disabled={vistaSupervision}
+                    disabled
                 />
             </div>
 
@@ -153,7 +152,7 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaS
                     value={"No atributos"}
                     placeholder="No registrado"
                     className="bg-muted h-8 text-xs"
-                    disabled={vistaSupervision}
+                    disabled
                 />
             </div>
 
@@ -165,7 +164,7 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente, vistaS
                     value={"No atributos"}
                     placeholder="No registrado"
                     className="bg-muted h-8 text-xs"
-                    disabled={vistaSupervision}
+                    disabled
                 />
             </div>
         </div>

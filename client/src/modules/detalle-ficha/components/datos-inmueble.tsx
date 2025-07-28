@@ -12,10 +12,9 @@ import { buscarExacto, getData } from "@/service/data.actions";
 
 interface DatosInmuebleProps {
   ficha: FichaCatastro;
-  vistaSupervision: boolean;
 }
 
-export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmuebleProps) {
+export default function DatosInmueble({ ficha }: DatosInmuebleProps) {
   // Opciones para los combobox (estos datos vendrían del backend)
   const [region, setRegion] = useState<string>("CUSCO");
   const [sucursal, setSucursal] = useState<ComboboxOption[]>([]);
@@ -72,7 +71,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="region"
           defaultValue={region}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -85,7 +83,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           value={ficha.codsuc || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
           className="h-8 text-xs"
         />
       </div>
@@ -98,7 +95,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           value={ficha.codsector_new || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
           className="h-8 text-xs"
         />
       </div>
@@ -111,7 +107,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           value={ficha.codmza_new || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
           className="h-8 text-xs"
         />
       </div>
@@ -122,7 +117,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="lote"
           defaultValue={ficha.nrolote_new || "No registrado"}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -133,7 +127,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="sublote"
           defaultValue={ficha.nrosublote_new || "No registrado"}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -144,7 +137,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="suministro"
           defaultValue={ficha.codcliente || "No registrado"}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -155,7 +147,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="calle"
           defaultValue={ficha.direccion || "No registrado"}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -166,7 +157,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="cuadra"
           defaultValue={ficha.cuadra || "No registrado"}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -177,7 +167,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="nromuni"
           defaultValue={ficha.nromunic?.toString() || "No registrado"}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -188,7 +177,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="mzmuni"
           defaultValue={ficha.mzamunic || "No registrado"}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -199,7 +187,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="ltmuni"
           defaultValue={ficha.ltemunic?.toString() || "No registrado"}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -212,7 +199,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           value={ficha.urbanizacion || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
           className="h-8 text-xs"
         />
       </div>
@@ -225,7 +211,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           value={ficha.tipoconstruccion || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
           className="h-8 text-xs"
         />
       </div>
@@ -236,7 +221,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
         <Input
           id="nropisos"
           defaultValue={ficha.nropisos || "No registrado"}
-          readOnly={vistaSupervision}
           className="bg-muted h-8 text-xs"
         />
       </div>
@@ -249,7 +233,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           value={ficha.tiposervicio || ""}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
           className="h-8 text-xs"
         />
       </div>
@@ -262,7 +245,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           value={ficha.tipoaba || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
           className="h-8 text-xs"
         />
       </div>
@@ -275,7 +257,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           value={ficha.piscina || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
           className="h-8 text-xs"
         />
       </div>
@@ -288,7 +269,6 @@ export default function DatosInmueble({ ficha, vistaSupervision }: DatosInmueble
           value={ficha.codalmacenaje || "No registrado"}
           onChange={() => { }}
           placeholder="No registrado"
-          disabled={vistaSupervision}
           className="h-8 text-xs"
         />
       </div>

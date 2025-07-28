@@ -13,10 +13,9 @@ import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 
 interface CalidadServicioProps {
   ficha: FichaCatastro;
-  vistaSupervision: boolean;
 }
 
-export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServicioProps) {
+export default function CalidadServicio({ ficha }: CalidadServicioProps) {
 
   const [tipoAccionComercial, setTipoAccionComercial] = useState<ComboboxOption[]>([]);
   const [tipoFichaIncompleta, setTipoFichaIncompleta] = useState<ComboboxOption[]>([]);
@@ -63,7 +62,6 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 <Input
                   id="horas-dia"
                   defaultValue={ficha.horasxdia || "No registrado"}
-                  readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
                   max="24"
@@ -78,7 +76,6 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 <Input
                   id="dias-semana"
                   defaultValue={ficha.diasxsemana || "No registrado"}
-                  readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
                   max="7"
@@ -95,7 +92,6 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                   value={ficha.presionagu || ""}
                   placeholder="No registrado"
                   className="h-8 text-xs"
-                  disabled={vistaSupervision}
                 />
               </div>
             </div>
@@ -112,7 +108,6 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 <Input
                   id="frente-lote"
                   defaultValue={ficha.medidalotefrente || "No registrado"}
-                  readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
                   step="0.01"
@@ -127,7 +122,6 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 <Input
                   id="distancia-caja-agua"
                   defaultValue={ficha.medidaejeagua || "No registrado"}
-                  readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
                   step="0.01"
@@ -142,7 +136,6 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 <Input
                   id="distancia-caja-desague"
                   defaultValue={ficha.medidaejedesague || "No registrado"}
-                  readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
                   step="0.01"
@@ -165,7 +158,6 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                   value={ficha.fichaincompleta || ""}
                   placeholder="No registrado"
                   className="h-8 text-xs"
-                  disabled={vistaSupervision}
                 />
               </div>
 
@@ -178,7 +170,6 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                   value={ficha.tipoacccomercial || ""}
                   placeholder="No registrado"
                   className="h-8 text-xs"
-                  disabled={vistaSupervision}
                 />
               </div>
             </div>
@@ -228,7 +219,6 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
             <h3 className="text-base font-semibold mb-3">OBSERVACIÓN</h3>
             <Textarea
               defaultValue={ficha.observacion || ""}
-              readOnly={vistaSupervision}
               placeholder="Ingrese observaciones..."
               className="min-h-[80px] text-sm resize-none"
             />
