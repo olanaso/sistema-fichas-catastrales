@@ -9,12 +9,15 @@ import { Calle, Manzana, Sector, Sucursal, Urbanizacion } from "@/models/modulos
 import { useEffect, useState } from "react";
 import { TipoAbastecimiento, TipoAlmacenaje, TipoConstruccion, TipoServicio } from "@/models/tipos";
 import { buscarExacto, getData } from "@/service/data.actions";
+import { Cliente } from "@/models/cliente";
 
 interface DatosInmuebleProps {
   ficha: FichaCatastro;
+  cliente: Cliente | null;
+  vistaSupervision: boolean;
 }
 
-export default function DatosInmueble({ ficha }: DatosInmuebleProps) {
+export default function DatosInmueble({ ficha, cliente, vistaSupervision }: DatosInmuebleProps) {
   // Opciones para los combobox (estos datos vendrían del backend)
   const [region, setRegion] = useState<string>("CUSCO");
   const [sucursal, setSucursal] = useState<ComboboxOption[]>([]);
@@ -233,7 +236,12 @@ export default function DatosInmueble({ ficha }: DatosInmuebleProps) {
           value={ficha.tiposervicio || ""}
           onChange={() => { }}
           placeholder="No registrado"
-          className="h-8 text-xs"
+          className={`h-8 text-xs text-white
+            ${!vistaSupervision ?
+              "" :
+              !(cliente?.tiposervicio == ficha.tiposervicio) ?
+                "dark:bg-red-500 bg-red-500" :
+                "dark:bg-green-500 bg-green-500"}`}
         />
       </div>
 

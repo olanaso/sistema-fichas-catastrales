@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Image, Upload, Eye, X, MapPin } from "lucide-react";
 import { FichaCatastro } from "@/models/fichacatastro";
+import { Cliente } from "@/models/cliente";
 
 interface ImagenesAdjuntasProps {
   ficha: FichaCatastro;
+  cliente: Cliente | null;
 }
 
-export default function ImagenesAdjuntas({ ficha }: ImagenesAdjuntasProps) {
+export default function ImagenesAdjuntas({ ficha, cliente }: ImagenesAdjuntasProps) {
   const imagenes = [
     {
       id: "caja-agua",

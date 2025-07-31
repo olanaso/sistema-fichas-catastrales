@@ -89,8 +89,9 @@ export default function DatosUsuarioSupervision({
                         value={cliente?.tipousuario || "No registrado"}
                         placeholder="No registrado"
                         className={`h-8 text-xs text-white
-            ${!(cliente?.tipousuario == ficha.tipousuario) &&
-                            "dark:bg-red-500 bg-red-500"}`}
+            ${!(cliente?.tipousuario == ficha.tipousuario) ?
+                                "dark:bg-red-500 bg-red-500" :
+                                "dark:bg-green-500 bg-green-500"}`}
                         disabled
                     />
                 </div>

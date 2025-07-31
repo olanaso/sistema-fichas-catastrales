@@ -20,14 +20,15 @@ import {
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { FichaCatastralUnidadUso } from "@/models/fichacatastral_unidaduso";
 import { IconButton } from "@/components/custom/icon-button";
+import { Cliente } from "@/models/cliente";
 
 interface DatosUsuarioProps {
   ficha: FichaCatastro;
+  cliente: Cliente | null;
+  vistaSupervision: boolean;
 }
 
-export default function DatosUsuario({
-  ficha,
-}: DatosUsuarioProps) {
+export default function DatosUsuario({ ficha, cliente, vistaSupervision }: DatosUsuarioProps) {
   const [tipoUsuario, setTipoUsuario] = useState<ComboboxOption[]>([]);
   const [tipoResponsable, setTipoResponsable] = useState<ComboboxOption[]>([]);
   const [tipoCategoria, setTipoCategoria] = useState<ComboboxOption[]>([]);
@@ -91,7 +92,12 @@ export default function DatosUsuario({
             options={tipoUsuario}
             value={ficha.tipousuario || "ACTIVO"}
             placeholder="No registrado"
-            className="h-8 text-xs"
+            className={`h-8 text-xs text-white
+              ${!vistaSupervision ?
+                "" :
+                !(cliente?.tipousuario == ficha.tipousuario) ?
+                  "dark:bg-red-500 bg-red-500" :
+                  "dark:bg-green-500 bg-green-500"}`}
           />
         </div>
 
@@ -202,7 +208,12 @@ export default function DatosUsuario({
             options={tipoCategoria}
             value={ficha.catetar_new || "No registrado"}
             placeholder="No registrado"
-            className="h-8 text-xs"
+            className={`h-8 text-xs text-white
+              ${!vistaSupervision ?
+                "" :
+                !(cliente?.catetar == ficha.catetar_new) ?
+                "dark:bg-red-500 bg-red-500" :
+                "dark:bg-green-500 bg-green-500"}`}
           />
         </div>
 
@@ -254,7 +265,7 @@ export default function DatosUsuario({
           {unidadesUso.map((unidad, index) => (
             <div
               key={`${unidad.idficha}-${unidad.codcliente}-${index}`}
-              className="p-2 border bg-lime-50 border-lime-500 dark:bg-stone-900 dark:border-stone-800"
+              className="p-2 border bg-gray-50 rounded-md dark:bg-stone-900 dark:border-stone-800"
             >
               <div className="grid grid-cols-6 gap-2 text-xs">
                 <div>

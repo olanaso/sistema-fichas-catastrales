@@ -252,8 +252,9 @@ export default function DatosInmuebleSupervision({ ficha, cliente }: DatosInmueb
           placeholder="No registrado"
           disabled
           className={`h-8 text-xs text-white
-            ${!(cliente?.tiposervicio == ficha.tiposervicio) &&
-            "dark:bg-red-500 bg-red-500"}`}
+            ${!(cliente?.tiposervicio == ficha.tiposervicio) ?
+              "dark:bg-red-500 bg-red-500" :
+              "dark:bg-green-500 bg-green-500"}`}
         />
       </div>
 

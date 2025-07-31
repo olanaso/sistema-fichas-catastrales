@@ -4,34 +4,37 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Droplets } from "lucide-react";
 import { FichaCatastro } from "@/models/fichacatastro";
-import { 
-  TipoDiametro, 
-  TipoEstadoServicio, 
-  TipoPavimento, 
-  TipoVereda, 
-  TipoMaterial, 
-  TipoIngresoConexion, 
-  TipoCaja, 
-  TipoLocalizacionCaja, 
-  TipoEstadoCaja, 
-  TipoTapa, 
-  TipoEstadoTapa, 
-  TipoLlaveMedidor, 
-  TipoPosicionMedidor, 
-  TipoCorteServicio, 
-  TipoFugas, 
-  TipoCajaObservacion 
+import {
+  TipoDiametro,
+  TipoEstadoServicio,
+  TipoPavimento,
+  TipoVereda,
+  TipoMaterial,
+  TipoIngresoConexion,
+  TipoCaja,
+  TipoLocalizacionCaja,
+  TipoEstadoCaja,
+  TipoTapa,
+  TipoEstadoTapa,
+  TipoLlaveMedidor,
+  TipoPosicionMedidor,
+  TipoCorteServicio,
+  TipoFugas,
+  TipoCajaObservacion
 } from "@/models/tipos";
 import { buscarExacto, getData } from "@/service/data.actions";
 import { ComboboxOption } from "@/types/combobox";
 import { useEffect, useState } from "react";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
+import { Cliente } from "@/models/cliente";
 
 interface DatosConexionAguaProps {
   ficha: FichaCatastro;
+  cliente: Cliente | null;
+  vistaSupervision: boolean;
 }
 
-export default function DatosConexionAgua({ ficha }: DatosConexionAguaProps) {
+export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: DatosConexionAguaProps) {
   const [estadoServicio, setEstadoServicio] = useState<ComboboxOption[]>([]);
   const [pavimentacion, setPavimentacion] = useState<ComboboxOption[]>([]);
   const [vereda, setVereda] = useState<ComboboxOption[]>([]);
@@ -143,7 +146,12 @@ export default function DatosConexionAgua({ ficha }: DatosConexionAguaProps) {
             options={estadoServicio}
             value={ficha.estadoservicio || ""}
             placeholder="No registrado"
-            className="h-8 text-xs"
+            className={`h-8 text-xs text-white
+              ${!vistaSupervision ?
+                "" :
+                !(cliente?.estadoservicio_a == ficha.estadoservicio) ?
+                "dark:bg-red-500 bg-red-500" :
+                "dark:bg-green-500 bg-green-500"}`}
           />
         </div>
 
