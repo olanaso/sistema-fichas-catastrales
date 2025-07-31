@@ -3,12 +3,14 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FichaCatastro } from "@/models/fichacatastro";
+import { Cliente } from "@/models/cliente";
 
 interface DatosPadronOrigenProps {
   ficha: FichaCatastro;
+  cliente: Cliente | null;
 }
 
-export default function DatosPadronOrigen({ ficha }: DatosPadronOrigenProps) {
+export default function DatosPadronOrigen({ ficha, cliente }: DatosPadronOrigenProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

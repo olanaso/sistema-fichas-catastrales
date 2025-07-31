@@ -3,6 +3,7 @@
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Cliente } from "@/models/cliente";
 import { FichaCatastro } from "@/models/fichacatastro";
 import { TipoCaja, TipoDiametro, TipoEstadoCaja, TipoEstadoServicio, TipoEstadoTapa, TipoFugas, TipoLocalizacionCaja, TipoMaterial, TipoTapa } from "@/models/tipos";
 import { buscarExacto, getData } from "@/service/data.actions";
@@ -11,9 +12,11 @@ import { useEffect, useState } from "react";
 
 interface DatosConexionDesagueProps {
   ficha: FichaCatastro;
+  cliente: Cliente | null;
+  vistaSupervision: boolean;
 }
 
-export default function DatosConexionDesague({ ficha }: DatosConexionDesagueProps) {
+export default function DatosConexionDesague({ ficha, cliente, vistaSupervision }: DatosConexionDesagueProps) {
 
   const [tipoLocalizacionCaja, setTipoLocalizacionCaja] = useState<ComboboxOption[]>([]);
   const [tipoCaja, setTipoCaja] = useState<ComboboxOption[]>([]);
@@ -69,7 +72,12 @@ export default function DatosConexionDesague({ ficha }: DatosConexionDesagueProp
                 options={tipoEstadoServicio}
                 value={ficha.situacionconex_d || ""}
                 placeholder="No registrado"
-                className="h-8 text-xs mt-1"
+                className={`h-8 text-xs text-white
+                  ${!vistaSupervision ?
+                    "" :
+                    !(cliente?.estadoservicio_d == ficha.situacionconex_d) ?
+                    "dark:bg-red-500 bg-red-500" :
+                    "dark:bg-green-500 bg-green-500"}`}
               />
             </div>
 

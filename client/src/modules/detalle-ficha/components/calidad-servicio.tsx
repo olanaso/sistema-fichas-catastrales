@@ -10,12 +10,14 @@ import { getData } from "@/service/data.actions";
 import { TipoAccionComercial, TipoFichaIncompleta, TipoPresionAgua } from "@/models/tipos";
 import { ComboboxOption } from "@/types/combobox";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
+import { Cliente } from "@/models/cliente";
 
 interface CalidadServicioProps {
   ficha: FichaCatastro;
+  cliente: Cliente | null;
 }
 
-export default function CalidadServicio({ ficha }: CalidadServicioProps) {
+export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps) {
 
   const [tipoAccionComercial, setTipoAccionComercial] = useState<ComboboxOption[]>([]);
   const [tipoFichaIncompleta, setTipoFichaIncompleta] = useState<ComboboxOption[]>([]);

@@ -8,26 +8,29 @@ import { buscarExacto, getData } from "@/service/data.actions";
 import { ComboboxOption } from "@/types/combobox";
 import { useEffect, useState } from "react";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
+import { Cliente } from "@/models/cliente";
 
 interface DatosMedidorProps {
   ficha: FichaCatastro;
+  cliente: Cliente | null;
+  vistaSupervision: boolean;
 }
 
-export default function DatosMedidor({ ficha }: DatosMedidorProps) {
+export default function DatosMedidor({ ficha, cliente, vistaSupervision }: DatosMedidorProps) {
 
   const [diametros, setDiametros] = useState<ComboboxOption[]>([]);
   const [marcas, setMarcas] = useState<ComboboxOption[]>([]);
   const [tipoFacturacion, setTipoFacturacion] = useState<ComboboxOption[]>([]);
   const [tipoLectura, setTipoLectura] = useState<ComboboxOption[]>([]);
   const [estadoMedidor, setEstadoMedidor] = useState<ComboboxOption[]>([]);
-  
+
   const opcionesSiNo: ComboboxOption[] = [
     { value: "1", label: "SÍ" },
     { value: "0", label: "NO" }
   ];
-  
+
   useEffect(() => {
-    buscarExacto("diametros", ["tipocon"],["001"]).then((res) => {
+    buscarExacto("diametros", ["tipocon"], ["001"]).then((res) => {
       setDiametros(res.data.map((diametro: TipoDiametro) => ({ value: diametro.coddiametro, label: diametro.descripcion })));
     });
     getData("tipomarcamedidor").then((res) => {
@@ -43,7 +46,7 @@ export default function DatosMedidor({ ficha }: DatosMedidorProps) {
       setEstadoMedidor(res.data.map((estado: TipoEstadoMedidor) => ({ value: estado.estadomed, label: estado.descripcion })));
     });
   }, []);
-  
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -55,7 +58,13 @@ export default function DatosMedidor({ ficha }: DatosMedidorProps) {
           <Input
             id="numero-medidor"
             defaultValue={ficha.nromed || "No registrado"}
-            className="h-8 text-xs"
+            className={`h-8 text-xs text-white
+              ${!vistaSupervision ?
+                "" :
+                !(cliente?.nro_medidor == ficha.nromed) ?
+                "dark:bg-red-500 bg-red-500" :
+                "dark:bg-green-500 bg-green-500"
+              }`}
           />
         </div>
 
@@ -141,7 +150,12 @@ export default function DatosMedidor({ ficha }: DatosMedidorProps) {
           <Input
             id="lectura"
             defaultValue={ficha.lectura || "No registrado"}
-            className="h-8 text-xs"
+            className={`bg-muted h-8 text-xs text-white
+              ${!vistaSupervision ?
+                "" :
+                !(ficha.lectura == "No atributos") ?
+                "dark:bg-red-500 bg-red-500" :
+                "dark:bg-green-500 bg-green-500"}`}
           />
         </div>
 
@@ -154,7 +168,12 @@ export default function DatosMedidor({ ficha }: DatosMedidorProps) {
             options={tipoFacturacion}
             value={ficha.tipofacturacion || ""}
             placeholder="No registrado"
-            className="h-8 text-xs"
+            className={`bg-muted h-8 text-xs text-white
+              ${!vistaSupervision ?
+                "" :
+                !(ficha.tipofacturacion == "No atributos") ?
+                "dark:bg-red-500 bg-red-500" :
+                "dark:bg-green-500 bg-green-500"}`}
           />
         </div>
 
@@ -180,7 +199,12 @@ export default function DatosMedidor({ ficha }: DatosMedidorProps) {
             options={estadoMedidor}
             value={ficha.estadomed || ""}
             placeholder="No registrado"
-            className="h-8 text-xs"
+            className={`bg-muted h-8 text-xs text-white
+              ${!vistaSupervision ?
+                "" :
+                !(ficha.estadomed == "No atributos") ?
+                "dark:bg-red-500 bg-red-500" :
+                "dark:bg-green-500 bg-green-500"}`}
           />
         </div>
 
