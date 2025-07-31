@@ -2,6 +2,7 @@ package org.catastro.sistemafichacatastral.Cliente;
 
 import org.catastro.sistemafichacatastral.dto.AsiganacionDto;
 import org.catastro.sistemafichacatastral.dto.AsignacionMasivoDto;
+import org.catastro.sistemafichacatastral.dto.ImportacionDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,15 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-
+    @PostMapping("/importar")
+    public ResponseEntity<?> importarDatos(@RequestBody ImportacionDto dto) {
+        try {
+            Map<String, Object> resultado = clienteService.ejecutarImportacion(dto);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
 
     @GetMapping("/buscar")
     public ResponseEntity<?> buscarFichas(
