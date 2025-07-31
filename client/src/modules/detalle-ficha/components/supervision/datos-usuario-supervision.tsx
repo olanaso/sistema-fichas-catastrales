@@ -211,8 +211,9 @@ export default function DatosUsuarioSupervision({
                         value={cliente?.catetar || "No registrado"}
                         placeholder="No registrado"
                         className={`h-8 text-xs text-white
-            ${!(cliente?.catetar == ficha.catetar_new) &&
-                            "dark:bg-red-500 bg-red-500"}`}
+            ${!(cliente?.catetar == ficha.catetar_new) ?
+                                "dark:bg-red-500 bg-red-500" :
+                                "dark:bg-green-500 bg-green-500"}`}
                         disabled
                     />
                 </div>
@@ -252,7 +253,7 @@ export default function DatosUsuarioSupervision({
             </Card>
 
             {/* Sección de tarifas */}
-            <div className="space-y-3">
+            {/* <div className="space-y-3">
                 <div className="flex items-center justify-between">
                     <h4 className="text-sm font-semibold">ASIGNAR TARIFAS</h4>
                     <Button size="sm" variant="outline" className="h-8" disabled>
@@ -321,7 +322,7 @@ export default function DatosUsuarioSupervision({
                         </div>
                     ))}
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 } 

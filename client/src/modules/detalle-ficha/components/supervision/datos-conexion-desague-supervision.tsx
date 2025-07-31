@@ -66,8 +66,9 @@ export default function DatosConexionDesagueSupervision({ ficha, cliente }: Dato
                     value={cliente?.estadoservicio_d || "No registrado"}
                     placeholder="No registrado"
                     className={`h-8 text-xs text-white
-            ${!(cliente?.estadoservicio_d == ficha.situacionconex_d) &&
-                        "dark:bg-red-500 bg-red-500"}`}
+            ${!(cliente?.estadoservicio_d == ficha.situacionconex_d) ?
+                            "dark:bg-red-500 bg-red-500" :
+                            "dark:bg-green-500 bg-green-500"}`}
                     disabled
                 />
             </div>

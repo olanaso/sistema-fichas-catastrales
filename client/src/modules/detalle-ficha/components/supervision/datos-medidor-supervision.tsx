@@ -53,11 +53,14 @@ export default function DatosMedidorSupervision({ ficha, cliente }: DatosMedidor
                 <Label htmlFor="numero-medidor" className="text-xs font-medium">50. Número Medidor</Label>
                 <Input
                     id="numero-medidor"
-                    defaultValue={cliente?.nro_medidor || "No registrado"}
+                    defaultValue={cliente?.nro_medidor?.toString() || "No registrado"}
                     readOnly
+                    disabled
                     className={`h-8 text-xs text-white
-            ${!(cliente?.nro_medidor == ficha.nromed) &&
-                        "dark:bg-red-500 bg-red-500"}`}
+            ${!(cliente?.nro_medidor == ficha.nromed) ?
+                            "dark:bg-red-500 bg-red-500" :
+                            "dark:bg-green-500 bg-green-500"
+                        }`}
                 />
             </div>
 
@@ -68,6 +71,7 @@ export default function DatosMedidorSupervision({ ficha, cliente }: DatosMedidor
                     id="ano"
                     defaultValue={"No atributos"}
                     readOnly
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -79,6 +83,7 @@ export default function DatosMedidorSupervision({ ficha, cliente }: DatosMedidor
                     id="lectura-medidor"
                     defaultValue={"No atributos"}
                     readOnly
+                    disabled
                     className="bg-muted h-8 text-xs"
                 />
             </div>
@@ -90,6 +95,7 @@ export default function DatosMedidorSupervision({ ficha, cliente }: DatosMedidor
                     id="numero-medidor-sistema"
                     defaultValue={cliente?.nro_medidor || "No registrado"}
                     readOnly
+                    disabled
                     className="h-8 text-xs"
                 />
             </div>
@@ -101,6 +107,7 @@ export default function DatosMedidorSupervision({ ficha, cliente }: DatosMedidor
                     id="fecha-instalacion"
                     defaultValue={cliente?.fecha_inst || "No registrado"}
                     readOnly
+                    disabled
                     className="h-8 text-xs"
                 />
             </div>
@@ -136,9 +143,11 @@ export default function DatosMedidorSupervision({ ficha, cliente }: DatosMedidor
                     id="lectura"
                     defaultValue={"No atributos"}
                     readOnly
+                    disabled
                     className={`bg-muted h-8 text-xs text-white
-            ${!(ficha.lectura == "No atributos") &&
-                        "dark:bg-red-500 bg-red-500"}`}
+            ${!(ficha.lectura == "No atributos") ?
+                            "dark:bg-red-500 bg-red-500" :
+                            "dark:bg-green-500 bg-green-500"}`}
                 />
             </div>
 
@@ -151,8 +160,9 @@ export default function DatosMedidorSupervision({ ficha, cliente }: DatosMedidor
                     placeholder="No registrado"
                     disabled
                     className={`bg-muted h-8 text-xs text-white
-            ${!(ficha.tipofacturacion == "No atributos") &&
-                        "dark:bg-red-500 bg-red-500"}`}
+            ${!(ficha.tipofacturacion == "No atributos") ?
+                            "dark:bg-red-500 bg-red-500" :
+                            "dark:bg-green-500 bg-green-500"}`}
                 />
             </div>
 
@@ -177,8 +187,9 @@ export default function DatosMedidorSupervision({ ficha, cliente }: DatosMedidor
                     placeholder="No registrado"
                     disabled
                     className={`bg-muted h-8 text-xs text-white
-            ${!(ficha.estadomed == "No atributos") &&
-                        "dark:bg-red-500 bg-red-500"}`}
+            ${!(ficha.estadomed == "No atributos") ?
+                            "dark:bg-red-500 bg-red-500" :
+                            "dark:bg-green-500 bg-green-500"}`}
                 />
             </div>
 
