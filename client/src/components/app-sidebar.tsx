@@ -81,11 +81,11 @@ const menuFichas = [
     url: "/gestion-fichas",
     icon: Ticket,
   },
-  {
-    title: "Migración SICI",
-    url: "/migracion-sici",
-    icon: ArrowRightCircle,
-  },
+  // {
+  //   title: "Migración SICI",
+  //   url: "/migracion-sici",
+  //   icon: ArrowRightCircle,
+  // },
 ];
 
 const menuCapacitacion = [

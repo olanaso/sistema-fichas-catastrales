@@ -543,7 +543,7 @@ export function AsignacionGrupal({
                       <div>
                         <span className="font-medium text-gray-700 dark:text-gray-300">Inspector:</span>
                         <p className="text-gray-600 dark:text-gray-400 truncate">
-                          {grupo.codinspector}
+                          {inspectores.find(i => i.codinspector === grupo.codinspector)?.nombres}
                         </p>
                         <p className="text-gray-500">Cód: {grupo.codinspector}</p>
                       </div>
