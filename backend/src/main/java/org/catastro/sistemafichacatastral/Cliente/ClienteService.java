@@ -441,6 +441,8 @@ public class ClienteService {
         }
     }
 
+    /** ASIGANACIÓN DE CLIENTE **/
+
     public void asignacionMasiva(AsignacionMasivoDto dto) {
         if (dto.getCodclientes() == null || dto.getCodclientes().isEmpty()) {
             throw new IllegalArgumentException("Debe proporcionar al menos un código de cliente.");
@@ -490,4 +492,33 @@ public class ClienteService {
             throw new RuntimeException("Error al guardar o actualizar la ficha: " + e.getMessage(), e);
         }
     }
+
+    /**
+     * Actualiza o elimina programaciones de trabajo
+     * @param codcreador Código del usuario creador
+     * @param accion Acción a realizar: 'GRABAR' para marcar como "Designado" o 'ELIMINAR' para eliminar programaciones
+     */
+    public void actualizarOEliminarProgramacion(String codcreador, String accion) {
+        try {
+            if (codcreador == null || codcreador.trim().isEmpty()) {
+                throw new IllegalArgumentException("El código del creador no puede estar vacío");
+            }
+            
+            if (accion == null || (!accion.equals("GRABAR") && !accion.equals("ELIMINAR"))) {
+                throw new IllegalArgumentException("La acción debe ser 'GRABAR' o 'ELIMINAR'");
+            }
+
+            String sql = "SELECT fichacatastral.usp_actualizar_eliminar_programacion(:codcreador, :accion)";
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter("codcreador", codcreador);
+            query.setParameter("accion", accion);
+            query.getSingleResult();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al " + accion.toLowerCase() + " programaciones: " + e.getMessage(), e);
+        }
+    }
+
+    
+
 }

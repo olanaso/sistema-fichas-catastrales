@@ -60,4 +60,27 @@ public class ClienteController {
             return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
         }
     }
+
+    @PutMapping("/programacion")
+    public ResponseEntity<?> actualizarOEliminarProgramacion(
+            @RequestParam String codcreador,
+            @RequestParam String accion
+    ) {
+        try {
+            clienteService.actualizarOEliminarProgramacion(codcreador, accion);
+            
+            String mensaje = accion.equals("GRABAR") 
+                ? "Programaciones marcadas como 'Designado' correctamente." 
+                : "Programaciones eliminadas correctamente.";
+                
+            return ResponseEntity.ok(Map.of(
+                "success", true, 
+                "message", mensaje,
+                "codcreador", codcreador,
+                "accion", accion
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
 }
