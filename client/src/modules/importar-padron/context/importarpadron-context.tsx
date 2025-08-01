@@ -10,7 +10,7 @@ interface ImportarPadronProviderProps {
 export function ImportarPadronProvider({ children }: ImportarPadronProviderProps) {
   return (
     <DataPaginatedProvider<DataMigra>
-      tableName="vw_datamigra"
+      tableName="vista_padron_sici"
       initialPageSize={10}
       searchColumns={["cliente", "provincia", "sucursal", "calle", "urbanizacion", "tipo_construccion", "tipo_usuarioa"]}
     >

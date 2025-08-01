@@ -1,5 +1,6 @@
 import apiClient from "@/lib/axios";
 import { PadronHistorico } from "@/models/padronhistorico";
+import { ImportFormValues } from "../components/form/import-form";
 
 // Función para obtener datos de cualquier tabla
 export async function getImportarPadronClientes(page: number = 0, size: number = 10) {
@@ -48,6 +49,16 @@ export async function getHistorialImportarPadronClientes(): Promise<PadronHistor
     return data.length > 0 ? data[0] as PadronHistorico : null;
   } catch (error: any) {
     console.error('Error en getHistorialImportarPadronClientes:', error);
+    return null;
+  }
+}
+
+export async function importarPadronClientes(dto: ImportFormValues) {
+  try {
+    const response = await apiClient.post(`/cliente/importar`, dto);
+    return response.data;
+  } catch (error: any) {
+    console.error('Error en importarPadronClientes:', error);
     return null;
   }
 }

@@ -16,6 +16,8 @@ import { Inspector } from "@/models/inspector";
 import { Cliente } from "@/models/cliente";
 import { AsignacionTrabajo } from "@/models/asignacion-trabajo";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { Usuario } from "@/models/usuario";
 
 export default function AsignacionCargaView() {
   const [fichasSeleccionadas, setFichasSeleccionadas] = useState<number[]>([]);
@@ -29,10 +31,13 @@ export default function AsignacionCargaView() {
   const [loadingVerAsignaciones, setLoadingVerAsignaciones] = useState(false);
   const [filtrosExternos, setFiltrosExternos] = useState<FiltrosAsignacionType | undefined>(undefined);
 
+  // Obtener el usuario logueado
+  const { user } = useAuth();
+  
   // Función para recargar asignaciones
-  const recargarAsignaciones = async () => {
+  const recargarAsignaciones = async (user: Usuario) => {
     try {
-      const data = await buscarExacto("usp_programacion_trabajo", ["estado"], ["Programado"]);
+      const data = await buscarExacto("usp_programacion_trabajo", ["estado", "codcreador"], ["Programado", user?.codusu]);
       setAsignaciones(data.data);
       console.log("Asignaciones recargadas:", data.data.length, "asignaciones encontradas");
     } catch (error) {
@@ -41,11 +46,12 @@ export default function AsignacionCargaView() {
   };
 
   useEffect(() => {
+    if (!user) return;
     getData("inspectores").then((data) => {
       setInspectores(data.data);
     });
-    recargarAsignaciones();
-  }, []);
+    recargarAsignaciones(user);
+  }, [user]);
 
   const handleFiltrar = async (filtros: FiltrosAsignacionType) => {
     try {
@@ -109,7 +115,9 @@ export default function AsignacionCargaView() {
     setFichasSeleccionadas([]);
     
     // Recargar asignaciones para mostrar los cambios inmediatamente
-    await recargarAsignaciones();
+    if (user) {
+      await recargarAsignaciones(user);
+    }
     
     if (Object.keys(filtrosAplicados).length > 0) {
       await handleFiltrar(filtrosAplicados);

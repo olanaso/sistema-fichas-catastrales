@@ -18,15 +18,16 @@ import { CustomInputControlled } from "@/components/custom/input-controlled";
 import { toast } from "sonner";
 import { Import, Loader2, Lock, User, Users } from "lucide-react";
 import { CustomTextarea } from "@/components/custom/custom-textarea";
+import { importarPadronClientes } from "../../action/importarpadron.actions";
 
 // Esquema de validación
-const importSchema = z.object({
+export const importSchema = z.object({
   usuario: z.string().min(1, "El usuario es obligatorio"),
   contrasena: z.string().min(1, "La contraseña es obligatoria"),
   observacion: z.string().min(1, "La observación es obligatoria"),
 });
 
-type ImportFormValues = z.infer<typeof importSchema>;
+export type ImportFormValues = z.infer<typeof importSchema>;
 
 export default function ImportForm() {
   const [showDialog, setShowDialog] = useState(false);
@@ -49,8 +50,7 @@ export default function ImportForm() {
   const onSubmit = async (values: ImportFormValues) => {
     setIsLoading(true);
     try {
-      // Simulación de petición a la API
-      await new Promise((res) => setTimeout(res, 1200));
+      await importarPadronClientes(values);
       toast.success("¡Importación enviada correctamente!");
       form.reset();
       setShowDialog(false);

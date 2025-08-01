@@ -338,3 +338,79 @@ export async function getFichasCatastralesPorColumnas(columnas: string[], valore
         return [];
     }
 }
+
+/**
+ * Función para grabar programaciones (marcar como "Designado")
+ * @param codcreador - Código del usuario creador
+ * @returns Respuesta de la API
+ */
+export async function grabarProgramacion(codcreador: string): Promise<AsignacionGrupalResponse> {
+    try {
+        const response = await apiClient.put('/cliente/programacion', null, {
+            params: {
+                codcreador: codcreador,
+                accion: 'GRABAR'
+            }
+        });
+
+        if (response.data.success) {
+            toast.success('Programaciones grabadas exitosamente');
+            return {
+                success: true,
+                message: 'Programaciones grabadas exitosamente',
+                data: response.data
+            };
+        } else {
+            toast.error(response.data.error || 'Error al grabar programaciones');
+            return {
+                success: false,
+                message: response.data.error || 'Error al grabar programaciones'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al grabar programaciones:', error);
+        toast.error('Error al grabar programaciones');
+        return {
+            success: false,
+            message: error.response?.data?.error || 'Error al grabar programaciones'
+        };
+    }
+}
+
+/**
+ * Función para cancelar programaciones (eliminar programaciones "Programado")
+ * @param codcreador - Código del usuario creador
+ * @returns Respuesta de la API
+ */
+export async function cancelarProgramacion(codcreador: string): Promise<AsignacionGrupalResponse> {
+    try {
+        const response = await apiClient.put('/cliente/programacion', null, {
+            params: {
+                codcreador: codcreador,
+                accion: 'ELIMINAR'
+            }
+        });
+
+        if (response.data.success) {
+            toast.success('Programaciones canceladas exitosamente');
+            return {
+                success: true,
+                message: 'Programaciones canceladas exitosamente',
+                data: response.data
+            };
+        } else {
+            toast.error(response.data.error || 'Error al cancelar programaciones');
+            return {
+                success: false,
+                message: response.data.error || 'Error al cancelar programaciones'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al cancelar programaciones:', error);
+        toast.error('Error al cancelar programaciones');
+        return {
+            success: false,
+            message: error.response?.data?.error || 'Error al cancelar programaciones'
+        };
+    }
+}

@@ -85,20 +85,28 @@ export default function TableGestionPadron({
             <div className="flex items-center gap-2">
               <Circle className="w-4 h-4 text-gray-600" />
               <CustomBadge color="dark" className="text-xs">
-                PENDIENTE
+                SIN ASIGNAR
               </CustomBadge>
               <span className="text-xs text-muted-foreground">
-                Fichas sin procesar
+                Clientes sin asignar
               </span>
             </div>
-  
+            <div className="flex items-center gap-2">
+              <Circle className="w-4 h-4 text-orange-600" />
+              <CustomBadge color="orange" className="text-xs">
+                PROGRAMADO
+              </CustomBadge>
+              <span className="text-xs text-muted-foreground">
+                Clientes programados
+              </span>
+            </div>
             <div className="flex items-center gap-2">
               <Circle className="w-4 h-4 text-green-600" />
               <CustomBadge color="green" className="text-xs">
-                COMPLETADO
+                ASIGNADO
               </CustomBadge>
               <span className="text-xs text-muted-foreground">
-                Fichas completadas
+                Clientes asignados
               </span>
             </div>
           </div>
