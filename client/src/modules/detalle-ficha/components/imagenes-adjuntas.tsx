@@ -9,9 +9,10 @@ import { Cliente } from "@/models/cliente";
 interface ImagenesAdjuntasProps {
   ficha: FichaCatastro;
   cliente: Cliente | null;
+  handleActualizarAtributos: (atributo: string, valor: string) => void;
 }
 
-export default function ImagenesAdjuntas({ ficha, cliente }: ImagenesAdjuntasProps) {
+export default function ImagenesAdjuntas({ ficha, cliente, handleActualizarAtributos }: ImagenesAdjuntasProps) {
   const imagenes = [
     {
       id: "caja-agua",

@@ -15,9 +15,12 @@ import { Cliente } from "@/models/cliente";
 interface CalidadServicioProps {
   ficha: FichaCatastro;
   cliente: Cliente | null;
+  handleActualizarAtributos: (atributo: string, valor: string) => void;
 }
 
-export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps) {
+export default function CalidadServicio({ ficha, cliente, handleActualizarAtributos }: CalidadServicioProps) {
+  // Estado local para manejar los valores actualizados
+  const [valoresActualizados, setValoresActualizados] = useState<{ [key: string]: string }>({});
 
   const [tipoAccionComercial, setTipoAccionComercial] = useState<ComboboxOption[]>([]);
   const [tipoFichaIncompleta, setTipoFichaIncompleta] = useState<ComboboxOption[]>([]);
@@ -35,6 +38,19 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
       setTipoPresionAgua(res.data.map((tipo: TipoPresionAgua) => ({ value: tipo.tipopresionagu, label: tipo.descripcion })));
     });
   }, []);
+
+  // Función para obtener el valor actual (del estado local o de ficha)
+  const obtenerValor = (campo: string, valorOriginal: string | number | null | undefined) => {
+    return valoresActualizados[campo] !== undefined 
+      ? valoresActualizados[campo] 
+      : valorOriginal?.toString() || "No registrado";
+  };
+
+  // Función para manejar cambios
+  const manejarCambio = (campo: string, valor: string) => {
+    setValoresActualizados(prev => ({ ...prev, [campo]: valor }));
+    handleActualizarAtributos(campo, valor);
+  };
 
   const servicios = [
     { nombre: "Lavatorios", cantidad: ficha.nrolavatorios || "-", estado: ficha.estadolavatorios || "-" },
@@ -63,11 +79,12 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
                 </Label>
                 <Input
                   id="horas-dia"
-                  defaultValue={ficha.horasxdia || "No registrado"}
+                  value={obtenerValor("horasxdia", ficha.horasxdia)}
                   className="h-8 text-sm mt-1"
                   type="number"
                   max="24"
                   min="0"
+                  onChange={(e) => manejarCambio("horasxdia", e.target.value)}
                 />
               </div>
 
@@ -77,11 +94,12 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
                 </Label>
                 <Input
                   id="dias-semana"
-                  defaultValue={ficha.diasxsemana || "No registrado"}
+                  value={obtenerValor("diasxsemana", ficha.diasxsemana)}
                   className="h-8 text-sm mt-1"
                   type="number"
                   max="7"
                   min="0"
+                  onChange={(e) => manejarCambio("diasxsemana", e.target.value)}
                 />
               </div>
 
@@ -91,9 +109,10 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
                 </Label>
                 <ComboboxControlled
                   options={tipoPresionAgua}
-                  value={ficha.presionagu || ""}
+                  value={obtenerValor("presionagu", ficha.presionagu)}
                   placeholder="No registrado"
                   className="h-8 text-xs"
+                  onChange={(e) => manejarCambio("presionagu", e.toString())}
                 />
               </div>
             </div>
@@ -114,6 +133,7 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
                   type="number"
                   step="0.01"
                   placeholder="0.00"
+                  onChange={(e) => handleActualizarAtributos("medidalotefrente", e.target.value)}
                 />
               </div>
 
@@ -128,6 +148,7 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
                   type="number"
                   step="0.01"
                   placeholder="0.00"
+                  onChange={(e) => handleActualizarAtributos("medidaejeagua", e.target.value)}
                 />
               </div>
 
@@ -142,6 +163,7 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
                   type="number"
                   step="0.01"
                   placeholder="0.00"
+                  onChange={(e) => handleActualizarAtributos("medidaejedesague", e.target.value)}
                 />
               </div>
             </div>
@@ -157,9 +179,10 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
                 </Label>
                 <ComboboxControlled
                   options={tipoFichaIncompleta}
-                  value={ficha.fichaincompleta || ""}
+                  value={obtenerValor("fichaincompleta", ficha.fichaincompleta)}
                   placeholder="No registrado"
                   className="h-8 text-xs"
+                  onChange={(e) => manejarCambio("fichaincompleta", e.toString())}
                 />
               </div>
 
@@ -169,9 +192,10 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
                 </Label>
                 <ComboboxControlled
                   options={tipoAccionComercial}
-                  value={ficha.tipoacccomercial || ""}
+                  value={obtenerValor("tipoacccomercial", ficha.tipoacccomercial)}
                   placeholder="No registrado"
                   className="h-8 text-xs"
+                  onChange={(e) => manejarCambio("tipoacccomercial", e.toString())}
                 />
               </div>
             </div>
@@ -223,6 +247,7 @@ export default function CalidadServicio({ ficha, cliente }: CalidadServicioProps
               defaultValue={ficha.observacion || ""}
               placeholder="Ingrese observaciones..."
               className="min-h-[80px] text-sm resize-none"
+              onChange={(e) => handleActualizarAtributos("observacion", e.target.value)}
             />
           </div>
         </div>

@@ -14,9 +14,12 @@ interface DatosMedidorProps {
   ficha: FichaCatastro;
   cliente: Cliente | null;
   vistaSupervision: boolean;
+  handleActualizarAtributos: (atributo: string, valor: string) => void;
 }
 
-export default function DatosMedidor({ ficha, cliente, vistaSupervision }: DatosMedidorProps) {
+export default function DatosMedidor({ ficha, cliente, vistaSupervision, handleActualizarAtributos }: DatosMedidorProps) {
+  // Estado local para manejar los valores actualizados
+  const [valoresActualizados, setValoresActualizados] = useState<{ [key: string]: string }>({});
 
   const [diametros, setDiametros] = useState<ComboboxOption[]>([]);
   const [marcas, setMarcas] = useState<ComboboxOption[]>([]);
@@ -47,6 +50,19 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
     });
   }, []);
 
+  // Función para obtener el valor actual (del estado local o de ficha)
+  const obtenerValor = (campo: string, valorOriginal: string | number | Date | null | undefined) => {
+    return valoresActualizados[campo] !== undefined 
+      ? valoresActualizados[campo] 
+      : valorOriginal?.toString() || "No registrado";
+  };
+
+  // Función para manejar cambios
+  const manejarCambio = (campo: string, valor: string) => {
+    setValoresActualizados(prev => ({ ...prev, [campo]: valor }));
+    handleActualizarAtributos(campo, valor);
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -57,7 +73,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="numero-medidor"
-            defaultValue={ficha.nromed || "No registrado"}
+            value={obtenerValor("nromed", ficha.nromed)}
             className={`h-8 text-xs text-white
               ${!vistaSupervision ?
                 "" :
@@ -65,6 +81,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"
               }`}
+            onChange={(e) => manejarCambio("nromed", e.target.value)}
           />
         </div>
 
@@ -75,8 +92,9 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="ano"
-            defaultValue={ficha.anio || "No registrado"}
+            value={obtenerValor("anio", ficha.anio)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("anio", e.target.value)}
           />
         </div>
 
@@ -87,8 +105,9 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="lectura-medidor"
-            defaultValue={ficha.lecturaultima?.toString() || "No registrado"}
+            value={obtenerValor("lecturaultima", ficha.lecturaultima)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("lecturaultima", e.target.value)}
           />
         </div>
 
@@ -99,8 +118,9 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="numero-medidor-sistema"
-            defaultValue={ficha.nromed_new || "No registrado"}
+            value={obtenerValor("nromed_new", ficha.nromed_new)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("nromed_new", e.target.value)}
           />
         </div>
 
@@ -111,8 +131,9 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="fecha-instalacion"
-            defaultValue={ficha.fechainstalacion?.toString() || "No registrado"}
+            value={obtenerValor("fechainstalacion", ficha.fechainstalacion)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("fechainstalacion", e.target.value)}
           />
         </div>
 
@@ -123,9 +144,10 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={marcas}
-            value={ficha.marcamed || ""}
+            value={obtenerValor("marcamed", ficha.marcamed)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("marcamed", e.toString())}
           />
         </div>
 
@@ -136,9 +158,10 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={diametros}
-            value={ficha.coddiametro_m || ""}
+            value={obtenerValor("coddiametro_m", ficha.coddiametro_m)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("coddiametro_m", e.toString())}
           />
         </div>
 
@@ -149,13 +172,14 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="lectura"
-            defaultValue={ficha.lectura || "No registrado"}
+            value={obtenerValor("lectura", ficha.lectura)}
             className={`bg-muted h-8 text-xs text-white
               ${!vistaSupervision ?
                 "" :
                 !(ficha.lectura == "No atributos") ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}
+            onChange={(e) => manejarCambio("lectura", e.target.value)}
           />
         </div>
 
@@ -166,7 +190,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={tipoFacturacion}
-            value={ficha.tipofacturacion || ""}
+            value={obtenerValor("tipofacturacion", ficha.tipofacturacion)}
             placeholder="No registrado"
             className={`bg-muted h-8 text-xs text-white
               ${!vistaSupervision ?
@@ -174,6 +198,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
                 !(ficha.tipofacturacion == "No atributos") ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}
+            onChange={(e) => manejarCambio("tipofacturacion", e.toString())}
           />
         </div>
 
@@ -184,9 +209,10 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={tipoLectura}
-            value={ficha.tipolectura || ""}
+            value={obtenerValor("tipolectura", ficha.tipolectura)}
             placeholder="Seleccionar tipo"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tipolectura", e.toString())}
           />
         </div>
 
@@ -197,7 +223,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={estadoMedidor}
-            value={ficha.estadomed || ""}
+            value={obtenerValor("estadomed", ficha.estadomed)}
             placeholder="No registrado"
             className={`bg-muted h-8 text-xs text-white
               ${!vistaSupervision ?
@@ -205,6 +231,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
                 !(ficha.estadomed == "No atributos") ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}
+            onChange={(e) => manejarCambio("estadomed", e.toString())}
           />
         </div>
 
@@ -215,9 +242,10 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={opcionesSiNo}
-            value={ficha.medidoroperativo || ""}
+            value={obtenerValor("medidoroperativo", ficha.medidoroperativo)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("medidoroperativo", e.toString())}
           />
         </div>
 
@@ -228,9 +256,10 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={opcionesSiNo}
-            value={ficha.tienemedidor || ""}
+            value={obtenerValor("tienemedidor", ficha.tienemedidor)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tienemedidor", e.toString())}
           />
         </div>
       </div>

@@ -117,6 +117,10 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
   const [vistaSupervision, setVistaSupervision] = useState(false);
   const [inspector, setInspector] = useState<Inspector | null>(null);
   const [modificador, setModificador] = useState<Usuario | null>(null);
+
+  // diccionario de atributos que se van a actualizar de la ficha catastral
+  const [atributosActualizar, setAtributosActualizar] = useState<{ [key: string]: string }>({});
+
   useEffect(() => {
     const cargarFicha = async () => {
       if (!codFicha) return;
@@ -184,6 +188,10 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
     }
   }
 
+  const handleActualizarAtributos = (atributo: string, valor: string) => {
+    setAtributosActualizar({ ...atributosActualizar, [atributo]: valor });
+  }
+
   const handleObservar = () => {
     // TODO: Implementar lógica para observar ficha
     console.log("Observar ficha:", ficha?.idficha);
@@ -197,9 +205,11 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
   const handleGuardar = () => {
     // TODO: Implementar lógica para guardar ficha
     console.log("Guardar ficha:", ficha?.idficha);
+    console.log("Atributos a actualizar:", atributosActualizar);
   }
 
   const handleCancelar = () => {
+    setAtributosActualizar({});
     // TODO: Implementar lógica para cancelar
     console.log("Cancelar cambios");
   }
@@ -355,6 +365,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
                 ficha={ficha}
                 cliente={cliente}
                 vistaSupervision={vistaSupervision}
+                handleActualizarAtributos={handleActualizarAtributos}
               />
             )}
           </CardContent>

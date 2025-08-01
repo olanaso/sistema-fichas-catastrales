@@ -32,9 +32,13 @@ interface DatosConexionAguaProps {
   ficha: FichaCatastro;
   cliente: Cliente | null;
   vistaSupervision: boolean;
+  handleActualizarAtributos: (atributo: string, valor: string) => void;
 }
 
-export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: DatosConexionAguaProps) {
+export default function DatosConexionAgua({ ficha, cliente, vistaSupervision, handleActualizarAtributos }: DatosConexionAguaProps) {
+  // Estado local para manejar los valores actualizados
+  const [valoresActualizados, setValoresActualizados] = useState<{ [key: string]: string }>({});
+
   const [estadoServicio, setEstadoServicio] = useState<ComboboxOption[]>([]);
   const [pavimentacion, setPavimentacion] = useState<ComboboxOption[]>([]);
   const [vereda, setVereda] = useState<ComboboxOption[]>([]);
@@ -134,6 +138,19 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
     });
   }, []);
 
+  // Función para obtener el valor actual (del estado local o de ficha)
+  const obtenerValor = (campo: string, valorOriginal: string | number | null | undefined) => {
+    return valoresActualizados[campo] !== undefined 
+      ? valoresActualizados[campo] 
+      : valorOriginal?.toString() || "No registrado";
+  };
+
+  // Función para manejar cambios
+  const manejarCambio = (campo: string, valor: string) => {
+    setValoresActualizados(prev => ({ ...prev, [campo]: valor }));
+    handleActualizarAtributos(campo, valor);
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -144,7 +161,7 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={estadoServicio}
-            value={ficha.estadoservicio || ""}
+            value={obtenerValor("estadoservicio", ficha.estadoservicio)}
             placeholder="No registrado"
             className={`h-8 text-xs text-white
               ${!vistaSupervision ?
@@ -152,6 +169,7 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
                 !(cliente?.estadoservicio_a == ficha.estadoservicio) ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}
+            onChange={(e) => manejarCambio("estadoservicio", e.toString())}
           />
         </div>
 
@@ -162,9 +180,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={pavimentacion}
-            value={ficha.pavconagu_a || ""}
+            value={obtenerValor("pavconagu_a", ficha.pavconagu_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("pavconagu_a", e.toString())}
           />
         </div>
 
@@ -175,9 +194,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={vereda}
-            value={ficha.vereda_a || ""}
+            value={obtenerValor("vereda_a", ficha.vereda_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("vereda_a", e.toString())}
           />
         </div>
 
@@ -188,9 +208,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={diametros}
-            value={ficha.coddiametro_a || ""}
+            value={obtenerValor("coddiametro_a", ficha.coddiametro_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("coddiametro_a", e.toString())}
           />
         </div>
 
@@ -201,9 +222,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={tipoMaterial}
-            value={ficha.tipomaterial_a || ""}
+            value={obtenerValor("tipomaterial_a", ficha.tipomaterial_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tipomaterial_a", e.toString())}
           />
         </div>
 
@@ -214,9 +236,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={tipoIngreso}
-            value={ficha.tipoingreso || ""}
+            value={obtenerValor("tipoingreso", ficha.tipoingreso)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tipoingreso", e.toString())}
           />
         </div>
 
@@ -227,9 +250,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={tipoCaja}
-            value={ficha.tipocaja_a || ""}
+            value={obtenerValor("tipocaja_a", ficha.tipocaja_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tipocaja_a", e.toString())}
           />
         </div>
 
@@ -240,9 +264,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={localizacionCaja}
-            value={ficha.loccaja_a || ""}
+            value={obtenerValor("loccaja_a", ficha.loccaja_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("loccaja_a", e.toString())}
           />
         </div>
 
@@ -253,9 +278,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={estadoCaja}
-            value={ficha.estadocaja_a || ""}
+            value={obtenerValor("estadocaja_a", ficha.estadocaja_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("estadocaja_a", e.toString())}
           />
         </div>
 
@@ -266,9 +292,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={tipoTapa}
-            value={ficha.tipotapa_a || ""}
+            value={obtenerValor("tipotapa_a", ficha.tipotapa_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tipotapa_a", e.toString())}
           />
         </div>
 
@@ -279,9 +306,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={estadoTapa}
-            value={ficha.esttapa_a || ""}
+            value={obtenerValor("esttapa_a", ficha.esttapa_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("esttapa_a", e.toString())}
           />
         </div>
 
@@ -292,9 +320,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={llaves}
-            value={ficha.llavemed || ""}
+            value={obtenerValor("llavemed", ficha.llavemed)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("llavemed", e.toString())}
           />
         </div>
 
@@ -305,9 +334,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={posicionMedidor}
-            value={ficha.posicionmed || ""}
+            value={obtenerValor("posicionmed", ficha.posicionmed)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("posicionmed", e.toString())}
           />
         </div>
 
@@ -318,9 +348,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={tipoCorte}
-            value={ficha.tipocorte_a || ""}
+            value={obtenerValor("tipocorte_a", ficha.tipocorte_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tipocorte_a", e.toString())}
           />
         </div>
 
@@ -331,8 +362,9 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <Input
             id="razon-corte"
-            defaultValue={ficha.tipocerrado || "No registrado"}
+            value={obtenerValor("tipocerrado", ficha.tipocerrado)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tipocerrado", e.target.value)}
           />
         </div>
 
@@ -343,9 +375,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={fugas}
-            value={ficha.tipofugas_a || ""}
+            value={obtenerValor("tipofugas_a", ficha.tipofugas_a)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tipofugas_a", e.toString())}
           />
         </div>
 
@@ -356,9 +389,10 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision }: 
           </Label>
           <ComboboxControlled
             options={cajaObservacion}
-            value={ficha.tipocajaobserv || ""}
+            value={obtenerValor("tipocajaobserv", ficha.tipocajaobserv)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tipocajaobserv", e.toString())}
           />
         </div>
       </div>

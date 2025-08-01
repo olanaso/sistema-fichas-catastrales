@@ -14,9 +14,12 @@ interface DatosConexionDesagueProps {
   ficha: FichaCatastro;
   cliente: Cliente | null;
   vistaSupervision: boolean;
+  handleActualizarAtributos: (atributo: string, valor: string) => void;
 }
 
-export default function DatosConexionDesague({ ficha, cliente, vistaSupervision }: DatosConexionDesagueProps) {
+export default function DatosConexionDesague({ ficha, cliente, vistaSupervision, handleActualizarAtributos }: DatosConexionDesagueProps) {
+  // Estado local para manejar los valores actualizados
+  const [valoresActualizados, setValoresActualizados] = useState<{ [key: string]: string }>({});
 
   const [tipoLocalizacionCaja, setTipoLocalizacionCaja] = useState<ComboboxOption[]>([]);
   const [tipoCaja, setTipoCaja] = useState<ComboboxOption[]>([]);
@@ -58,6 +61,19 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
     });
   }, []);
 
+  // Función para obtener el valor actual (del estado local o de ficha)
+  const obtenerValor = (campo: string, valorOriginal: string | number | null | undefined) => {
+    return valoresActualizados[campo] !== undefined 
+      ? valoresActualizados[campo] 
+      : valorOriginal?.toString() || "No registrado";
+  };
+
+  // Función para manejar cambios
+  const manejarCambio = (campo: string, valor: string) => {
+    setValoresActualizados(prev => ({ ...prev, [campo]: valor }));
+    handleActualizarAtributos(campo, valor);
+  };
+
   return (
     <div className=" overflow-y-auto">
       <div className="rounded-lg">
@@ -70,7 +86,7 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
               </Label>
               <ComboboxControlled
                 options={tipoEstadoServicio}
-                value={ficha.situacionconex_d || ""}
+                value={obtenerValor("situacionconex_d", ficha.situacionconex_d)}
                 placeholder="No registrado"
                 className={`h-8 text-xs text-white
                   ${!vistaSupervision ?
@@ -78,6 +94,7 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
                     !(cliente?.estadoservicio_d == ficha.situacionconex_d) ?
                     "dark:bg-red-500 bg-red-500" :
                     "dark:bg-green-500 bg-green-500"}`}
+                onChange={(e) => manejarCambio("situacionconex_d", e.toString())}
               />
             </div>
 
@@ -87,9 +104,10 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
               </Label>
               <ComboboxControlled
                 options={tipoDiametro}
-                value={ficha.coddiametro_d || ""}
+                value={obtenerValor("coddiametro_d", ficha.coddiametro_d)}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
+                onChange={(e) => manejarCambio("coddiametro_d", e.toString())}
               />
             </div>
           </div>
@@ -102,9 +120,10 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
               </Label>
               <ComboboxControlled
                 options={tipoMaterial}
-                value={ficha.tipomaterial_d || ""}
+                value={obtenerValor("tipomaterial_d", ficha.tipomaterial_d)}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
+                onChange={(e) => manejarCambio("tipomaterial_d", e.toString())}
               />
             </div>
 
@@ -114,9 +133,10 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
               </Label>
               <ComboboxControlled
                 options={tipoCaja}
-                value={ficha.tipocaja_d || ""}
+                value={obtenerValor("tipocaja_d", ficha.tipocaja_d)}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
+                onChange={(e) => manejarCambio("tipocaja_d", e.toString())}
               />
             </div>
 
@@ -126,9 +146,10 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
               </Label>
               <ComboboxControlled
                 options={tipoLocalizacionCaja}
-                value={ficha.loccaja_d || ""}
+                value={obtenerValor("loccaja_d", ficha.loccaja_d)}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
+                onChange={(e) => manejarCambio("loccaja_d", e.toString())}
               />
             </div>
           </div>
@@ -141,9 +162,10 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
               </Label>
               <ComboboxControlled
                 options={tipoEstadoCaja}
-                value={ficha.estadocaja_d || ""}
+                value={obtenerValor("estadocaja_d", ficha.estadocaja_d)}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
+                onChange={(e) => manejarCambio("estadocaja_d", e.toString())}
               />
             </div>
 
@@ -153,9 +175,10 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
               </Label>
               <ComboboxControlled
                 options={tipoTapa}
-                value={ficha.tipotapa_d || ""}
+                value={obtenerValor("tipotapa_d", ficha.tipotapa_d)}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
+                onChange={(e) => manejarCambio("tipotapa_d", e.toString())}
               />
             </div>
 
@@ -165,9 +188,10 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
               </Label>
               <ComboboxControlled
                 options={tipoEstadoTapa}
-                value={ficha.esttapa_d || ""}
+                value={obtenerValor("esttapa_d", ficha.esttapa_d)}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
+                onChange={(e) => manejarCambio("esttapa_d", e.toString())}
               />
             </div>
           </div>
@@ -180,9 +204,10 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision 
               </Label>
               <ComboboxControlled
                 options={tipoFugas}
-                value={ficha.fugasdesague || ""}
+                value={obtenerValor("fugasdesague", ficha.fugasdesague)}
                 placeholder="No registrado"
                 className="h-8 text-xs mt-1"
+                onChange={(e) => manejarCambio("fugasdesague", e.toString())}
               />
             </div>
           </div>

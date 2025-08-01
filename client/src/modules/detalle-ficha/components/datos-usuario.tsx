@@ -26,9 +26,13 @@ interface DatosUsuarioProps {
   ficha: FichaCatastro;
   cliente: Cliente | null;
   vistaSupervision: boolean;
+  handleActualizarAtributos: (atributo: string, valor: string) => void;
 }
 
-export default function DatosUsuario({ ficha, cliente, vistaSupervision }: DatosUsuarioProps) {
+export default function DatosUsuario({ ficha, cliente, vistaSupervision, handleActualizarAtributos }: DatosUsuarioProps) {
+  // Estado local para manejar los valores actualizados
+  const [valoresActualizados, setValoresActualizados] = useState<{ [key: string]: string }>({});
+
   const [tipoUsuario, setTipoUsuario] = useState<ComboboxOption[]>([]);
   const [tipoResponsable, setTipoResponsable] = useState<ComboboxOption[]>([]);
   const [tipoCategoria, setTipoCategoria] = useState<ComboboxOption[]>([]);
@@ -79,6 +83,19 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
     // });
   }, []);
 
+  // Función para obtener el valor actual (del estado local o de ficha)
+  const obtenerValor = (campo: string, valorOriginal: string | number | null | undefined) => {
+    return valoresActualizados[campo] !== undefined 
+      ? valoresActualizados[campo] 
+      : valorOriginal?.toString() || "No registrado";
+  };
+
+  // Función para manejar cambios
+  const manejarCambio = (campo: string, valor: string) => {
+    setValoresActualizados(prev => ({ ...prev, [campo]: valor }));
+    handleActualizarAtributos(campo, valor);
+  };
+
   return (
     <div className="space-y-4">
       {/* Información del usuario */}
@@ -90,7 +107,7 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={tipoUsuario}
-            value={ficha.tipousuario || "ACTIVO"}
+            value={obtenerValor("tipousuario", ficha.tipousuario)}
             placeholder="No registrado"
             className={`h-8 text-xs text-white
               ${!vistaSupervision ?
@@ -98,6 +115,7 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
                 !(cliente?.tipousuario == ficha.tipousuario) ?
                   "dark:bg-red-500 bg-red-500" :
                   "dark:bg-green-500 bg-green-500"}`}
+            onChange={(e) => manejarCambio("tipousuario", e.toString())}
           />
         </div>
 
@@ -108,8 +126,9 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="nombres"
-            defaultValue={ficha.propietario || "No registrado"}
+            value={obtenerValor("propietario", ficha.propietario)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("propietario", e.target.value)}
           />
         </div>
 
@@ -120,8 +139,9 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="dni"
-            defaultValue={ficha.dni || "No registrado"}
+            value={obtenerValor("dni", ficha.dni)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("dni", e.target.value)}
           />
         </div>
 
@@ -132,8 +152,9 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="habitantes"
-            defaultValue={ficha.habitantes || "No registrado"}
+            value={obtenerValor("habitantes", ficha.habitantes)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("habitantes", e.target.value)}
           />
         </div>
 
@@ -144,9 +165,10 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={tipoResponsable}
-            value={ficha.tiporesponsable || ""}
+            value={obtenerValor("tiporesponsable", ficha.tiporesponsable)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("tiporesponsable", e.toString())}
           />
         </div>
 
@@ -157,8 +179,9 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="telefono"
-            defaultValue={ficha.celular || "No registrado"}
+            value={obtenerValor("celular", ficha.celular)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("celular", e.target.value)}
           />
         </div>
 
@@ -169,8 +192,9 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="contrato"
-            defaultValue={ficha.nrocontrato || "No registrado"}
+            value={obtenerValor("nrocontrato", ficha.nrocontrato)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("nrocontrato", e.target.value)}
           />
         </div>
 
@@ -181,8 +205,9 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="reservorio"
-            defaultValue={ficha.codreservorio?.toString() || "No registrado"}
+            value={obtenerValor("codreservorio", ficha.codreservorio)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("codreservorio", e.target.value)}
           />
         </div>
 
@@ -193,9 +218,10 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={tipoResponsable}
-            value={ficha.codsectorabast || "No registrado"}
+            value={obtenerValor("codsectorabast", ficha.codsectorabast)}
             placeholder="No registrado"
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("codsectorabast", e.toString())}
           />
         </div>
 
@@ -206,7 +232,7 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <ComboboxControlled
             options={tipoCategoria}
-            value={ficha.catetar_new || "No registrado"}
+            value={obtenerValor("catetar_new", ficha.catetar_new)}
             placeholder="No registrado"
             className={`h-8 text-xs text-white
               ${!vistaSupervision ?
@@ -214,6 +240,7 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
                 !(cliente?.catetar == ficha.catetar_new) ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}
+            onChange={(e) => manejarCambio("catetar_new", e.toString())}
           />
         </div>
 
@@ -224,8 +251,9 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision }: Datos
           </Label>
           <Input
             id="razon-social"
-            defaultValue={ficha.razonsocial || "No registrado"}
+            value={obtenerValor("razonsocial", ficha.razonsocial)}
             className="h-8 text-xs"
+            onChange={(e) => manejarCambio("razonsocial", e.target.value)}
           />
         </div>
       </div>
