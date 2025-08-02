@@ -63,7 +63,7 @@ public class FichaCatastralController {
         this.fichasService = fichasService;
     }
 
-    @GetMapping("/docx3")
+    @GetMapping("/docx")
     public ResponseEntity<byte[]> generarWord3(
             @RequestParam(defaultValue = "10") int codcliente
     ) {
