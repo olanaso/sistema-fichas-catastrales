@@ -130,14 +130,6 @@ export default function ImagenesAdjuntas({ ficha, cliente, handleActualizarAtrib
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
           <div className="text-gray-400 mb-2">📷</div>
           <p className="text-sm text-gray-500">No hay fotografía</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full mt-2"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            Seleccionar...
-          </Button>
         </div>
       );
     }
@@ -148,14 +140,6 @@ export default function ImagenesAdjuntas({ ficha, cliente, handleActualizarAtrib
           <div className="text-gray-400 mb-2">📄</div>
           <p className="text-sm text-gray-500">No es una imagen</p>
           <p className="text-xs text-gray-400">Archivo: {imagen.nombreArchivo}</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full mt-2"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            Seleccionar...
-          </Button>
         </div>
       );
     }

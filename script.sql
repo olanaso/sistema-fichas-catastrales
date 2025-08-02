@@ -521,6 +521,7 @@ ALTER TABLE fichacatastral.usp_padronhistorico ALTER COLUMN codpadron TYPE SERIA
 --MODIFICACIÓN DE TABLA FICHA PARA ESTADO DE FICHA OBSERVADA ---
 ALTER TABLE fichacatastral.fichacatastro_eps ADD fechaobservacion timestamp NULL;
 ALTER TABLE fichacatastral.fichacatastro_eps ADD detalleobservacion varchar(255) NULL;
+ALTER TABLE fichacatastral.fichacatastro_eps ADD asignado_accioncomercial varchar(3) NULL;
 
 
 

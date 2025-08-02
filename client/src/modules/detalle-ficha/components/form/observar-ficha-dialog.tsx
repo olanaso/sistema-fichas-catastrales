@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Loader2, AlertTriangle, Eye } from "lucide-react";
 import { CustomDialog } from "@/components/custom/dialog";
+import { observarFicha } from "../../action/detalle-ficha.action";
 
 // Schema de validación para el formulario de observación
 const observarFichaSchema = z.object({
@@ -29,12 +30,14 @@ interface ObservarFichaDialogProps {
   isOpen: boolean;
   onClose: () => void;
   fichaId: number;
+  codUsuario: string;
 }
 
 export default function ObservarFichaDialog({
   isOpen,
   onClose,
   fichaId,
+  codUsuario,
 }: ObservarFichaDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,19 +51,15 @@ export default function ObservarFichaDialog({
   async function onSubmit(values: ObservarFichaFormValues) {
     setIsLoading(true);
     try {
-      const formData = {
-        fichaId,
-        detalleObservacion: values.detalleObservacion,
-      };
-
-      console.log("Observando ficha:", formData);
+      const result = await observarFicha(fichaId, codUsuario, values.detalleObservacion);
       
-      // TODO: Aquí irá la llamada al endpoint
-      // const result = await observarFicha(formData);
-      
-      toast.success("Ficha observada correctamente");
-      form.reset();
-      onClose();
+      if (result.success) {
+        toast.success("Ficha observada correctamente");
+        form.reset();
+        onClose();
+        // Recargar la página para mostrar los cambios
+        window.location.reload();
+      }
     } catch (error) {
       toast.error("Error al observar la ficha");
       console.error("Error observing ficha:", error);

@@ -205,6 +205,245 @@ export async function getTarifas(idficha: number, codcliente: number): Promise<{
             error: error.response?.data?.message || 'Error al obtener las tarifas'
         };
     }
+}
+
+// DTO para registrar unidad de uso
+export interface RegistrarUnidadUsoDto {
+    codcliente: number;
+    tarifa: string;
+    actividad: string;
+    cantidad: string;
+    razonsocial: string;
+    referencia: string;
+    idficha: number;
+}
+
+// Función para registrar una nueva unidad de uso
+export async function registrarUnidadUso(data: RegistrarUnidadUsoDto): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+        const response = await apiClient.post('/fichas-catastrales/unidad-uso/registrar', data);
+        
+        if (response.data && response.data.success) {
+            toast.success(response.data.message || 'Unidad de uso registrada exitosamente');
+            return {
+                success: true,
+                message: response.data.message
+            };
+        } else {
+            toast.error(response.data?.message || 'Error al registrar la unidad de uso');
+            return {
+                success: false,
+                error: response.data?.message || 'Error al registrar la unidad de uso'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al registrar unidad de uso:', error);
+        const errorMessage = error.response?.data?.message || 'Error al registrar la unidad de uso';
+        toast.error(errorMessage);
+        return {
+            success: false,
+            error: errorMessage
+        };
+    }
+}
+
+// Función para eliminar unidad de uso por item
+export async function eliminarUnidadUsoPorItem(item: string, idficha: number): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+        const response = await apiClient.delete(`/fichas-catastrales/unidad-uso/eliminar-por-item?item=${item}&idficha=${idficha}`);
+        
+        if (response.data && response.data.success) {
+            toast.success(response.data.message || 'Unidad de uso eliminada exitosamente');
+            return {
+                success: true,
+                message: response.data.message
+            };
+        } else {
+            toast.error(response.data?.message || 'Error al eliminar la unidad de uso');
+            return {
+                success: false,
+                error: response.data?.message || 'Error al eliminar la unidad de uso'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al eliminar unidad de uso:', error);
+        const errorMessage = error.response?.data?.message || 'Error al eliminar la unidad de uso';
+        toast.error(errorMessage);
+        return {
+            success: false,
+            error: errorMessage
+        };
+    }
+}
+
+// Función para eliminar todas las unidades de uso de una ficha
+export async function eliminarUnidadUsoPorFicha(idficha: number): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+        const response = await apiClient.delete(`/fichas-catastrales/unidad-uso/eliminar-por-ficha?idficha=${idficha}`);
+        
+        if (response.data && response.data.success) {
+            toast.success(response.data.message || 'Unidades de uso eliminadas exitosamente');
+            return {
+                success: true,
+                message: response.data.message
+            };
+        } else {
+            toast.error(response.data?.message || 'Error al eliminar las unidades de uso');
+            return {
+                success: false,
+                error: response.data?.message || 'Error al eliminar las unidades de uso'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al eliminar unidades de uso:', error);
+        const errorMessage = error.response?.data?.message || 'Error al eliminar las unidades de uso';
+        toast.error(errorMessage);
+        return {
+            success: false,
+            error: errorMessage
+        };
+    }
+}
+
+// DTO para actualizar ficha catastral
+export interface ActualizarFichaDto {
+    idficha: number;
+    columnas: string[];
+    valores: string[];
+}
+
+// Función para actualizar ficha catastral
+export async function actualizarFichaCatastro(data: ActualizarFichaDto): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+        const response = await apiClient.put('/fichas-catastrales/actualizar', data);
+        
+        if (response.data && response.data.success) {
+            toast.success(response.data.message || 'Ficha catastral actualizada exitosamente');
+            return {
+                success: true,
+                message: response.data.message
+            };
+        } else {
+            toast.error(response.data?.message || 'Error al actualizar la ficha catastral');
+            return {
+                success: false,
+                error: response.data?.message || 'Error al actualizar la ficha catastral'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al actualizar ficha catastral:', error);
+        const errorMessage = error.response?.data?.message || 'Error al actualizar la ficha catastral';
+        toast.error(errorMessage);
+        return {
+            success: false,
+            error: errorMessage
+        };
+    }
+}
+
+// Función para establecer ficha como parcial
+export async function establecerFichaParcial(idficha: number, codUsuario: string): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+        const data: ActualizarFichaDto = {
+            idficha,
+            columnas: ['estadoficha', 'fechamodificacion', 'usermodificador'],
+            valores: ['P', 'now()', codUsuario]
+        };
+
+        const response = await apiClient.put('/fichas-catastrales/actualizar', data);
+        
+        if (response.data && response.data.success) {
+            toast.success('Ficha establecida como parcial exitosamente');
+            return {
+                success: true,
+                message: response.data.message
+            };
+        } else {
+            toast.error(response.data?.message || 'Error al establecer ficha como parcial');
+            return {
+                success: false,
+                error: response.data?.message || 'Error al establecer ficha como parcial'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al establecer ficha como parcial:', error);
+        const errorMessage = error.response?.data?.message || 'Error al establecer ficha como parcial';
+        toast.error(errorMessage);
+        return {
+            success: false,
+            error: errorMessage
+        };
+    }
+}
+
+// Función para finalizar ficha
+export async function finalizarFicha(idficha: number, codUsuario: string): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+        const data: ActualizarFichaDto = {
+            idficha,
+            columnas: ['estadoficha', 'fechaaprobacion', 'usermodificador', 'fichaaprobada'],
+            valores: ['F', 'now()', codUsuario, '1']
+        };
+
+        const response = await apiClient.put('/fichas-catastrales/actualizar', data);
+        
+        if (response.data && response.data.success) {
+            toast.success('Ficha finalizada exitosamente');
+            return {
+                success: true,
+                message: response.data.message
+            };
+        } else {
+            toast.error(response.data?.message || 'Error al finalizar la ficha');
+            return {
+                success: false,
+                error: response.data?.message || 'Error al finalizar la ficha'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al finalizar ficha:', error);
+        const errorMessage = error.response?.data?.message || 'Error al finalizar la ficha';
+        toast.error(errorMessage);
+        return {
+            success: false,
+            error: errorMessage
+        };
+    }
+}
+
+// Función para observar ficha
+export async function observarFicha(idficha: number, codUsuario: string, observacion: string): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+        const data: ActualizarFichaDto = {
+            idficha,
+            columnas: ['estadoficha', 'fechaobservacion', 'usermodificador', 'detalleobservacion'],
+            valores: ['O', 'now()', codUsuario, observacion]
+        };
+
+        const response = await apiClient.put('/fichas-catastrales/actualizar', data);
+        
+        if (response.data && response.data.success) {
+            toast.success('Ficha observada exitosamente');
+            return {
+                success: true,
+                message: response.data.message
+            };
+        } else {
+            toast.error(response.data?.message || 'Error al observar la ficha');
+            return {
+                success: false,
+                error: response.data?.message || 'Error al observar la ficha'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al observar ficha:', error);
+        const errorMessage = error.response?.data?.message || 'Error al observar la ficha';
+        toast.error(errorMessage);
+        return {
+            success: false,
+            error: errorMessage
+        };
+    }
 } 
 
 

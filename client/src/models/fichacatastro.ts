@@ -207,6 +207,11 @@ export interface FichaCatastro {
     codmza?: string;
     nrolote?: string;
     nrosublote?: string;
+
+    // Nuevos campos
+    asignado_accioncomercial?: string;
+    fechaobservacion?: Date | string;
+    detalleobservacion?: string;
 }
 
 // ====================
@@ -253,6 +258,11 @@ export interface FichaCatastroDto {
     estareg: number;
     fechareg?: string;
     fechamodificacion?: string;
+
+    // Nuevos campos
+    asignado_accioncomercial?: string;
+    fechaobservacion?: Date | string;
+    detalleobservacion?: string;
 }
 
 // ====================

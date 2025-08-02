@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader2, Trash2, AlertTriangle } from "lucide-react";
 import { CustomDialog } from "@/components/custom/dialog";
+import { eliminarUnidadUsoPorItem } from "../../action/detalle-ficha.action";
 
 interface DeleteTarifaDialogProps {
   isOpen: boolean;
   onClose: () => void;
   tarifaId: string | number;
   tarifaNombre: string;
+  idficha: number; // Agregar idficha para la eliminación
+  onTarifaDeleted?: () => void; // Callback para actualizar la lista de tarifas
 }
 
 export default function DeleteTarifaDialog({
@@ -18,21 +21,28 @@ export default function DeleteTarifaDialog({
   onClose,
   tarifaId,
   tarifaNombre,
+  idficha,
+  onTarifaDeleted,
 }: DeleteTarifaDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = async () => {
     setIsLoading(true);
     try {
-      console.log("Eliminando tarifa:", { tarifaId, tarifaNombre });
+      console.log("Eliminando tarifa:", { tarifaId, tarifaNombre, idficha });
       
-      // TODO: Aquí irá la llamada al endpoint
-      // const result = await deleteTarifa(tarifaId);
+      // Llamar a la API para eliminar la unidad de uso
+      const result = await eliminarUnidadUsoPorItem(tarifaId.toString(), idficha);
       
-      toast.success("Tarifa eliminada correctamente");
-      onClose();
+      if (result.success) {
+        onClose();
+        
+        // Actualizar la lista de tarifas si se proporciona el callback
+        if (onTarifaDeleted) {
+          onTarifaDeleted();
+        }
+      }
     } catch (error) {
-      toast.error("Error al eliminar la tarifa");
       console.error("Error deleting tarifa:", error);
     } finally {
       setIsLoading(false);

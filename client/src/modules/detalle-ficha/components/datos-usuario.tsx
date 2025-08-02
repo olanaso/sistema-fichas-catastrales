@@ -97,11 +97,18 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision, handleA
         }
       });
     }
+  }, [ficha.idficha, ficha.codcliente]);
 
-    // getData("sectorabastecimiento").then((res) => {
-    //   setSectorAbastecimiento(res.data.map((tipo: ) => ({ value: tipo.sectorabastecimiento, label: tipo.descripcion })));
-    // });
-  }, []);
+  // Función para actualizar la lista de tarifas
+  const actualizarTarifas = () => {
+    if (ficha.idficha && ficha.codcliente) {
+      getTarifas(ficha.idficha, ficha.codcliente).then((res) => {
+        if (res.success && res.data) {
+          setTarifas(res.data);
+        }
+      });
+    }
+  };
 
   // Función para obtener el valor actual (del estado local o de ficha)
   const obtenerValor = (campo: string, valorOriginal: string | number | null | undefined) => {
@@ -409,6 +416,7 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision, handleA
          creador={ficha.creador || ""}
          codcliente={ficha.codcliente}
          idficha={ficha.idficha}
+         onTarifaAdded={actualizarTarifas}
        />
 
        {selectedTarifa && (
@@ -417,6 +425,8 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision, handleA
            onClose={handleCloseDeleteDialog}
            tarifaId={selectedTarifa.item || 0}
            tarifaNombre={selectedTarifa.nombre_tarifa || "Tarifa sin nombre"}
+           idficha={ficha.idficha}
+           onTarifaDeleted={actualizarTarifas}
          />
        )}
      </div>

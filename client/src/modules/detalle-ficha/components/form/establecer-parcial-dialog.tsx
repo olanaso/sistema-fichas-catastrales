@@ -3,39 +3,39 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Loader2, CheckCircle, AlertTriangle } from "lucide-react";
+import { Loader2, Clock, AlertTriangle } from "lucide-react";
 import { CustomDialog } from "@/components/custom/dialog";
-import { finalizarFicha } from "../../action/detalle-ficha.action";
+import { establecerFichaParcial } from "../../action/detalle-ficha.action";
 
-interface AprobarFichaDialogProps {
+interface EstablecerParcialDialogProps {
   isOpen: boolean;
   onClose: () => void;
   fichaId: number;
   codUsuario: string;
 }
 
-export default function AprobarFichaDialog({
+export default function EstablecerParcialDialog({
   isOpen,
   onClose,
   fichaId,
   codUsuario,
-}: AprobarFichaDialogProps) {
+}: EstablecerParcialDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAprobar = async () => {
+  const handleEstablecerParcial = async () => {
     setIsLoading(true);
     try {
-      const result = await finalizarFicha(fichaId, codUsuario);
+      const result = await establecerFichaParcial(fichaId, codUsuario);
       
       if (result.success) {
-        toast.success("Ficha aprobada correctamente");
+        toast.success("Ficha establecida como parcial correctamente");
         onClose();
         // Recargar la página para mostrar los cambios
         window.location.reload();
       }
     } catch (error) {
-      toast.error("Error al aprobar la ficha");
-      console.error("Error approving ficha:", error);
+      toast.error("Error al establecer ficha como parcial");
+      console.error("Error setting ficha as partial:", error);
     } finally {
       setIsLoading(false);
     }
@@ -49,24 +49,24 @@ export default function AprobarFichaDialog({
     <CustomDialog
       open={isOpen}
       onOpenChange={onClose}
-      title="Aprobar ficha catastral"
-      description="¿Está seguro que desea aprobar esta ficha?"
+      title="Establecer ficha como parcial"
+      description="¿Está seguro que desea establecer esta ficha como parcial?"
       size="md"
     >
       <div className="space-y-6">
         {/* Información de confirmación */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 dark:bg-green-900/20 dark:border-green-800">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900/20 dark:border-blue-800">
           <div className="flex items-start space-x-3">
-            <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+            <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <h4 className="text-sm font-medium text-green-800 dark:text-green-200">
-                Ficha a aprobar:
+              <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                Ficha a establecer como parcial:
               </h4>
-              <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+              <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
                 Ficha #{fichaId}
               </p>
-              <p className="text-xs text-green-600 dark:text-green-400 mt-2">
-                Al aprobar la ficha, se marcará como "Finalizada" y no podrá ser modificada posteriormente.
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
+                Al establecer como parcial, la ficha podrá ser evaluada y posteriormente aprobada u observada.
               </p>
             </div>
           </div>
@@ -81,7 +81,7 @@ export default function AprobarFichaDialog({
                 Confirmación requerida:
               </h4>
               <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
-                Asegúrese de que todos los datos de la ficha estén correctos antes de proceder con la aprobación.
+                Esta acción marcará la ficha como "Parcial" y permitirá su evaluación posterior.
               </p>
             </div>
           </div>
@@ -100,19 +100,19 @@ export default function AprobarFichaDialog({
           </Button>
           <Button 
             type="button"
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700"
-            onClick={handleAprobar}
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+            onClick={handleEstablecerParcial}
             disabled={isLoading}
           >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Aprobando...
+                Estableciendo...
               </>
             ) : (
               <>
-                <CheckCircle className="mr-2 h-4 w-4" />
-                Aprobar ficha
+                <Clock className="mr-2 h-4 w-4" />
+                Establecer como parcial
               </>
             )}
           </Button>

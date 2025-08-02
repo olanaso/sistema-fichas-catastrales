@@ -11,6 +11,8 @@ import { TipoAccionComercial, TipoFichaIncompleta, TipoPresionAgua } from "@/mod
 import { ComboboxOption } from "@/types/combobox";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { Cliente } from "@/models/cliente";
+import SeleccionarInspectorDialog from "./form/seleccionar-inspector-dialog";
+import AdvertenciaNingunoDialog from "./form/advertencia-ninguno-dialog";
 
 interface CalidadServicioProps {
   ficha: FichaCatastro;
@@ -25,6 +27,11 @@ export default function CalidadServicio({ ficha, cliente, handleActualizarAtribu
   const [tipoAccionComercial, setTipoAccionComercial] = useState<ComboboxOption[]>([]);
   const [tipoFichaIncompleta, setTipoFichaIncompleta] = useState<ComboboxOption[]>([]);
   const [tipoPresionAgua, setTipoPresionAgua] = useState<ComboboxOption[]>([]);
+
+  // Estados para los diálogos
+  const [showSeleccionarInspectorDialog, setShowSeleccionarInspectorDialog] = useState(false);
+  const [showAdvertenciaNingunoDialog, setShowAdvertenciaNingunoDialog] = useState(false);
+  const [tipoAccionComercialSeleccionado, setTipoAccionComercialSeleccionado] = useState<string>("");
   
 
   useEffect(() => {
@@ -50,6 +57,49 @@ export default function CalidadServicio({ ficha, cliente, handleActualizarAtribu
   const manejarCambio = (campo: string, valor: string) => {
     setValoresActualizados(prev => ({ ...prev, [campo]: valor }));
     handleActualizarAtributos(campo, valor);
+  };
+
+  // Función para manejar cambios en tipo de acción comercial
+  const manejarCambioTipoAccionComercial = (valor: string) => {
+    const valorActual = obtenerValor("tipoacccomercial", ficha.tipoacccomercial);
+    
+    // Si el valor actual es 001 y se cambia a otro, mostrar diálogo de selección de inspector
+    if (valorActual === "001" && valor !== "001" && valor !== "") {
+      setTipoAccionComercialSeleccionado(valor);
+      setShowSeleccionarInspectorDialog(true);
+      return;
+    }
+    
+    // Si se cambia a valor vacío o "ninguno", mostrar diálogo de advertencia
+    if (valor === "" || valor === "ninguno" || valor === "001" || valor === "NONE") {
+      setShowAdvertenciaNingunoDialog(true);
+      return;
+    }
+    
+    // Para otros casos, manejar normalmente
+    manejarCambio("tipoacccomercial", valor);
+  };
+
+  // Función para manejar éxito en asignación de inspector
+  const handleInspectorAsignado = () => {
+    // Recargar la página para mostrar los cambios
+    window.location.reload();
+  };
+
+  // Función para manejar éxito en remoción de acción comercial
+  const handleAccionComercialRemovida = () => {
+    // Recargar la página para mostrar los cambios
+    window.location.reload();
+  };
+
+  // Funciones para cerrar diálogos
+  const handleCloseSeleccionarInspectorDialog = () => {
+    setShowSeleccionarInspectorDialog(false);
+    setTipoAccionComercialSeleccionado("");
+  };
+
+  const handleCloseAdvertenciaNingunoDialog = () => {
+    setShowAdvertenciaNingunoDialog(false);
   };
 
   const servicios = [
@@ -195,7 +245,7 @@ export default function CalidadServicio({ ficha, cliente, handleActualizarAtribu
                   value={obtenerValor("tipoacccomercial", ficha.tipoacccomercial)}
                   placeholder="No registrado"
                   className="h-8 text-xs"
-                  onChange={(e) => manejarCambio("tipoacccomercial", e.toString())}
+                  onChange={(e) => manejarCambioTipoAccionComercial(e.toString())}
                 />
               </div>
             </div>
@@ -252,6 +302,23 @@ export default function CalidadServicio({ ficha, cliente, handleActualizarAtribu
           </div>
         </div>
       </div>
+
+      {/* Diálogos */}
+      <SeleccionarInspectorDialog
+        isOpen={showSeleccionarInspectorDialog}
+        onClose={handleCloseSeleccionarInspectorDialog}
+        fichaId={ficha.idficha}
+        tipoAccionComercial={tipoAccionComercialSeleccionado}
+        onSuccess={handleInspectorAsignado}
+      />
+
+      <AdvertenciaNingunoDialog
+        isOpen={showAdvertenciaNingunoDialog}
+        onClose={handleCloseAdvertenciaNingunoDialog}
+        tipoAccionComercial={tipoAccionComercialSeleccionado}
+        fichaId={ficha.idficha}
+        onSuccess={handleAccionComercialRemovida}
+      />
     </div>
   );
 } 

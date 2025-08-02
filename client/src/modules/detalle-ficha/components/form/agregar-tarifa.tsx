@@ -21,12 +21,11 @@ import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { ComboboxOption } from "@/types/combobox";
 import { Tarifa } from "@/models/tarifas";
 import { buscarExacto } from "@/service/data.actions";
+import { registrarUnidadUso, RegistrarUnidadUsoDto } from "../../action/detalle-ficha.action";
 
 // Schema de validación para el formulario de tarifa
 const addTarifaSchema = z.object({
-  catetar: z.string().min(1, "La categoría es requerida"),
-  nomtar: z.string().min(1, "El nombre de tarifa es requerido"),
-  tipocategoria: z.string().min(1, "El tipo de categoría es requerido"),
+  tarifa: z.string().min(1, "La tarifa es requerida"),
   actividad: z.string().min(1, "La actividad es requerida"),
   cantidad: z.string().min(1, "La cantidad es requerida"),
   razonsocial: z.string().min(1, "La razón social es requerida"),
@@ -44,6 +43,7 @@ interface AddTarifaDialogProps {
   creador: string;
   codcliente: number;
   idficha: number;
+  onTarifaAdded?: () => void; // Callback para actualizar la lista de tarifas
 }
 
 export default function AddTarifaDialog({
@@ -55,6 +55,7 @@ export default function AddTarifaDialog({
   creador,
   codcliente,
   idficha,
+  onTarifaAdded,
 }: AddTarifaDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [tarifas, setTarifas] = useState<ComboboxOption[]>([]);
@@ -73,9 +74,7 @@ export default function AddTarifaDialog({
   const form = useForm<AddTarifaFormValues>({
     resolver: zodResolver(addTarifaSchema),
     defaultValues: {
-      catetar: "",
-      nomtar: "",
-      tipocategoria: "",
+      tarifa: "",
       actividad: "",
       cantidad: "",
       razonsocial: "",
@@ -86,27 +85,32 @@ export default function AddTarifaDialog({
   async function onSubmit(values: AddTarifaFormValues) {
     setIsLoading(true);
     try {
-      // Datos del formulario
-      const formData = {
-        ...values,
-        // Datos agregados al enviar al endpoint
-        codemp,
-        codsuc,
-        creador,
+      // Preparar los datos para la API
+      const unidadUsoData: RegistrarUnidadUsoDto = {
         codcliente,
+        tarifa: values.tarifa, // Usar catetar como tarifa
+        actividad: values.actividad,
+        cantidad: values.cantidad,
+        razonsocial: values.razonsocial,
+        referencia: values.referencia,
         idficha,
       };
 
-      console.log("Datos del formulario a enviar:", formData);
+      console.log("Datos del formulario a enviar:", unidadUsoData);
       
-      // TODO: Aquí irá la llamada al endpoint
-      // const result = await addTarifa(formData);
+      // Llamar a la API para registrar la unidad de uso
+      const result = await registrarUnidadUso(unidadUsoData);
       
-      toast.success("Tarifa agregada correctamente");
-      form.reset();
-      onClose();
+      if (result.success) {
+        form.reset();
+        onClose();
+        
+        // Actualizar la lista de tarifas si se proporciona el callback
+        if (onTarifaAdded) {
+          onTarifaAdded();
+        }
+      }
     } catch (error) {
-      toast.error("Error al agregar la tarifa");
       console.error("Error adding tarifa:", error);
     } finally {
       setIsLoading(false);
@@ -134,7 +138,7 @@ export default function AddTarifaDialog({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="catetar"
+                name="tarifa"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Subcategoría *</FormLabel>

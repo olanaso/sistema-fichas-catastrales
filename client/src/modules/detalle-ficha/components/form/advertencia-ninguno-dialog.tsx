@@ -3,39 +3,44 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Loader2, CheckCircle, AlertTriangle } from "lucide-react";
+import { Loader2, AlertTriangle, X } from "lucide-react";
 import { CustomDialog } from "@/components/custom/dialog";
-import { finalizarFicha } from "../../action/detalle-ficha.action";
+import { actualizarFichaCatastro } from "../../action/detalle-ficha.action";
 
-interface AprobarFichaDialogProps {
+interface AdvertenciaNingunoDialogProps {
   isOpen: boolean;
   onClose: () => void;
   fichaId: number;
-  codUsuario: string;
+  tipoAccionComercial: string;
+  onSuccess: () => void;
 }
 
-export default function AprobarFichaDialog({
+export default function AdvertenciaNingunoDialog({
   isOpen,
   onClose,
   fichaId,
-  codUsuario,
-}: AprobarFichaDialogProps) {
+  tipoAccionComercial,
+  onSuccess,
+}: AdvertenciaNingunoDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAprobar = async () => {
+  const handleConfirmar = async () => {
     setIsLoading(true);
     try {
-      const result = await finalizarFicha(fichaId, codUsuario);
-      
+      const result = await actualizarFichaCatastro({
+        idficha: fichaId,
+        columnas: ["asignado_accioncomercial", "tipoacccomercial"],
+        valores: ["NULL", tipoAccionComercial],
+      });
+
       if (result.success) {
-        toast.success("Ficha aprobada correctamente");
+        toast.success("Acción comercial removida correctamente");
+        onSuccess();
         onClose();
-        // Recargar la página para mostrar los cambios
-        window.location.reload();
       }
     } catch (error) {
-      toast.error("Error al aprobar la ficha");
-      console.error("Error approving ficha:", error);
+      toast.error("Error al remover acción comercial");
+      console.error("Error removing commercial action:", error);
     } finally {
       setIsLoading(false);
     }
@@ -49,24 +54,24 @@ export default function AprobarFichaDialog({
     <CustomDialog
       open={isOpen}
       onOpenChange={onClose}
-      title="Aprobar ficha catastral"
-      description="¿Está seguro que desea aprobar esta ficha?"
+      title="Advertencia - Remover Acción Comercial"
+      description="¿Está seguro que desea remover la acción comercial?"
       size="md"
     >
       <div className="space-y-6">
-        {/* Información de confirmación */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 dark:bg-green-900/20 dark:border-green-800">
+        {/* Información de advertencia */}
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 dark:bg-red-900/20 dark:border-red-800">
           <div className="flex items-start space-x-3">
-            <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <h4 className="text-sm font-medium text-green-800 dark:text-green-200">
-                Ficha a aprobar:
+              <h4 className="text-sm font-medium text-red-800 dark:text-red-200">
+                Acción Comercial:
               </h4>
-              <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                Ficha #{fichaId}
+              <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                Se establecerá como "NINGUNO"
               </p>
-              <p className="text-xs text-green-600 dark:text-green-400 mt-2">
-                Al aprobar la ficha, se marcará como "Finalizada" y no podrá ser modificada posteriormente.
+              <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+                Al confirmar, se removerá la asignación de inspector y se establecerá el tipo de acción comercial como vacío.
               </p>
             </div>
           </div>
@@ -81,7 +86,7 @@ export default function AprobarFichaDialog({
                 Confirmación requerida:
               </h4>
               <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
-                Asegúrese de que todos los datos de la ficha estén correctos antes de proceder con la aprobación.
+                Esta acción actualizará la base de datos removiendo la asignación de inspector y el tipo de acción comercial.
               </p>
             </div>
           </div>
@@ -98,21 +103,22 @@ export default function AprobarFichaDialog({
           >
             Cancelar
           </Button>
-          <Button 
+          <Button
             type="button"
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700"
-            onClick={handleAprobar}
+            variant="destructive"
+            onClick={handleConfirmar}
             disabled={isLoading}
+            className="w-full sm:w-auto"
           >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Aprobando...
+                Guardando...
               </>
             ) : (
               <>
-                <CheckCircle className="mr-2 h-4 w-4" />
-                Aprobar ficha
+                <X className="mr-2 h-4 w-4" />
+                Confirmar Remoción
               </>
             )}
           </Button>
