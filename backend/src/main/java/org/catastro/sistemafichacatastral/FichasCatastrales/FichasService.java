@@ -49,4 +49,20 @@ public class FichasService {
         }
     }
 
+    public String obtenerTarifas(Integer idficha, Integer codcliente) {
+        try {
+            Query query = entityManager.createNativeQuery(
+                    "SELECT fichacatastral.usp_obtener_tarifas(?1, ?2)"
+            );
+            query.setParameter(1, idficha);
+            query.setParameter(2, codcliente);
+
+            Object result = query.getSingleResult();
+            return result != null ? result.toString() : "[]";
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener tarifas: " + e.getMessage(), e);
+        }
+    }
+
 }

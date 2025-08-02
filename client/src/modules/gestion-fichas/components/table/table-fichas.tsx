@@ -51,7 +51,7 @@ export default function TableFichas({
                             Leyenda de Estados
                         </h3>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div className="flex items-center gap-2">
                             <Circle className="w-4 h-4 text-gray-600" />
                             <CustomBadge color="dark" className="text-xs">
@@ -64,19 +64,28 @@ export default function TableFichas({
                         <div className="flex items-center gap-2">
                             <Circle className="w-4 h-4 text-blue-600" />
                             <CustomBadge color="blue" className="text-xs">
-                                EN_PROCESO
+                                PARCIAL
                             </CustomBadge>
                             <span className="text-xs text-muted-foreground">
-                                Fichas en revisión
+                                Fichas en proceso
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Circle className="w-4 h-4 text-orange-600" />
+                            <CustomBadge color="orange" className="text-xs">
+                                OBSERVADO
+                            </CustomBadge>
+                            <span className="text-xs text-muted-foreground">
+                                Fichas observadas
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Circle className="w-4 h-4 text-green-600" />
                             <CustomBadge color="green" className="text-xs">
-                                COMPLETADO
+                                FINALIZADO
                             </CustomBadge>
                             <span className="text-xs text-muted-foreground">
-                                Fichas completadas
+                                Fichas finalizadas
                             </span>
                         </div>
                     </div>

@@ -90,7 +90,7 @@ export default function DatosConexionDesague({ ficha, cliente, vistaSupervision,
                 placeholder="No registrado"
                 className={`h-8 text-xs text-white
                   ${!vistaSupervision ?
-                    "" :
+                    "text-primary" :
                     !(cliente?.estadoservicio_d == ficha.situacionconex_d) ?
                     "dark:bg-red-500 bg-red-500" :
                     "dark:bg-green-500 bg-green-500"}`}
