@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Plus, Trash } from "lucide-react";
-import AddTarifaDialog from "./form/add-tarifa-dialog";
-import DeleteTarifaDialog from "./form/delete-tarifa-dialog";
+import AddTarifaDialog from "./form/agregar-tarifa";
+import DeleteTarifaDialog from "./form/eliminar-tarifa";
 import { FichaCatastro } from "@/models/fichacatastro";
 import { ComboboxOption } from "@/types/combobox";
 import { useEffect, useState } from "react";
@@ -77,11 +77,11 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision, handleA
         }))
       );
     });
-    getData("tipoactividad").then((res) => {
+    buscarExacto("tipoactividad", ["estareg"], ["1"]).then((res) => {
       setTipoActividad(
         res.data.map((tipo: TipoActividad) => ({
           value: tipo.actividad,
-          label: tipo.descripcion,
+          label: tipo.descripcion + " - " + tipo.codprov,
         }))
       );
     });
@@ -338,10 +338,10 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision, handleA
                 <div className="grid grid-cols-6 gap-2 text-xs">
                   <div>
                     <span className="font-medium text-gray-700 dark:text-gray-300">
-                      Categoría:
+                      Subcategoría:
                     </span>
                     <p className="text-gray-600 dark:text-gray-400 truncate">
-                      {tarifa.nombre_categoria || "No registrado"}
+                      {tarifa.nombre_tarifa || "No registrado"}
                     </p>
                   </div>
 
@@ -403,7 +403,6 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision, handleA
        <AddTarifaDialog
          isOpen={showAddDialog}
          onClose={handleCloseAddDialog}
-         categorias={tipoCategoria}
          actividades={tipoActividad}
          codemp={ficha.codemp || ""}
          codsuc={ficha.codsuc || ""}
@@ -416,8 +415,8 @@ export default function DatosUsuario({ ficha, cliente, vistaSupervision, handleA
          <DeleteTarifaDialog
            isOpen={showDeleteDialog}
            onClose={handleCloseDeleteDialog}
-           tarifaId={selectedTarifa.tarifa || 0}
-           tarifaNombre={selectedTarifa.nombre_categoria || "Tarifa sin nombre"}
+           tarifaId={selectedTarifa.item || 0}
+           tarifaNombre={selectedTarifa.nombre_tarifa || "Tarifa sin nombre"}
          />
        )}
      </div>
