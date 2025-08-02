@@ -17,6 +17,8 @@ import {
   getEstadosFichas,
   FiltrosGestionFichas 
 } from "../../action/gestion-fichas.actions";
+import { useFiltrosPersistentes } from "@/hooks/use-filtros-persistentes";
+import { AppliedFiltersBar } from "@/components/custom/applied-filters-bar";
 
 interface FiltrosFichasProps {
   onFiltrar: (filtros: FiltrosGestionFichas) => void;
@@ -30,7 +32,28 @@ export function FiltrosFichas({
   loading: externalLoading = false,
 }: FiltrosFichasProps) {
   const [loading, setLoading] = useState(false);
-  const [filtros, setFiltros] = useState<FiltrosGestionFichas>({
+  const [mostrarFormulario, setMostrarFormulario] = useState(true);
+  
+  // Hook para persistencia de filtros
+  const {
+    filtros,
+    guardarFiltrosAplicados,
+    limpiarFiltros,
+    tieneFiltrosAplicados,
+    isLoaded
+  } = useFiltrosPersistentes<FiltrosGestionFichas>(
+    "gestion-fichas-filtros",
+    {
+      grupo: "",
+      inspector: "",
+      fechaInicio: "",
+      fechaFin: "",
+      estado: "",
+    }
+  );
+
+  // Estado local para el formulario
+  const [filtrosFormulario, setFiltrosFormulario] = useState<FiltrosGestionFichas>({
     grupo: "",
     inspector: "",
     fechaInicio: "",
@@ -68,10 +91,10 @@ export function FiltrosFichas({
   // Cargar inspectores cuando cambie el grupo
   useEffect(() => {
     const cargarInspectores = async () => {
-      if (filtros.grupo)  {
+      if (filtrosFormulario.grupo)  {
         try {
           setLoadingInspectores(true);
-          const inspectoresData = await getInspectoresPorGrupo(filtros.grupo);
+          const inspectoresData = await getInspectoresPorGrupo(filtrosFormulario.grupo);
           setInspectores(inspectoresData);
         } catch (error) {
           console.error("Error al cargar inspectores:", error);
@@ -85,11 +108,11 @@ export function FiltrosFichas({
     };
 
     cargarInspectores();
-  }, [filtros.grupo]);
+  }, [filtrosFormulario.grupo]);
 
   // Actualizar filtros cuando cambien las fechas
   useEffect(() => {
-    setFiltros(prev => ({
+    setFiltrosFormulario(prev => ({
       ...prev,
       fechaInicio: fechaInicio ? format(fechaInicio, 'yyyy-MM-dd') : "",
       fechaFin: fechaFin ? format(fechaFin, 'yyyy-MM-dd') : "",
@@ -97,7 +120,7 @@ export function FiltrosFichas({
   }, [fechaInicio, fechaFin]);
   
   const handleGrupoChange = (value: string | number) => {
-    setFiltros((prev) => ({
+    setFiltrosFormulario((prev) => ({
       ...prev,
       grupo: String(value),
       inspector: "", // Limpiar inspector cuando cambie el grupo
@@ -105,14 +128,14 @@ export function FiltrosFichas({
   };
 
   const handleInspectorChange = (value: string | number) => {
-    setFiltros((prev) => ({
+    setFiltrosFormulario((prev) => ({
       ...prev,
       inspector: String(value),
     }));
   };
 
   const handleEstadoChange = (value: string | number) => {
-    setFiltros((prev) => ({
+    setFiltrosFormulario((prev) => ({
       ...prev,
       estado: String(value),
     }));
@@ -120,15 +143,20 @@ export function FiltrosFichas({
 
   const handleFiltrar = () => {
     const filtrosLimpios = Object.fromEntries(
-      Object.entries(filtros).filter(
+      Object.entries(filtrosFormulario).filter(
         ([_, value]) => value && value.trim() !== ""
       )
     );
+    // Guardar filtros aplicados
+    guardarFiltrosAplicados(filtrosLimpios);
+    // Ocultar formulario
+    setMostrarFormulario(false);
     onFiltrar(filtrosLimpios);
   };
 
   const handleLimpiar = () => {
-    setFiltros({
+    limpiarFiltros();
+    setFiltrosFormulario({
       grupo: "",
       inspector: "",
       fechaInicio: "",
@@ -137,16 +165,29 @@ export function FiltrosFichas({
     });
     setFechaInicio(undefined);
     setFechaFin(undefined);
+    setMostrarFormulario(true);
     onLimpiar();
   };
 
-  const tieneFiltrosAplicados = () => {
+  const handleMostrarFormulario = () => {
+    setMostrarFormulario(true);
+  };
+
+  // Cargar filtros guardados cuando se carga el componente
+  useEffect(() => {
+    if (isLoaded && tieneFiltrosAplicados()) {
+      // Si hay filtros guardados, ocultar el formulario
+      setMostrarFormulario(false);
+    }
+  }, [isLoaded]);
+
+  const tieneFiltrosAplicadosLocal = () => {
     // Si solo hay estado seleccionado, no considerar como filtros aplicados
     const filtrosSinEstado = {
-      grupo: filtros.grupo,
-      inspector: filtros.inspector,
-      fechaInicio: filtros.fechaInicio,
-      fechaFin: filtros.fechaFin,
+      grupo: filtrosFormulario.grupo,
+      inspector: filtrosFormulario.inspector,
+      fechaInicio: filtrosFormulario.fechaInicio,
+      fechaFin: filtrosFormulario.fechaFin,
     };
     
     const tieneOtrosFiltros = Object.values(filtrosSinEstado).some(
@@ -154,19 +195,33 @@ export function FiltrosFichas({
     );
     
     // Si hay fecha inicio, debe haber fecha fin
-    const fechasValidas = !filtros.fechaInicio || (filtros.fechaInicio && filtros.fechaFin);
+    const fechasValidas = !filtrosFormulario.fechaInicio || (filtrosFormulario.fechaInicio && filtrosFormulario.fechaFin);
     
     return tieneOtrosFiltros && fechasValidas;
   };
 
   return (
     <div className="mb-4">
-      <div>
-        <Label className="text-base font-semibold">Filtros</Label>
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 mt-2">
+      {/* Mostrar barra de filtros aplicados si hay filtros guardados y no se muestra el formulario */}
+      {tieneFiltrosAplicados() && !mostrarFormulario && (
+        <AppliedFiltersBar
+          filtros={filtros}
+          onLimpiar={handleLimpiar}
+          onMostrarFormulario={handleMostrarFormulario}
+          grupos={grupos}
+          inspectores={inspectores}
+          estados={estados}
+        />
+      )}
+
+      {/* Mostrar formulario de filtros */}
+      {mostrarFormulario && (
+        <div>
+          <Label className="text-base font-semibold">Filtros</Label>
+          <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 mt-2">
           <ComboboxControlled
             options={grupos}
-            value={filtros.grupo}
+            value={filtrosFormulario.grupo}
             onChange={handleGrupoChange}
             placeholder="Seleccionar..."
             searchPlaceholder="Buscar grupo..."
@@ -178,14 +233,14 @@ export function FiltrosFichas({
 
           <ComboboxControlled
             options={inspectores}
-            value={filtros.inspector}
+            value={filtrosFormulario.inspector}
             onChange={handleInspectorChange}
             placeholder="Seleccionar..."
             searchPlaceholder="Buscar inspector..."
             emptyMessage="No se encontraron inspectores"
             label="Inspector"
             loading={loadingInspectores}
-            disabled={!filtros.grupo || loadingInspectores}
+            disabled={!filtrosFormulario.grupo || loadingInspectores}
           />
 
           <div className="space-y-1">
@@ -257,7 +312,7 @@ export function FiltrosFichas({
 
           <ComboboxControlled
             options={estados}
-            value={filtros.estado}
+            value={filtrosFormulario.estado}
             onChange={handleEstadoChange}
             placeholder="Seleccionar..."
             searchPlaceholder="Buscar estado..."
@@ -272,7 +327,7 @@ export function FiltrosFichas({
               variant="outline"
               size="sm"
               onClick={handleLimpiar}
-              disabled={!tieneFiltrosAplicados() || externalLoading}
+              disabled={!tieneFiltrosAplicadosLocal() || externalLoading}
               className="flex items-center gap-1 h-9 px-3"
             >
               <X className="h-3 w-3" />
@@ -282,7 +337,7 @@ export function FiltrosFichas({
             <Button
               size="sm"
               onClick={handleFiltrar}
-              disabled={!tieneFiltrosAplicados() || externalLoading}
+              disabled={!tieneFiltrosAplicadosLocal() || externalLoading}
               className="flex items-center gap-1 h-9 px-3"
             >
               <Search className="h-3 w-3" />
@@ -293,6 +348,7 @@ export function FiltrosFichas({
           </div>
         </div>
       </div>
+    )}
     </div>
   );
 }
