@@ -1,9 +1,15 @@
 package org.catastro.sistemafichacatastral.fichacatastral;
 
 
+import com.documents4j.api.DocumentType;
+import com.documents4j.api.IConverter;
+import com.documents4j.job.LocalConverter;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider;
 import fr.opensagres.xdocreport.template.formatter.FieldsMetadata;
 import fr.opensagres.xdocreport.template.formatter.NullImageBehaviour;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.catastro.sistemafichacatastral.DocxProjectWithFreemarkerAndImage;
 import org.catastro.sistemafichacatastral.FichaCatastroUnidadUso;
 import org.catastro.sistemafichacatastral.GrupoTrabajo.GrupoTrabajoService;
@@ -38,9 +44,9 @@ import org.springframework.http.MediaType;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.*;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +69,7 @@ public class FichaCatastralController {
         this.fichasService = fichasService;
     }
 
-    @GetMapping("/docx3")
+    @GetMapping("/docx")
     public ResponseEntity<byte[]> generarWord3(
             @RequestParam(defaultValue = "10") int codcliente
     ) {
@@ -98,26 +104,10 @@ public class FichaCatastralController {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> propiedades = mapper.convertValue(ofichacastrao, Map.class);
 
-// Recorrer el Map y agregar todo al context
+
             for (Map.Entry<String, Object> entry : propiedades.entrySet()) {
                 context.put(entry.getKey(), entry.getValue() != null ? entry.getValue() : "");
             }
-
-
-           /* context.put("region", "CUSCO");
-            context.put("sucursal", "CUSCO");
-            context.put("sector", "CUSPITAPARA");
-            context.put("mzna", "L");
-            context.put("lote", "12");
-            context.put("sublote", "-");
-            context.put("suministro", "1234566");
-            context.put("mz_muni", "L");
-            context.put("lt_muni", "-");
-            context.put("urb_asoc", "-");
-            context.put("tiposervicio", "AGUA");
-            context.put("tipoasentamiento", "URBANO");
-            context.put("piscina", "NO");
-            context.put("reservorio", "NO");*/
 
 
 
@@ -162,20 +152,6 @@ public class FichaCatastralController {
             ImgFachada.setSize(80f, 80f);
             context.put("ImgFachada", ImgFachada);
 
-           List<FichaCatastroUnidadUso> actividades = new ArrayList<>();
-          /*  actividades.add(new FichaCatastroUnidadUso("Comercial", "Venta de ropa", 3, "La Moda S.A.", "Cerca al parque"));
-            actividades.add(new FichaCatastroUnidadUso("Gastronómica", "Restaurante", 1, "Delicias EIRL", "Frente al colegio"));
-            actividades.add(new FichaCatastroUnidadUso("Educativa", "Academia de inglés", 2, "English Fast", "Al costado del cine"));
-            actividades.add(new FichaCatastroUnidadUso("Salud", "Clínica dental", 1, "Sonrisas S.A.C.", "Avenida Central 123"));
-            actividades.add(new FichaCatastroUnidadUso("Comercial", "Venta de electrónicos", 4, "ElectroMundo", "Cerca del mercado central"));
-            actividades.add(new FichaCatastroUnidadUso("Recreativa", "Gimnasio", 2, "Power Gym", "Frente a la plaza principal"));
-            actividades.add(new FichaCatastroUnidadUso("Gastronómica", "Cafetería", 1, "Café & Té", "Jirón Lima 456"));
-            actividades.add(new FichaCatastroUnidadUso("Comercial", "Librería", 2, "Letras Libres", "A media cuadra de la municipalidad"));
-            actividades.add(new FichaCatastroUnidadUso("Educativa", "Centro de cómputo", 3, "CompuNet", "Pasaje Los Pinos 101"));
-            actividades.add(new FichaCatastroUnidadUso("Salud", "Botica", 1, "Botica Salud", "Cerca al hospital"));
-            actividades.add(new FichaCatastroUnidadUso("Servicios", "Peluquería", 1, "Estilo y Corte", "A espaldas del estadio"));*/
-
-
             context.put("actividades", ofichacastrao.getList_fichacatastro_epsuniduso());
 
             //Parametros de prueba
@@ -205,7 +181,93 @@ public class FichaCatastralController {
 
 
 
+    @GetMapping("/pdf")
+    public ResponseEntity<byte[]> generarPDF(@RequestParam(defaultValue = "10") int codcliente) {
+        File tempDocx = null;
+        File tempPdf = null;
 
+        try {
+            // 1. Generar DOCX primero usando tu código original con XDocReport
+            String plantillaPath = "plantillaficha-copia.docx";
+            InputStream in = getClass().getClassLoader().getResourceAsStream(plantillaPath);
+            if (in == null) {
+                throw new RuntimeException("No se encontró la plantilla.");
+            }
+
+            IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
+
+            FieldsMetadata metadata = report.createFieldsMetadata();
+            metadata.addFieldAsImage("ImgConexionDesague");
+            metadata.addFieldAsImage("ImgConexionAgua");
+            metadata.addFieldAsImage("ImgCroquis");
+            metadata.addFieldAsImage("ImgFachada");
+
+            IContext context = report.createContext();
+            FichaCatastro ofichacastrao = fichasService.obtenerDataFichaCatastroJSON(codcliente);
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> propiedades = mapper.convertValue(ofichacastrao, Map.class);
+            propiedades.forEach((k, v) -> context.put(k, v != null ? v : ""));
+
+            // Manejo de imágenes simplificado (ajústalo si lo necesitas)
+            FtpService ftpService = new FtpService();
+            context.put("ImgConexionDesague", new ByteArrayImageProvider(ftpService.obtenerImagenComoBytes(ofichacastrao.getFotocajadesague())));
+            context.put("ImgConexionAgua", new ByteArrayImageProvider(ftpService.obtenerImagenComoBytes(ofichacastrao.getFotocajaagua())));
+            context.put("ImgCroquis", new ByteArrayImageProvider(ftpService.obtenerImagenComoBytes(ofichacastrao.getFotofachada())));
+            context.put("ImgFachada", new ByteArrayImageProvider(ftpService.obtenerImagenComoBytes(ofichacastrao.getFotofachada())));
+            context.put("actividades", ofichacastrao.getList_fichacatastro_epsuniduso());
+
+            // Archivo temporal DOCX
+            tempDocx = File.createTempFile("tempFicha", ".docx");
+            try (FileOutputStream fos = new FileOutputStream(tempDocx)) {
+                report.process(context, fos);
+            }
+
+            // 2. Convertir DOCX → PDF con documents4j
+            tempPdf = File.createTempFile("tempFicha", ".pdf");
+            IConverter converter = LocalConverter.builder().build();
+
+            try (FileInputStream docxInputStream = new FileInputStream(tempDocx);
+                 FileOutputStream pdfOutputStream = new FileOutputStream(tempPdf)) {
+                boolean conversion = converter.convert(docxInputStream)
+                        .as(DocumentType.DOCX)
+                        .to(pdfOutputStream)
+                        .as(DocumentType.PDF)
+                        .execute();
+                if (!conversion) {
+                    throw new RuntimeException("Fallo en conversión DOCX a PDF");
+                }
+            } finally {
+                converter.shutDown();
+            }
+
+            // 3. Devolver PDF generado
+            byte[] pdfBytes = Files.readAllBytes(tempPdf.toPath());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"ficha_catastral.pdf\"");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        } finally {
+            // Limpieza de temporales
+            if (tempDocx != null) tempDocx.delete();
+            if (tempPdf != null) tempPdf.delete();
+        }
+    }
+
+
+    private IImageProvider obtenerImagen(byte[] imagenBytes) {
+        if (imagenBytes == null || imagenBytes.length == 0) {
+            return new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+        }
+        IImageProvider imagen = new ByteArrayImageProvider(imagenBytes);
+        imagen.setSize(80f, 80f);
+        return imagen;
+    }
 
 
 
