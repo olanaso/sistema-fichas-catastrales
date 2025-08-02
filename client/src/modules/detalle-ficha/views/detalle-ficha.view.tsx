@@ -20,7 +20,8 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  X
+  X,
+  Save
 } from "lucide-react";
 import { DetalleFichaResponse } from "../action/detalle-ficha.action";
 import { format } from "date-fns";
@@ -43,6 +44,11 @@ import ImagenesAdjuntas from "../components/imagenes-adjuntas";
 import DatosPadronOrigen from "../components/datos-padron-origen";
 import DatosPadronOrigenSupervision from "../components/supervision/datos-padron-origen-supervision";
 import { buscarExacto } from "@/service/data.actions";
+
+// Importar diálogos de confirmación
+import ObservarFichaDialog from "../components/form/observar-ficha-dialog";
+import AprobarFichaDialog from "../components/form/aprobar-ficha-dialog";
+import GuardarCambiosDialog from "../components/form/guardar-cambios-dialog";
 import { FichaCatastro } from "@/models/fichacatastro";
 import { Cliente } from "@/models/cliente";
 import { Inspector } from "@/models/inspector";
@@ -121,6 +127,11 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
   // diccionario de atributos que se van a actualizar de la ficha catastral
   const [atributosActualizar, setAtributosActualizar] = useState<{ [key: string]: string }>({});
 
+  // Estados para los diálogos de confirmación
+  const [showObservarDialog, setShowObservarDialog] = useState(false);
+  const [showAprobarDialog, setShowAprobarDialog] = useState(false);
+  const [showGuardarDialog, setShowGuardarDialog] = useState(false);
+
   useEffect(() => {
     const cargarFicha = async () => {
       if (!codFicha) return;
@@ -193,19 +204,15 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
   }
 
   const handleObservar = () => {
-    // TODO: Implementar lógica para observar ficha
-    console.log("Observar ficha:", ficha?.idficha);
+    setShowObservarDialog(true);
   }
 
   const handleAprobar = () => {
-    // TODO: Implementar lógica para aprobar ficha
-    console.log("Aprobar ficha:", ficha?.idficha);
+    setShowAprobarDialog(true);
   }
 
   const handleGuardar = () => {
-    // TODO: Implementar lógica para guardar ficha
-    console.log("Guardar ficha:", ficha?.idficha);
-    console.log("Atributos a actualizar:", atributosActualizar);
+    setShowGuardarDialog(true);
   }
 
   const handleCancelar = () => {
@@ -213,6 +220,19 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
     // TODO: Implementar lógica para cancelar
     console.log("Cancelar cambios");
   }
+
+  // Funciones para cerrar los diálogos
+  const handleCloseObservarDialog = () => {
+    setShowObservarDialog(false);
+  };
+
+  const handleCloseAprobarDialog = () => {
+    setShowAprobarDialog(false);
+  };
+
+  const handleCloseGuardarDialog = () => {
+    setShowGuardarDialog(false);
+  };
 
   if (loading) {
     return (
@@ -410,23 +430,47 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
             </Button>
             <Button size="sm" className="h-9" onClick={handleGuardar}>
               <CheckCircle className="w-3 h-3 mr-1" />
-              <span className="text-xs">Guardar</span>
+              <span className="text-xs">Guardar cambios</span>
             </Button>
           </>
         ) : (
           // Botones para otros estados (Pendiente, Parcial, Observado)
           <>
-            <Button variant="outline" size="sm" className="h-9" onClick={handleObservar}>
+            <Button variant="destructive" size="sm" className="h-9" onClick={handleObservar}>
               <AlertCircle className="w-3 h-3 mr-1" />
               <span className="text-xs">Observar</span>
             </Button>
-            <Button size="sm" className="h-9" onClick={handleAprobar}>
+            <Button variant="outline" size="sm" className="h-9 bg-green-500 hover:bg-green-400" onClick={handleAprobar}>
               <CheckCircle className="w-3 h-3 mr-1" />
               <span className="text-xs">Aprobar</span>
+            </Button>
+            <Button variant="default" color="red" size="sm" className="h-9" onClick={handleGuardar}>
+              <Save className="w-3 h-3 mr-1" />
+              <span className="text-xs">Guardar cambios</span>
             </Button>
           </>
         )}
       </div>
+
+      {/* Diálogos de confirmación */}
+      <ObservarFichaDialog
+        isOpen={showObservarDialog}
+        onClose={handleCloseObservarDialog}
+        fichaId={ficha.idficha}
+      />
+
+      <AprobarFichaDialog
+        isOpen={showAprobarDialog}
+        onClose={handleCloseAprobarDialog}
+        fichaId={ficha.idficha}
+      />
+
+      <GuardarCambiosDialog
+        isOpen={showGuardarDialog}
+        onClose={handleCloseGuardarDialog}
+        fichaId={ficha.idficha}
+        atributosActualizar={atributosActualizar}
+      />
     </div>
   );
 }

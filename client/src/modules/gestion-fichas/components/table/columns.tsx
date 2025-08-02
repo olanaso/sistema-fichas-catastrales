@@ -48,12 +48,14 @@ export const createColumns = (
       //obtener el estado de la ficha
       const estado = ficha.estadoficha;
       //designar el color y el texto del estado
-      const color = estado === "F" ? "green" : estado === "P" ? "blue" : "dark";
+      const color = estado === "F" ? "green" : estado === "P" ? "blue" : estado === "O" ? "orange" : "dark";
       const texto =
         estado === "F"
-          ? "Ficha completada"
+          ? "Ficha finalizada"
           : estado === "P"
           ? "Ficha parcial"
+          : estado === "O"
+          ? "Ficha observada"
           : "Ficha pendiente";
 
       return (

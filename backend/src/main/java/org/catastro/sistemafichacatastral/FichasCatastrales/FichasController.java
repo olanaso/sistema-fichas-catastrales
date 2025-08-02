@@ -41,4 +41,17 @@ public class FichasController {
         }
     }
 
+    @GetMapping("/obtener-tarifas")
+    public ResponseEntity<?> obtenerTarifas(
+            @RequestParam Integer idficha,
+            @RequestParam Integer codcliente
+    ) {
+        try {
+            String json = fichasService.obtenerTarifas(idficha, codcliente);
+            return ResponseEntity.ok(json);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
+
 }

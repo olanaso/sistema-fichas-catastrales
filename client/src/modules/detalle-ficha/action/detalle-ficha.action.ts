@@ -180,6 +180,31 @@ export async function getDetalleFicha(codFicha: number): Promise<{ success: bool
             error: error.response?.data?.message || 'Error al obtener el detalle de la ficha'
         };
     }
+}
+
+export async function getTarifas(idficha: number, codcliente: number): Promise<{ success: boolean; data?: any; error?: string }> {
+    try {
+        const response = await apiClient.get(`/fichas-catastrales/obtener-tarifas?idficha=${idficha}&codcliente=${codcliente}`);
+        
+        if (response.data) {
+            return {
+                success: true,
+                data: response.data
+            };
+        } else {
+            return {
+                success: false,
+                error: 'No se encontraron tarifas'
+            };
+        }
+    } catch (error: any) {
+        console.error('Error al obtener tarifas:', error);
+        toast.error('Error al cargar las tarifas');
+        return {
+            success: false,
+            error: error.response?.data?.message || 'Error al obtener las tarifas'
+        };
+    }
 } 
 
 

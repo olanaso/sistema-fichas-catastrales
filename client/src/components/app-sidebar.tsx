@@ -51,7 +51,7 @@ const menuConfiguracion = [
     icon: Settings,
   },
   {
-    title: "Supervisores",
+    title: "Usuarios del sistema",
     url: "/supervisores",
     icon: UserCog,
   },

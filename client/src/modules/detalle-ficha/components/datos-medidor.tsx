@@ -76,7 +76,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision, handleA
             value={obtenerValor("nromed", ficha.nromed)}
             className={`h-8 text-xs text-white
               ${!vistaSupervision ?
-                "" :
+                "text-primary" :
                 !(cliente?.nro_medidor == ficha.nromed) ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"
@@ -175,7 +175,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision, handleA
             value={obtenerValor("lectura", ficha.lectura)}
             className={`bg-muted h-8 text-xs text-white
               ${!vistaSupervision ?
-                "" :
+                "text-primary" :
                 !(ficha.lectura == "No atributos") ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}
@@ -194,7 +194,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision, handleA
             placeholder="No registrado"
             className={`bg-muted h-8 text-xs text-white
               ${!vistaSupervision ?
-                "" :
+                "text-primary" :
                 !(ficha.tipofacturacion == "No atributos") ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}
@@ -227,7 +227,7 @@ export default function DatosMedidor({ ficha, cliente, vistaSupervision, handleA
             placeholder="No registrado"
             className={`bg-muted h-8 text-xs text-white
               ${!vistaSupervision ?
-                "" :
+                "text-primary" :
                 !(ficha.estadomed == "No atributos") ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}

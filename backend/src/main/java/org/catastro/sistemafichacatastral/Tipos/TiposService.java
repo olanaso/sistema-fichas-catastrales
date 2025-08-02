@@ -90,4 +90,26 @@ public class TiposService {
         }
     }
 
+    public Integer obtenerCantidadPorFiltros(String tabla, List<String> columnas, List<String> valores) {
+        try {
+            Query query;
+            if (columnas == null || columnas.isEmpty() || valores == null || valores.isEmpty()) {
+                // Llamada sin filtros
+                query = entityManager.createNativeQuery("SELECT fichacatastral.usp_obtener_total(?1)");
+                query.setParameter(1, tabla);
+            } else {
+                query = entityManager.createNativeQuery(
+                        "SELECT fichacatastral.usp_obtener_cantidad_por_filtros(?1, ?2, ?3)"
+                );
+                query.setParameter(1, tabla);
+                query.setParameter(2, columnas.toArray(new String[0]));
+                query.setParameter(3, valores.toArray(new String[0]));
+            }
+            Object result = query.getSingleResult();
+            return result != null ? Integer.valueOf(result.toString()) : 0;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener cantidad por filtros: " + e.getMessage(), e);
+        }
+    }
+
 }

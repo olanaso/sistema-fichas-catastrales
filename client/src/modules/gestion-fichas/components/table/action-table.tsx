@@ -73,7 +73,7 @@ export default function GestionFichasActionTable({
       </IconButton>
 
       {/* Botón Imprimir */}
-      <IconButton
+      {/* <IconButton
         tooltip="Imprimir ficha"
         tooltipIcon={<Printer className="h-3 w-3" />}
         onClick={handleImprimirFicha}
@@ -82,7 +82,7 @@ export default function GestionFichasActionTable({
         variant="ghost"
       >
         <Printer className="h-4 w-4" />
-      </IconButton>
+      </IconButton> */}
 
       {/* Botón Descargar */}
       <IconButton
@@ -90,14 +90,14 @@ export default function GestionFichasActionTable({
         tooltipIcon={<Download className="h-3 w-3" />}
         onClick={handleDescargarFicha}
         disabled={!isAprobada}
-        color="blue"
+        color="purple"
         variant="ghost"
       >
         <Download className="h-4 w-4" />
       </IconButton>
 
       {/* Botón Migrar */}
-      <IconButton
+      {/* <IconButton
         tooltip="Migrar ficha"
         tooltipIcon={<ArrowRightLeft className="h-3 w-3" />}
         onClick={handleMigrarFicha}
@@ -106,9 +106,9 @@ export default function GestionFichasActionTable({
         variant="ghost"
       >
         <ArrowRightLeft className="h-4 w-4" />
-      </IconButton>
+      </IconButton> */}
 
-      <IconButton
+      {/* <IconButton
         tooltip="Aprobar ficha"
         tooltipIcon={<CheckCircle className="h-3 w-3" />}
         onClick={handleAprobarFicha}
@@ -117,7 +117,7 @@ export default function GestionFichasActionTable({
         variant="ghost"
       >
         <CheckCircle className="h-4 w-4" />
-      </IconButton>
+      </IconButton> */}
     </div>
   );
 }

@@ -264,7 +264,7 @@ export default function DatosInmueble({ ficha, cliente, vistaSupervision, handle
           placeholder="No registrado"
           className={`h-8 text-xs text-white
             ${!vistaSupervision ?
-              "" :
+              "text-primary" :
               !(cliente?.tiposervicio == ficha.tiposervicio) ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}

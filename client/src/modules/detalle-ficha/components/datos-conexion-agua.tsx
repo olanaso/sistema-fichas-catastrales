@@ -165,7 +165,7 @@ export default function DatosConexionAgua({ ficha, cliente, vistaSupervision, ha
             placeholder="No registrado"
             className={`h-8 text-xs text-white
               ${!vistaSupervision ?
-                "" :
+                "text-primary" :
                 !(cliente?.estadoservicio_a == ficha.estadoservicio) ?
                 "dark:bg-red-500 bg-red-500" :
                 "dark:bg-green-500 bg-green-500"}`}
