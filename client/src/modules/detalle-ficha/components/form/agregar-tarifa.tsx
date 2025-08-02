@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,6 +19,8 @@ import { CustomDialog } from "@/components/custom/dialog";
 import { CustomInputControlled } from "@/components/custom/input-controlled";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
 import { ComboboxOption } from "@/types/combobox";
+import { Tarifa } from "@/models/tarifas";
+import { buscarExacto } from "@/service/data.actions";
 
 // Schema de validación para el formulario de tarifa
 const addTarifaSchema = z.object({
@@ -36,7 +38,6 @@ type AddTarifaFormValues = z.infer<typeof addTarifaSchema>;
 interface AddTarifaDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  categorias: ComboboxOption[];
   actividades: ComboboxOption[];
   codemp: string;
   codsuc: string;
@@ -48,7 +49,6 @@ interface AddTarifaDialogProps {
 export default function AddTarifaDialog({
   isOpen,
   onClose,
-  categorias,
   actividades,
   codemp,
   codsuc,
@@ -57,6 +57,18 @@ export default function AddTarifaDialog({
   idficha,
 }: AddTarifaDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [tarifas, setTarifas] = useState<ComboboxOption[]>([]);
+
+  useEffect(() => {
+    const fetchTarifas = async () => {
+      const tarifas = await buscarExacto("tarifas", ['codsuc'],[codsuc]);
+      setTarifas(tarifas.data.map((tarifa: Tarifa) => ({
+        value: tarifa.catetar,
+        label: tarifa.nomtar,
+      })));
+    };
+    fetchTarifas();
+  }, [codemp, codsuc, codcliente, idficha]);
 
   const form = useForm<AddTarifaFormValues>({
     resolver: zodResolver(addTarifaSchema),
@@ -118,68 +130,22 @@ export default function AddTarifaDialog({
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Bloque 1: Información básica */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Información de la Tarifa</h3>
+            <h3 className="text-lg font-semibold text-muted-foreground">Información de la Tarifa</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="catetar"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Categoría *</FormLabel>
+                    <FormLabel>Subcategoría *</FormLabel>
                     <FormControl>
                       <ComboboxControlled
-                        options={categorias}
+                        options={tarifas}
                         value={field.value}
                         onChange={field.onChange}
-                        placeholder="Seleccionar categoría..."
-                        searchPlaceholder="Buscar categoría..."
-                        emptyMessage="No se encontraron categorías"
-                        disabled={isLoading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="nomtar"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <CustomInputControlled
-                        label="Nombre de tarifa *"
-                        placeholder="Ej: Tarifa residencial"
-                        required
-                        maxLength={100}
-                        textTransform="original"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-
-          {/* Bloque 2: Tipo y actividad */}
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="tipocategoria"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tipo de categoría *</FormLabel>
-                    <FormControl>
-                      <ComboboxControlled
-                        options={categorias}
-                        value={field.value}
-                        onChange={field.onChange}
-                        placeholder="Seleccionar tipo..."
-                        searchPlaceholder="Buscar tipo..."
-                        emptyMessage="No se encontraron tipos"
+                        placeholder="Seleccionar subcategoría..."
+                        searchPlaceholder="Buscar subcategoría..."
+                        emptyMessage="No se encontraron subcategorías"
                         disabled={isLoading}
                       />
                     </FormControl>

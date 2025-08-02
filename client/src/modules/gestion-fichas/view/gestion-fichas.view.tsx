@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TableFichas from "../components/table/table-fichas";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Database, Download, Loader2 } from "lucide-react";
@@ -13,6 +13,7 @@ import useExportExcel from "@/hooks/use-export-excel";
 import { useDataMapperTipos } from "@/hooks/use-data-mapper-tipos";
 import { listaTiposMap } from "../utils/lista-tipos-map";
 import { listaDataExportFieldMapping, listaDataExportHeaders } from "../utils/lista-data-export";
+import { useFiltrosPersistentes } from "@/hooks/use-filtros-persistentes";
 
 export default function GestionFichasView() {
   const { exportToExcel } = useExportExcel();
@@ -22,6 +23,18 @@ export default function GestionFichasView() {
   const [mostrarResultados, setMostrarResultados] = useState(false);
   const [loadingFiltros, setLoadingFiltros] = useState(false);
   const [filtrosAplicados, setFiltrosAplicados] = useState<FiltrosGestionFichas>({});
+
+  // Hook para persistencia de filtros
+  const { filtros, isLoaded, tieneFiltrosAplicados } = useFiltrosPersistentes<FiltrosGestionFichas>(
+    "gestion-fichas-filtros",
+    {
+      grupo: "",
+      inspector: "",
+      fechaInicio: "",
+      fechaFin: "",
+      estado: "",
+    }
+  );
 
   const handleFiltrar = async (filtros: FiltrosGestionFichas) => {
     try {
@@ -43,6 +56,18 @@ export default function GestionFichasView() {
     setMostrarResultados(false);
     setFiltrosAplicados({});
   };
+
+  // Aplicar filtros guardados automáticamente cuando se carga la página
+  const aplicarFiltrosGuardados = async () => {
+    if (isLoaded && tieneFiltrosAplicados()) {
+      await handleFiltrar(filtros);
+    }
+  };
+
+  // Efecto para aplicar filtros guardados al cargar
+  useEffect(() => {
+    aplicarFiltrosGuardados();
+  }, [isLoaded]);
 
   const handleRefresh = async () => {
     // Si hay filtros aplicados, recargar con esos filtros
