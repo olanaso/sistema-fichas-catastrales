@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.catastro.sistemafichacatastral.FichasCatastrales.FichasService;
-import org.catastro.sistemafichacatastral.dto.DetalleFichaClienteDto;
+import org.catastro.sistemafichacatastral.FTP.FtpService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +56,7 @@ public class FichaCatastralController {
 
     private final FichaCatastralService fichaCatastralService;
     private final FichasService fichasService;
+
 
     public FichaCatastralController(FichaCatastralService fichaCatastralService,  FichasService fichasService) {
         this.fichaCatastralService = fichaCatastralService;
@@ -123,23 +124,41 @@ public class FichaCatastralController {
 
 
             boolean useImageSize = true;
+             FtpService ftpService = new FtpService();
 
-
-            IImageProvider ImgConexionDesague = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png", useImageSize);
+            byte[] ImgConexionDesagueBytes =ftpService.obtenerImagenComoBytes(ofichacastrao.getFotocajadesague());
+            IImageProvider ImgConexionDesague = new ByteArrayImageProvider(ImgConexionDesagueBytes);//ClassPathImageProvider(getClass().getClassLoader(), "logo.png", useImageSize);
+            if(ImgConexionDesague == null){
+                ImgConexionDesague = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            }
             ImgConexionDesague.setSize(80f, 80f);
             context.put("ImgConexionDesague", ImgConexionDesague);
 
-
-            IImageProvider ImgConexionAgua = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            byte[] ImgConexionAguaBytes =ftpService.obtenerImagenComoBytes(ofichacastrao.getFotocajaagua());
+            IImageProvider ImgConexionAgua = new ByteArrayImageProvider(ImgConexionAguaBytes);
+            if(ImgConexionAgua == null){
+                ImgConexionAgua = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            }
             ImgConexionAgua.setSize(80f, 80f);
             context.put("ImgConexionAgua", ImgConexionAgua);
 
 
-            IImageProvider ImgCroquis = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            byte[] ImgCroquisBytes =ftpService.obtenerImagenComoBytes(ofichacastrao.getFotofachada());
+            IImageProvider ImgCroquis = new ByteArrayImageProvider(ImgCroquisBytes);
+            if(ImgCroquis == null){
+                 ImgCroquis = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            }
+
             ImgCroquis.setSize(120f, 80f);
             context.put("ImgCroquis", ImgCroquis);
 
-            IImageProvider ImgFachada = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            byte[] ImgFachadaBytes =ftpService.obtenerImagenComoBytes(ofichacastrao.getFotofachada());
+            IImageProvider ImgFachada = new ByteArrayImageProvider(ImgFachadaBytes);
+
+            if(ImgFachada == null){
+                ImgFachada = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
+            }
+           // IImageProvider ImgFachada = new ClassPathImageProvider(getClass().getClassLoader(), "logo.png");
             ImgFachada.setSize(80f, 80f);
             context.put("ImgFachada", ImgFachada);
 
