@@ -51,7 +51,7 @@ const menuConfiguracion = [
     icon: Settings,
   },
   {
-    title: "Supervisores",
+    title: "Usuarios del sistema",
     url: "/supervisores",
     icon: UserCog,
   },
@@ -81,11 +81,11 @@ const menuFichas = [
     url: "/gestion-fichas",
     icon: Ticket,
   },
-  {
-    title: "Migración SICI",
-    url: "/migracion-sici",
-    icon: ArrowRightCircle,
-  },
+  // {
+  //   title: "Migración SICI",
+  //   url: "/migracion-sici",
+  //   icon: ArrowRightCircle,
+  // },
 ];
 
 const menuCapacitacion = [

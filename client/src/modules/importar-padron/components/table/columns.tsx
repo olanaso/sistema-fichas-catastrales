@@ -54,6 +54,8 @@ export const columns = (): ColumnDef<DataMigra>[] => [
         <div className="text-start space-y-1">
           <div className="text-xs font-medium text-green-900">
             {data.cliente || "Sin cliente"}
+            <br />
+            Cod: {data.codcliente}
           </div>
           <div className="text-xs text-gray-600">
             RUC: {data.ruc || "-"}
@@ -91,9 +93,9 @@ export const columns = (): ColumnDef<DataMigra>[] => [
           <div className="text-xs text-gray-600">
             Serv: {data.tipo_servicio || "-"}
           </div>
-          {data.piscina && (
+          {data.piscina_desc && (
             <div className="text-xs text-blue-600">
-              Piscina: {data.piscina}
+              Piscina: {data.piscina_desc}
             </div>
           )}
         </div>

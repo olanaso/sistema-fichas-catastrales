@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { TableHeaderColumn } from "@/components/table/table-header-column";
-import { Circle, User } from "lucide-react";
+import { Circle, User, MapPin, Building, Droplets, Gauge, Phone, FileText } from "lucide-react";
 import { CustomBadge } from "@/components/custom/custom-badge";
 import { ClienteDto } from "@/models/cliente";
 import {
@@ -20,127 +20,181 @@ export const columns = (tiposData: {
   tipocalle: TipoCalle[];
   tiposervicios: TipoServicio[];
 }): ColumnDef<ClienteDto>[] => [
-  // {
-  //   id: "actions",
-  //   header: "Acciones",
-  //   cell: ({ row }) => {
-  //     return <ActionTable cliente={row.original} />;
-  //   },
-  // },
   {
-    id: "estado",
-    header: "Estado",
+    id: "index",
+    accessorKey: "index",
+    header: "#",
     cell: ({ row }) => {
-      const estado = row.original.codinspector ? true : false;
-      let color = estado ? "green" : "dark";
-      let texto = estado ? "Asignado" : "No asignado";
-      return (
-        <div className="text-start">
-          <IconButton
-            tooltip={texto}
-            color={color as IconButtonColor}
-            children={<Circle className="w-4 h-4" />}
-          />
-        </div>
-      );
+      return <div className="text-start">{row.index + 1}</div>
     },
   },
   {
-    id: "codcatastral",
+    id: "ubicacion",
     accessorKey: "codcatastral",
-    header: "Cod. Cat.",
+    header: "Ubicación",
     cell: ({ row }) => {
+      const data = row.original;
+      const calle = tiposData.calles.find(c => c.codcalle === data.codcalle);
+      const tipocalle = tiposData.tipocalle.find(t => t.tipocalle === calle?.tipocalle);
+      
       return (
-        <div className="text-start">
-          <CustomBadge color="purple" className="text-xs">
-            {row.original.codsuc +
-              "-" +
-              row.original.codsector +
-              "-" +
-              row.original.codmza +
-              "-" +
-              row.original.nrolote +
-              "-" +
-              row.original.nrosublote}
-          </CustomBadge>
-        </div>
-      );
-    },
-  },
-  {
-    id: "codcliente",
-    accessorKey: "codcliente",
-    header: "Suministro",
-    cell: ({ row }) => {
-      return (
-        <div className="text-start">
-          {row.original.codcliente || "Sin dato"}
-        </div>
-      );
-    },
-  },
-  {
-    id: "propietario",
-    accessorKey: "propietario",
-    header: "Propietario",
-    cell: ({ row }) => {
-      const ficha = row.original;
-      return (
-        <div className="text-start flex items-center gap-2">
-          <User className="w-4 h-4 text-blue-600" />
-          <div>
-            <div className="font-medium">
-              {ficha.propietario || "Sin propietario"}
-            </div>
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-blue-900 dark:text-blue-100">
+            {data.codsuc} - {data.codsector}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Mz: {data.codmza || "-"} | Lt: {data.nrolote || "-"}
+            {data.nrosublote && ` | SubLt: ${data.nrosublote}`}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            {tipocalle?.descripcioncorta || ""} {calle?.descripcioncalle || "Sin calle"} {data.nrocalle || ""}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            {data.codcatastral || "Sin código catastral"}
           </div>
         </div>
       );
     },
   },
   {
-    id: "codcalle",
-    accessorKey: "codcalle",
-    header: "Urb./Calle",
+    id: "cliente",
+    accessorKey: "propietario",
+    header: "Cliente",
     cell: ({ row }) => {
-      const calle = tiposData.calles.find(
-        (c) => c.codcalle === row.original.codcalle
-      );
-      const tipocalle = tiposData.tipocalle.find(
-        (t) => t.tipocalle === calle?.tipocalle
-      );
+      const data = row.original;
       return (
-        <div className="text-start">
-          <CustomBadge color="orange" className="text-xs">
-            {tipocalle?.descripcioncorta
-              ? tipocalle?.descripcioncorta + " " + calle?.descripcioncalle
-              : calle?.descripcioncalle || "Sin calle"}{" "}
-            - {row.original.nrocalle}
-          </CustomBadge>
-        </div>
-      );
-    },
-  },
-  {
-    id: "dni",
-    accessorKey: "dni",
-    header: "DNI/RUC",
-    cell: ({ row }) => {
-      return (
-        <div className="text-start">
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-green-900 dark:text-green-100">
+            {data.propietario || "Sin propietario"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Cod: {data.codcliente}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            DNI: {data.dni || "-"} / RUC: {data.ruc || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Tel: {data.telefono || "-"}
+          </div>
           <CustomBadge color="blue" className="text-xs">
-            {row.original.dni || "Sin DNI"} / {row.original.ruc || "Sin RUC"}
+            {data.tipousuario || "Sin tipo"}
           </CustomBadge>
         </div>
       );
     },
   },
   {
-    id: "telefono",
-    accessorKey: "telefono",
-    header: "Teléfono",
+    id: "servicios",
+    accessorKey: "tiposervicio",
+    header: "Servicios",
     cell: ({ row }) => {
+      const data = row.original;
       return (
-        <div className="text-start">{row.original.telefono || "Sin dato"}</div>
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-purple-900 dark:text-purple-100">
+            Serv: {data.tiposervicio || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Estado: {data.estadoservicio || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Contrato: {data.nrocontrato || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Sin mora: {data.sinmora ? "Sí" : "No"}
+          </div>
+          {data.estadoregistro !== undefined && (
+            <div className="text-xs text-gray-600 dark:text-gray-400">
+              Reg: {data.estadoregistro === 1 ? "Activo" : "Inactivo"}
+            </div>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    id: "conexiones",
+    accessorKey: "estadoservicio_a",
+    header: "Conexiones",
+    cell: ({ row }) => {
+      const data = row.original;
+      return (
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-cyan-900 dark:text-cyan-100">
+            Agua: {data.estadoservicio_a || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Diám: {data.diametro_a || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Material: {data.tipomterial || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Desagüe: {data.estadoservicio_d || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Diám D: {data.diametro_d || "-"}
+          </div>
+        </div>
+      );
+    },
+  },
+  {
+    id: "medidor",
+    accessorKey: "nro_medidor",
+    header: "Medidor",
+    cell: ({ row }) => {
+      const data = row.original;
+      return (
+        <div className="text-start space-y-1">
+          <div className="text-xs font-medium text-orange-900 dark:text-orange-100">
+            N° {data.nro_medidor || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Inst: {data.fecha_inst || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Diám: {data.diametro_m || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Usos: {data.cant_uso || "-"}
+          </div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">
+            Caja: {data.loccaja_a || "-"}
+          </div>
+        </div>
+      );
+    },
+  },
+  {
+    id: "asignacion",
+    header: "Asignación",
+    cell: ({ row }) => {
+      const data = row.original;
+      const estado = data.codinspector ? true : false;
+      let color = estado ? "green" : "dark";
+      let texto = estado ? "Asignado" : "No asignado";
+      
+      return (
+        <div className="text-start space-y-1">
+          <div className="flex items-center gap-1">
+            <IconButton
+              tooltip={texto}
+              color={color as IconButtonColor}
+              children={<Circle className="w-3 h-3" />}
+            />
+          </div>
+                     {data.inspector && (
+             <div className="text-xs text-gray-600 dark:text-gray-400">
+               Insp: {data.inspector}
+             </div>
+           )}
+           {data.fechaasignacion && (
+             <div className="text-xs text-gray-600 dark:text-gray-400">
+               Asign: {data.fechaasignacion}
+             </div>
+           )}
+        </div>
       );
     },
   },

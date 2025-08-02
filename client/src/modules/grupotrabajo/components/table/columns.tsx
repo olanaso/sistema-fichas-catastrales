@@ -69,8 +69,7 @@ export const createColumns = ({ supervisores, inspectores }: ColumnsProps): Colu
     accessorKey: "inspectores",
     header: "Inspectores",
     cell: ({ row }) => {
-      const inspectores = row.original.inspectores;
-      const count = inspectores;
+      const count = inspectores.filter(i => i.codbrigada === row.original.codgrupo).length;      
       
       return (
         <div className="text-start">

@@ -85,4 +85,18 @@ public class TiposController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
+
+    @GetMapping("/obtener-cantidad")
+    public ResponseEntity<?> obtenerCantidadPorFiltros(
+            @RequestParam String tabla,
+            @RequestParam(required = false) List<String> columnas,
+            @RequestParam(required = false) List<String> valores
+    ) {
+        try {
+            Integer cantidad = tiposService.obtenerCantidadPorFiltros(tabla, columnas, valores);
+            return ResponseEntity.ok(Map.of("success", true, "cantidad", cantidad));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
 }

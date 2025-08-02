@@ -10,13 +10,17 @@ import { getData } from "@/service/data.actions";
 import { TipoAccionComercial, TipoFichaIncompleta, TipoPresionAgua } from "@/models/tipos";
 import { ComboboxOption } from "@/types/combobox";
 import { ComboboxControlled } from "@/components/custom/combobox-controlled";
+import { Cliente } from "@/models/cliente";
 
 interface CalidadServicioProps {
   ficha: FichaCatastro;
-  vistaSupervision: boolean;
+  cliente: Cliente | null;
+  handleActualizarAtributos: (atributo: string, valor: string) => void;
 }
 
-export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServicioProps) {
+export default function CalidadServicio({ ficha, cliente, handleActualizarAtributos }: CalidadServicioProps) {
+  // Estado local para manejar los valores actualizados
+  const [valoresActualizados, setValoresActualizados] = useState<{ [key: string]: string }>({});
 
   const [tipoAccionComercial, setTipoAccionComercial] = useState<ComboboxOption[]>([]);
   const [tipoFichaIncompleta, setTipoFichaIncompleta] = useState<ComboboxOption[]>([]);
@@ -34,6 +38,19 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
       setTipoPresionAgua(res.data.map((tipo: TipoPresionAgua) => ({ value: tipo.tipopresionagu, label: tipo.descripcion })));
     });
   }, []);
+
+  // Función para obtener el valor actual (del estado local o de ficha)
+  const obtenerValor = (campo: string, valorOriginal: string | number | null | undefined) => {
+    return valoresActualizados[campo] !== undefined 
+      ? valoresActualizados[campo] 
+      : valorOriginal?.toString() || "No registrado";
+  };
+
+  // Función para manejar cambios
+  const manejarCambio = (campo: string, valor: string) => {
+    setValoresActualizados(prev => ({ ...prev, [campo]: valor }));
+    handleActualizarAtributos(campo, valor);
+  };
 
   const servicios = [
     { nombre: "Lavatorios", cantidad: ficha.nrolavatorios || "-", estado: ficha.estadolavatorios || "-" },
@@ -62,12 +79,12 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <Input
                   id="horas-dia"
-                  defaultValue={ficha.horasxdia || "No registrado"}
-                  readOnly={vistaSupervision}
+                  value={obtenerValor("horasxdia", ficha.horasxdia)}
                   className="h-8 text-sm mt-1"
                   type="number"
                   max="24"
                   min="0"
+                  onChange={(e) => manejarCambio("horasxdia", e.target.value)}
                 />
               </div>
 
@@ -77,12 +94,12 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <Input
                   id="dias-semana"
-                  defaultValue={ficha.diasxsemana || "No registrado"}
-                  readOnly={vistaSupervision}
+                  value={obtenerValor("diasxsemana", ficha.diasxsemana)}
                   className="h-8 text-sm mt-1"
                   type="number"
                   max="7"
                   min="0"
+                  onChange={(e) => manejarCambio("diasxsemana", e.target.value)}
                 />
               </div>
 
@@ -92,10 +109,10 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <ComboboxControlled
                   options={tipoPresionAgua}
-                  value={ficha.presionagu || ""}
+                  value={obtenerValor("presionagu", ficha.presionagu)}
                   placeholder="No registrado"
                   className="h-8 text-xs"
-                  disabled={vistaSupervision}
+                  onChange={(e) => manejarCambio("presionagu", e.toString())}
                 />
               </div>
             </div>
@@ -112,11 +129,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 <Input
                   id="frente-lote"
                   defaultValue={ficha.medidalotefrente || "No registrado"}
-                  readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
                   step="0.01"
                   placeholder="0.00"
+                  onChange={(e) => handleActualizarAtributos("medidalotefrente", e.target.value)}
                 />
               </div>
 
@@ -127,11 +144,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 <Input
                   id="distancia-caja-agua"
                   defaultValue={ficha.medidaejeagua || "No registrado"}
-                  readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
                   step="0.01"
                   placeholder="0.00"
+                  onChange={(e) => handleActualizarAtributos("medidaejeagua", e.target.value)}
                 />
               </div>
 
@@ -142,11 +159,11 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 <Input
                   id="distancia-caja-desague"
                   defaultValue={ficha.medidaejedesague || "No registrado"}
-                  readOnly={vistaSupervision}
                   className="h-8 text-sm mt-1"
                   type="number"
                   step="0.01"
                   placeholder="0.00"
+                  onChange={(e) => handleActualizarAtributos("medidaejedesague", e.target.value)}
                 />
               </div>
             </div>
@@ -162,10 +179,10 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <ComboboxControlled
                   options={tipoFichaIncompleta}
-                  value={ficha.fichaincompleta || ""}
+                  value={obtenerValor("fichaincompleta", ficha.fichaincompleta)}
                   placeholder="No registrado"
                   className="h-8 text-xs"
-                  disabled={vistaSupervision}
+                  onChange={(e) => manejarCambio("fichaincompleta", e.toString())}
                 />
               </div>
 
@@ -175,10 +192,10 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
                 </Label>
                 <ComboboxControlled
                   options={tipoAccionComercial}
-                  value={ficha.tipoacccomercial || ""}
+                  value={obtenerValor("tipoacccomercial", ficha.tipoacccomercial)}
                   placeholder="No registrado"
                   className="h-8 text-xs"
-                  disabled={vistaSupervision}
+                  onChange={(e) => manejarCambio("tipoacccomercial", e.toString())}
                 />
               </div>
             </div>
@@ -228,9 +245,9 @@ export default function CalidadServicio({ ficha, vistaSupervision }: CalidadServ
             <h3 className="text-base font-semibold mb-3">OBSERVACIÓN</h3>
             <Textarea
               defaultValue={ficha.observacion || ""}
-              readOnly={vistaSupervision}
               placeholder="Ingrese observaciones..."
               className="min-h-[80px] text-sm resize-none"
+              onChange={(e) => handleActualizarAtributos("observacion", e.target.value)}
             />
           </div>
         </div>

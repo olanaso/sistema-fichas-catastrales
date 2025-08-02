@@ -1,8 +1,10 @@
 export interface PadronHistorico {
-  codpadron: string;
+  codpadron: number;
   creador: string;
-  fecha_importacion: string; // timestamp en string ISO
+  fechareg: string; // timestamp en string ISO
   cantidad_registros: number;
   estado: string;
+  tablacliente_bk: string;
+  tablauduso_bk: string;
   observacion?: string;
 } 

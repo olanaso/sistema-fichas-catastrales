@@ -3,13 +3,32 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FichaCatastro } from "@/models/fichacatastro";
+import { Cliente } from "@/models/cliente";
+import { useState } from "react";
 
 interface DatosPadronOrigenProps {
   ficha: FichaCatastro;
-  vistaSupervision: boolean;
+  cliente: Cliente | null;
+  handleActualizarAtributos: (atributo: string, valor: string) => void;
 }
 
-export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadronOrigenProps) {
+export default function DatosPadronOrigen({ ficha, cliente, handleActualizarAtributos }: DatosPadronOrigenProps) {
+  // Estado local para manejar los valores actualizados
+  const [valoresActualizados, setValoresActualizados] = useState<{ [key: string]: string }>({});
+
+  // Función para obtener el valor actual (del estado local o de ficha)
+  const obtenerValor = (campo: string, valorOriginal: string | number | null | undefined) => {
+    return valoresActualizados[campo] !== undefined 
+      ? valoresActualizados[campo] 
+      : valorOriginal?.toString() || "No registrado";
+  };
+
+  // Función para manejar cambios
+  const manejarCambio = (campo: string, valor: string) => {
+    setValoresActualizados(prev => ({ ...prev, [campo]: valor }));
+    handleActualizarAtributos(campo, valor);
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -20,9 +39,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="padron"
-            defaultValue={ficha.nrocatastro?.toString() || ""}
-            readOnly={vistaSupervision}
+            value={obtenerValor("nrocatastro", ficha.nrocatastro)}
             className="mt-1"
+            onChange={(e) => manejarCambio("nrocatastro", e.target.value)}
           />
         </div>
 
@@ -32,9 +51,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="sector"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("codsector_new", ficha.codsector_new)}
             className="mt-1"
+            onChange={(e) => manejarCambio("codsector_new", e.target.value)}
           />
         </div>
 
@@ -44,9 +63,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="manzana"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("codmza_new", ficha.codmza_new)}
             className="mt-1"
+            onChange={(e) => manejarCambio("codmza_new", e.target.value)}
           />
         </div>
 
@@ -57,9 +76,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="lote"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("nrolote_new", ficha.nrolote_new)}
             className="mt-1"
+            onChange={(e) => manejarCambio("nrolote_new", e.target.value)}
           />
         </div>
 
@@ -69,9 +88,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="sub-lote"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("nrosublote", ficha.nrosublote)}
             className="mt-1"
+            onChange={(e) => manejarCambio("nrosublote", e.target.value)}
           />
         </div>
 
@@ -81,9 +100,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="edificio"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("edificio", "No atributos")}
             className="mt-1"
+            onChange={(e) => manejarCambio("edificio", e.target.value)}
           />
         </div>
 
@@ -94,9 +113,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="piso"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("piso", "No atributos")}
             className="mt-1"
+            onChange={(e) => manejarCambio("piso", e.target.value)}
           />
         </div>
 
@@ -106,9 +125,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="unidad"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("unidad", "No atributos")}
             className="mt-1"
+            onChange={(e) => manejarCambio("unidad", e.target.value)}
           />
         </div>
 
@@ -118,9 +137,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="codigo-catastral"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("nrocatastro", ficha.nrocatastro)}
             className="mt-1"
+            onChange={(e) => manejarCambio("nrocatastro", e.target.value)}
           />
         </div>
 
@@ -131,9 +150,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="direccion"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("direccion", ficha.direccion)}
             className="mt-1"
+            onChange={(e) => manejarCambio("direccion", e.target.value)}
           />
         </div>
 
@@ -143,9 +162,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="distrito"
-              defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("distrito", "No atributos")}
             className="mt-1"
+            onChange={(e) => manejarCambio("distrito", e.target.value)}
           />
         </div>
 
@@ -155,9 +174,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="provincia"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("codprov", ficha.codprov)}
             className="mt-1"
+            onChange={(e) => manejarCambio("codprov", e.target.value)}
           />
         </div>
 
@@ -168,9 +187,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="departamento"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("departamento", "No atributos")}
             className="mt-1"
+            onChange={(e) => manejarCambio("departamento", e.target.value)}
           />
         </div>
 
@@ -180,9 +199,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="coordenada-x"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("coordenada_x", "No atributos")}
             className="mt-1"
+            onChange={(e) => manejarCambio("coordenada_x", e.target.value)}
           />
         </div>
 
@@ -192,9 +211,9 @@ export default function DatosPadronOrigen({ ficha, vistaSupervision }: DatosPadr
           </Label>
           <Input
             id="coordenada-y"
-            defaultValue={"No atributos"}
-            readOnly={vistaSupervision}
+            value={obtenerValor("coordenada_y", "No atributos")}
             className="mt-1"
+            onChange={(e) => manejarCambio("coordenada_y", e.target.value)}
           />
         </div>
       </div>

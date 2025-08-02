@@ -12,7 +12,7 @@ export function GrupoTrabajoProvider({ children }: GrupoTrabajoProviderProps) {
     <DataPaginatedProvider<GrupoTrabajoDto>
       tableName="usp_grupotrabajo"
       initialPageSize={10}
-      searchColumns={["nombre", "descripcion"]}
+      searchColumns={["nombre"]}
     >
       {children}
     </DataPaginatedProvider>

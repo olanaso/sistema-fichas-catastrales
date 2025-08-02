@@ -5,7 +5,7 @@ import TableImportarPadron from "../components/table/table-importarpadron";
 import { ImportarPadronProvider, useImportarPadron } from "../context/importarpadron-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, CheckCircleIcon, DatabaseIcon, FileTextIcon, FolderIcon, HashIcon, UserIcon, Calendar as CalendarIcon } from "lucide-react";
 import { getHistorialImportarPadronClientes } from "../action/importarpadron.actions";
 import { PadronHistorico } from "@/models/padronhistorico";
 import { Badge } from "@/components/ui/badge";
@@ -79,33 +79,109 @@ function ImportarPadronContent() {
 
       {/* Bloque de historial de importación */}
       {historial && (
-        <div className="border rounded-md bg-muted/50 p-4 mb-4">
-          <div className="flex flex-wrap items-center gap-6 justify-between">
-            <div>
-              <div className="font-medium text-sm text-muted-foreground">Fecha de última importación:</div>
-              <div className="font-bold text-lg">
-                {format(new Date(historial.fecha_importacion), "dd/MM/yyyy HH:mm", { locale: es })}
-              </div>
-            </div>
-            <div>
-              <div className="font-medium text-sm text-muted-foreground">Cantidad de registros:</div>
-              <div className="font-bold text-lg">
-                {historial.cantidad_registros.toLocaleString("es-PE")}
-              </div>
-            </div>
-            <div>
-              <div className="font-medium text-sm text-muted-foreground">Importado por:</div>
-              <div className="font-bold text-lg">
-                {historial.creador}
-              </div>
-            </div>
-            <div>
-              <div className="font-medium text-sm text-muted-foreground">Estado:</div>
-              <Badge className={"bg-green-200 text-green-900 font-bold px-6 py-2 text-base"}>
-                {historial.estado === "Exitoso" ? "Exitoso" : historial.estado}
-              </Badge>
-            </div>
+        <div className="border rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-zinc-950 dark:to-indigo-950 p-4 mb-6 shadow-sm">
+          {/* Primera fila - Información principal */}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-3">
+                         {/* Fecha de importación */}
+             <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border dark:border-gray-700">
+               <div className="flex items-center gap-1 mb-1">
+                 <CalendarIcon className="h-3 w-3 text-blue-600" />
+                 <div className="font-medium text-xs text-muted-foreground">Fecha</div>
+               </div>
+               <div className="font-bold text-sm text-gray-900 dark:text-gray-100">
+                 {format(new Date(historial.fechareg), "dd/MM/yyyy", { locale: es })}
+               </div>
+               <div className="text-xs text-muted-foreground">
+                 {format(new Date(historial.fechareg), "HH:mm", { locale: es })}
+               </div>
+             </div>
+
+                         {/* Cantidad de registros */}
+             <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border dark:border-gray-700">
+               <div className="flex items-center gap-1 mb-1">
+                 <DatabaseIcon className="h-3 w-3 text-green-600" />
+                 <div className="font-medium text-xs text-muted-foreground">Registros</div>
+               </div>
+               <div className="font-bold text-sm text-gray-900 dark:text-gray-100">
+                 {historial.cantidad_registros.toLocaleString("es-PE")}
+               </div>
+             </div>
+
+             {/* Usuario creador */}
+             <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border dark:border-gray-700">
+               <div className="flex items-center gap-1 mb-1">
+                 <UserIcon className="h-3 w-3 text-purple-600" />
+                 <div className="font-medium text-xs text-muted-foreground">Usuario</div>
+               </div>
+               <div className="font-bold text-sm text-gray-900 dark:text-gray-100 truncate">
+                 {historial.creador}
+               </div>
+             </div>
+
+             {/* Estado */}
+             <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border dark:border-gray-700">
+               <div className="flex items-center gap-1 mb-1">
+                 <CheckCircleIcon className="h-3 w-3 text-orange-600" />
+                 <div className="font-medium text-xs text-muted-foreground">Estado</div>
+               </div>
+               <Badge 
+                 className={`font-bold px-2 py-0.5 text-xs ${
+                   historial.estado === "EXITOSO" 
+                     ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700" 
+                     : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700"
+                 }`}
+               >
+                 {historial.estado === "EXITOSO" ? "Exitoso" : historial.estado}
+               </Badge>
+             </div>
+
+             {/* Código de padrón */}
+             <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border dark:border-gray-700">
+               <div className="flex items-center gap-1 mb-1">
+                 <HashIcon className="h-3 w-3 text-indigo-600" />
+                 <div className="font-medium text-xs text-muted-foreground">Código</div>
+               </div>
+               <div className="font-bold text-sm text-gray-900 dark:text-gray-100">
+                 #{historial.codpadron}
+               </div>
+             </div>
+
+             {/* Observación rápida */}
+             <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border dark:border-gray-700">
+               <div className="flex items-center gap-1 mb-1">
+                 <FileTextIcon className="h-3 w-3 text-gray-600" />
+                 <div className="font-medium text-xs text-muted-foreground">Obs.</div>
+               </div>
+               <div className="text-xs text-gray-900 dark:text-gray-100 truncate">
+                 {historial.observacion || "Sin observación"}
+               </div>
+             </div>
           </div>
+
+                     {/* Segunda fila - Información de backups */}
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+             {/* Backup clientes */}
+             <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border dark:border-gray-700">
+               <div className="flex items-center gap-2 mb-2">
+                 <FolderIcon className="h-4 w-4 text-amber-600" />
+                 <div className="font-medium text-sm text-muted-foreground">Backup clientes</div>
+               </div>
+               <div className="font-mono text-xs text-gray-900 dark:text-gray-100 break-all bg-gray-50 dark:bg-gray-700 p-2 rounded">
+                 {historial.tablacliente_bk || "No disponible"}
+               </div>
+             </div>
+
+             {/* Backup unidades de uso */}
+             <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border dark:border-gray-700">
+               <div className="flex items-center gap-2 mb-2">
+                 <FolderIcon className="h-4 w-4 text-cyan-600" />
+                 <div className="font-medium text-sm text-muted-foreground">Backup unidades</div>
+               </div>
+               <div className="font-mono text-xs text-gray-900 dark:text-gray-100 break-all bg-gray-50 dark:bg-gray-700 p-2 rounded">
+                 {historial.tablauduso_bk || "No disponible"}
+               </div>
+             </div>
+           </div>
         </div>
       )}
       

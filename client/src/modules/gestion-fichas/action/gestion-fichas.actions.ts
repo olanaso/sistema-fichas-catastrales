@@ -231,9 +231,10 @@ export async function getEstadosFichas(): Promise<ComboboxOption[]> {
     try {
         // Datos estáticos basados en los estados comunes de fichas catastrales
         return [
-            // { value: 'PENDIENTE', label: 'Pendiente' },
-            { value: 'PARCIAL', label: 'Parcial' },
-            { value: 'FINALIZADO', label: 'Finalizado' }
+            { value: 'PENDIENTE', label: 'Fichas Pendientes' },
+            { value: 'PARCIAL', label: 'Fichas Parciales' },
+            { value: 'OBSERVADO', label: 'Fichas Observadas' },
+            { value: 'FINALIZADO', label: 'Fichas Finalizadas' }
         ];
     } catch (error) {
         console.error('Error al obtener estados de fichas:', error);

@@ -20,7 +20,8 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  X
+  X,
+  Save
 } from "lucide-react";
 import { DetalleFichaResponse } from "../action/detalle-ficha.action";
 import { format } from "date-fns";
@@ -28,15 +29,30 @@ import { es } from "date-fns/locale";
 
 // Componentes de las secciones
 import DatosInmueble from "../components/datos-inmueble";
+import DatosInmuebleSupervision from "../components/supervision/datos-inmueble-supervision";
 import DatosUsuario from "../components/datos-usuario";
+import DatosUsuarioSupervision from "../components/supervision/datos-usuario-supervision";
 import DatosConexionAgua from "../components/datos-conexion-agua";
+import DatosConexionAguaSupervision from "../components/supervision/datos-conexion-agua-supervision";
 import DatosMedidor from "../components/datos-medidor";
+import DatosMedidorSupervision from "../components/supervision/datos-medidor-supervision";
 import DatosConexionDesague from "../components/datos-conexion-desague";
+import DatosConexionDesagueSupervision from "../components/supervision/datos-conexion-desague-supervision";
 import CalidadServicio from "../components/calidad-servicio";
+import CalidadServicioSupervision from "../components/supervision/calidad-servicio-supervision";
 import ImagenesAdjuntas from "../components/imagenes-adjuntas";
 import DatosPadronOrigen from "../components/datos-padron-origen";
+import DatosPadronOrigenSupervision from "../components/supervision/datos-padron-origen-supervision";
 import { buscarExacto } from "@/service/data.actions";
+
+// Importar diálogos de confirmación
+import ObservarFichaDialog from "../components/form/observar-ficha-dialog";
+import AprobarFichaDialog from "../components/form/aprobar-ficha-dialog";
+import GuardarCambiosDialog from "../components/form/guardar-cambios-dialog";
 import { FichaCatastro } from "@/models/fichacatastro";
+import { Cliente } from "@/models/cliente";
+import { Inspector } from "@/models/inspector";
+import { Usuario } from "@/models/usuario";
 
 // Definir las secciones disponibles
 const SECCIONES = [
@@ -44,59 +60,77 @@ const SECCIONES = [
     id: "inmueble",
     titulo: "1. Datos del inmueble / predio",
     icono: Home,
-    componente: DatosInmueble
+    componente: DatosInmueble,
+    componenteSupervision: DatosInmuebleSupervision
   },
   {
     id: "usuario",
     titulo: "2. Datos del usuario",
     icono: User,
-    componente: DatosUsuario
+    componente: DatosUsuario,
+    componenteSupervision: DatosUsuarioSupervision
   },
   {
     id: "conexion-agua",
     titulo: "3. Datos de la conexión de agua",
     icono: Droplets,
-    componente: DatosConexionAgua
+    componente: DatosConexionAgua,
+    componenteSupervision: DatosConexionAguaSupervision
   },
   {
     id: "medidor",
     titulo: "4. Datos del medidor",
     icono: Gauge,
-    componente: DatosMedidor
+    componente: DatosMedidor,
+    componenteSupervision: DatosMedidorSupervision
   },
   {
     id: "conexion-desague",
     titulo: "5. Datos de la conexión de desagüe",
     icono: Waves,
-    componente: DatosConexionDesague
+    componente: DatosConexionDesague,
+    componenteSupervision: DatosConexionDesagueSupervision
   },
   {
     id: "calidad-servicio",
     titulo: "6. Calidad de servicio / Numero de Servicio / Observaciones",
     icono: FileText,
-    componente: CalidadServicio
+    componente: CalidadServicio,
+    componenteSupervision: CalidadServicioSupervision
   },
   {
     id: "imagenes",
     titulo: "7. Imágenes adjuntas",
     icono: Image,
-    componente: ImagenesAdjuntas
+    componente: ImagenesAdjuntas,
   },
   {
     id: "padron-origen",
     titulo: "8. Datos de padrón origen",
     icono: Database,
-    componente: DatosPadronOrigen
+    componente: DatosPadronOrigen,
+    componenteSupervision: DatosPadronOrigenSupervision
   }
 ];
 
 export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
 
   const [ficha, setFicha] = useState<FichaCatastro | null>(null);
+  const [cliente, setCliente] = useState<Cliente | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [seccionActiva, setSeccionActiva] = useState("inmueble");
   const [vistaSupervision, setVistaSupervision] = useState(false);
+  const [inspector, setInspector] = useState<Inspector | null>(null);
+  const [modificador, setModificador] = useState<Usuario | null>(null);
+
+  // diccionario de atributos que se van a actualizar de la ficha catastral
+  const [atributosActualizar, setAtributosActualizar] = useState<{ [key: string]: string }>({});
+
+  // Estados para los diálogos de confirmación
+  const [showObservarDialog, setShowObservarDialog] = useState(false);
+  const [showAprobarDialog, setShowAprobarDialog] = useState(false);
+  const [showGuardarDialog, setShowGuardarDialog] = useState(false);
 
   useEffect(() => {
     const cargarFicha = async () => {
@@ -107,6 +141,15 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
         const resultado = await buscarExacto("fichacatastro_eps", ["idficha"], [codFicha.toString()]);
 
         if (resultado.success && resultado.data) {
+          const inspector = await buscarExacto("inspectores", ["codinspector"], [resultado.data[0].encuestador]);
+
+          const usuarioModificador = await buscarExacto("usersystema", ["codusu"], [resultado.data[0].usermodificador]);
+          if (inspector.success && inspector.data) {
+            setInspector(inspector.data[0]);
+          }
+          if (usuarioModificador.success && usuarioModificador.data) {
+            setModificador(usuarioModificador.data[0]);
+          }
           setFicha(resultado.data[0]);
         } else {
           setError(resultado.error || 'Error al cargar la ficha');
@@ -124,12 +167,15 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
   const obtenerEstadoFicha = () => {
     if (!ficha) return { texto: "Cargando...", color: "gray" };
 
-    if (ficha.fichaaprobada === 1) {
-      return { texto: "Aprobada", color: "green" };
-    } else if (ficha.fichaaprobada === 0) {
-      return { texto: "Pendiente", color: "blue" };
-    } else {
-      return { texto: "Rechazada", color: "red" };
+    switch (ficha.estadoficha) {
+      case "P":
+        return { texto: "Parcial", color: "yellow" };
+      case "F":
+        return { texto: "Finalizado", color: "green" };
+      case "O":
+        return { texto: "Observado", color: "red" };
+      default:
+        return { texto: "Pendiente", color: "gray" };
     }
   };
 
@@ -139,6 +185,53 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
     } catch {
       return fecha;
     }
+  };
+
+  const handleVistaSupervision = async () => {
+    const nuevaVistaSupervision = !vistaSupervision;
+    setVistaSupervision(nuevaVistaSupervision);
+
+    if (nuevaVistaSupervision && ficha) {
+      const resultado = await buscarExacto("clientes", ["codcliente"], [ficha.codcliente.toString()]);
+      if (resultado.success && resultado.data) {
+        setCliente(resultado.data[0]);
+      }
+    }
+  }
+
+  const handleActualizarAtributos = (atributo: string, valor: string) => {
+    setAtributosActualizar({ ...atributosActualizar, [atributo]: valor });
+  }
+
+  const handleObservar = () => {
+    setShowObservarDialog(true);
+  }
+
+  const handleAprobar = () => {
+    setShowAprobarDialog(true);
+  }
+
+  const handleGuardar = () => {
+    setShowGuardarDialog(true);
+  }
+
+  const handleCancelar = () => {
+    setAtributosActualizar({});
+    // TODO: Implementar lógica para cancelar
+    console.log("Cancelar cambios");
+  }
+
+  // Funciones para cerrar los diálogos
+  const handleCloseObservarDialog = () => {
+    setShowObservarDialog(false);
+  };
+
+  const handleCloseAprobarDialog = () => {
+    setShowAprobarDialog(false);
+  };
+
+  const handleCloseGuardarDialog = () => {
+    setShowGuardarDialog(false);
   };
 
   if (loading) {
@@ -171,6 +264,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
 
   const estado = obtenerEstadoFicha();
   const ComponenteSeccion = SECCIONES.find(s => s.id === seccionActiva)?.componente;
+  const ComponenteSeccionSupervision = SECCIONES.find(s => s.id === seccionActiva)?.componenteSupervision;
 
   return (
     <div className="space-y-4">
@@ -187,27 +281,24 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
                   <Badge variant="outline" className={`text-${estado.color}-600 border-${estado.color}-200 text-xs`}>
                     {estado.texto}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {ficha.encuestador && `por ${ficha.encuestador}`}
-                  </span>
                 </div>
               </div>
             </div>
 
             {/* Información de fechas y acciones */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto">
+            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 justify-end">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-                <div className="text-left">
-                  <p className="text-xs text-muted-foreground">Encuestador</p>
-                  <p className="font-medium text-xs">{ficha.encuestador || "-"}</p>
+                <div className="text-left lg:max-w-[150px]">
+                  <p className="text-xs text-muted-foreground truncate">Encuestador</p>
+                  <p className="font-medium text-xs break-words">{inspector?.nombres || "-"}</p>
                 </div>
-                <div className="text-left">
-                  <p className="text-xs text-muted-foreground">Modificado</p>
-                  <p className="font-medium text-xs">{ficha.usermodificador || "-"}</p>
+                <div className="text-left lg:max-w-[150px]">
+                  <p className="text-xs text-muted-foreground truncate">Modificado</p>
+                  <p className="font-medium text-xs break-words">{modificador?.nombre + " " + modificador?.apellidopa + " " + modificador?.apellidoma || "-"}</p>
                 </div>
-                <div className="text-left sm:col-span-2 lg:col-span-1">
-                  <p className="text-xs text-muted-foreground">Finalización</p>
-                  <p className="font-medium text-xs">
+                <div className="text-left lg:max-w-[100px]">
+                  <p className="text-xs text-muted-foreground truncate">Finalización</p>
+                  <p className="font-medium text-xs break-words">
                     {ficha.fechaaprobacion ? formatearFecha(ficha.fechaaprobacion.toString()) : "-"}
                   </p>
                 </div>
@@ -270,6 +361,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
                 })()}
                 <h3 className="text-lg font-semibold">
                   {SECCIONES.find(s => s.id === seccionActiva)?.titulo}
+                  {vistaSupervision && <span className="text-xs text-muted-foreground"> (Ficha Catastral)</span>}
                 </h3>
               </div>
 
@@ -278,7 +370,7 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
                 <Button
                   variant={vistaSupervision ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setVistaSupervision(!vistaSupervision)}
+                  onClick={() => handleVistaSupervision()}
                   className="h-8 px-3"
                 >
                   <Eye className="w-3 h-3" />
@@ -291,37 +383,94 @@ export default function DetalleFichaView({ codFicha }: { codFicha: number }) {
             {ComponenteSeccion && (
               <ComponenteSeccion
                 ficha={ficha}
+                cliente={cliente}
                 vistaSupervision={vistaSupervision}
+                handleActualizarAtributos={handleActualizarAtributos}
               />
             )}
           </CardContent>
 
+          {/* Vista de supervisión */}
           {vistaSupervision && (
-            <>
-              <CardContent className="pt-4 dark:bg-gray-900 bg-gray-200 border-t border-gray-300">
-                {ComponenteSeccion && (
-                  <ComponenteSeccion
+            <div className="dark:bg-gray-900 bg-gray-200 border-t border-gray-300">
+              <CardHeader className="pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    {(() => {
+                      const Icono = SECCIONES.find(s => s.id === seccionActiva)?.icono || Home;
+                      return <Icono className="w-4 h-4" />;
+                    })()}
+                    <h3 className="text-lg font-semibold">
+                      {SECCIONES.find(s => s.id === seccionActiva)?.titulo} <span className="text-xs text-muted-foreground">(Padrón)</span>
+                    </h3>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                {ComponenteSeccionSupervision && (
+                  <ComponenteSeccionSupervision
                     ficha={ficha}
-                    vistaSupervision={vistaSupervision}
+                    cliente={cliente}
                   />
                 )}
               </CardContent>
-            </>
+            </div>
           )}
         </Card>
       </div>
 
       {/* Botones de acción */}
       <div className="flex flex-col sm:flex-row justify-end gap-2">
-        <Button variant="outline" size="sm" className="h-9">
-          <X className="w-3 h-3 mr-1" />
-          <span className="text-xs">Cancelar</span>
-        </Button>
-        <Button size="sm" className="h-9">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          <span className="text-xs">Guardar</span>
-        </Button>
+        {estado.texto === "Finalizado" ? (
+          // Botones para estado "F" (Finalizado)
+          <>
+            <Button variant="outline" size="sm" className="h-9" onClick={handleCancelar}>
+              <X className="w-3 h-3 mr-1" />
+              <span className="text-xs">Cancelar</span>
+            </Button>
+            <Button size="sm" className="h-9" onClick={handleGuardar}>
+              <CheckCircle className="w-3 h-3 mr-1" />
+              <span className="text-xs">Guardar cambios</span>
+            </Button>
+          </>
+        ) : (
+          // Botones para otros estados (Pendiente, Parcial, Observado)
+          <>
+            <Button variant="destructive" size="sm" className="h-9" onClick={handleObservar}>
+              <AlertCircle className="w-3 h-3 mr-1" />
+              <span className="text-xs">Observar</span>
+            </Button>
+            <Button variant="outline" size="sm" className="h-9 bg-green-500 hover:bg-green-400" onClick={handleAprobar}>
+              <CheckCircle className="w-3 h-3 mr-1" />
+              <span className="text-xs">Aprobar</span>
+            </Button>
+            <Button variant="default" color="red" size="sm" className="h-9" onClick={handleGuardar}>
+              <Save className="w-3 h-3 mr-1" />
+              <span className="text-xs">Guardar cambios</span>
+            </Button>
+          </>
+        )}
       </div>
+
+      {/* Diálogos de confirmación */}
+      <ObservarFichaDialog
+        isOpen={showObservarDialog}
+        onClose={handleCloseObservarDialog}
+        fichaId={ficha.idficha}
+      />
+
+      <AprobarFichaDialog
+        isOpen={showAprobarDialog}
+        onClose={handleCloseAprobarDialog}
+        fichaId={ficha.idficha}
+      />
+
+      <GuardarCambiosDialog
+        isOpen={showGuardarDialog}
+        onClose={handleCloseGuardarDialog}
+        fichaId={ficha.idficha}
+        atributosActualizar={atributosActualizar}
+      />
     </div>
   );
 }

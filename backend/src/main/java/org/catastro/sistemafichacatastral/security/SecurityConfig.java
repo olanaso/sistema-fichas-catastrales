@@ -44,8 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/configuracion/public/**").permitAll()
-                        .requestMatchers("/usuarios/**").permitAll()
-                        .requestMatchers("/ficha-catastral/**").permitAll()
+                        .requestMatchers("/ftp/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling

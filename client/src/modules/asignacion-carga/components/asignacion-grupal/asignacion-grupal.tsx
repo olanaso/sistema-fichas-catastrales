@@ -31,6 +31,8 @@ import {
   asignarFichasMasivo,
   getGruposTrabajo,
   getInspectoresByBrigada,
+  grabarProgramacion,
+  cancelarProgramacion,
   type AsignacionGrupalRequest,
   type FichaUpdateMasivoDto,
 } from "../../action/asignacion-carga.actions";
@@ -218,10 +220,17 @@ export function AsignacionGrupal({
   const handleGrabarProgramacion = async () => {
     try {
       setLoadingGrabar(true);
-      // TODO: Implementar acción de grabar programación en el backend
-      console.log("Grabando programación...");
-      toast.success("Programación grabada exitosamente");
-      onAsignacionCompleta();
+      
+      if (!user?.codusu) {
+        toast.error("Error: Usuario no autenticado");
+        return;
+      }
+
+      const response = await grabarProgramacion(user.codusu);
+      
+      if (response.success) {
+        onAsignacionCompleta();
+      }
     } catch (error) {
       console.error("Error al grabar programación:", error);
       toast.error("Error al grabar la programación");
@@ -233,10 +242,17 @@ export function AsignacionGrupal({
   const handleCancelarProgramacion = async () => {
     try {
       setLoadingCancelar(true);
-      // TODO: Implementar acción de cancelar programación en el backend
-      console.log("Cancelando programación...");
-      toast.success("Programación cancelada exitosamente");
-      onAsignacionCompleta();
+      
+      if (!user?.codusu) {
+        toast.error("Error: Usuario no autenticado");
+        return;
+      }
+
+      const response = await cancelarProgramacion(user.codusu);
+      
+      if (response.success) {
+        onAsignacionCompleta();
+      }
     } catch (error) {
       console.error("Error al cancelar programación:", error);
       toast.error("Error al cancelar la programación");
@@ -527,7 +543,7 @@ export function AsignacionGrupal({
                       <div>
                         <span className="font-medium text-gray-700 dark:text-gray-300">Inspector:</span>
                         <p className="text-gray-600 dark:text-gray-400 truncate">
-                          {grupo.codinspector}
+                          {inspectores.find(i => i.codinspector === grupo.codinspector)?.nombres}
                         </p>
                         <p className="text-gray-500">Cód: {grupo.codinspector}</p>
                       </div>

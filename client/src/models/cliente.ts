@@ -131,6 +131,31 @@ export interface Cliente {
     fecha_visita?: string;
     observaciones?: string;
     estado_asignacion?: string;
+
+    // Nuevas columnas agregadas
+    constru?: string;
+    piso?: number;
+    piscina?: string;
+    tiporeser?: string;
+    estadoservicio_a?: string;
+    diametro_a?: string;
+    tipomterial?: string;
+    materialc?: string;
+    loccaja_a?: string;
+    nro_medidor?: string;
+    fecha_inst?: string;
+    diametro_m?: string;
+    estadoservicio_d?: string;
+    diametro_d?: string;
+    tipomterial_d?: string;
+    caja_d?: string;
+    cant_uso?: number;
+    reprutrep?: number;
+    contipmul?: number;
+    contipult?: number;
+    prelocali?: number;
+    caltip?: string;
+    urbtip?: string;
 }
 
 export interface ClienteDto {
@@ -262,6 +287,31 @@ export interface ClienteDto {
     codbrigada?: string;
     fechaasignacion?: string;
     inspector?: string;
+
+    // Nuevas columnas agregadas
+    constru?: string;
+    piso?: number;
+    piscina?: string;
+    tiporeser?: string;
+    estadoservicio_a?: string;
+    diametro_a?: string;
+    tipomterial?: string;
+    materialc?: string;
+    loccaja_a?: string;
+    nro_medidor?: string;
+    fecha_inst?: string;
+    diametro_m?: string;
+    estadoservicio_d?: string;
+    diametro_d?: string;
+    tipomterial_d?: string;
+    caja_d?: string;
+    cant_uso?: number;
+    reprutrep?: number;
+    contipmul?: number;
+    contipult?: number;
+    prelocali?: number;
+    caltip?: string;
+    urbtip?: string;
 }
 
 // Request para crear/actualizar cliente
@@ -386,6 +436,31 @@ export interface ClienteRequest {
     codbrigada?: string;
     fechaasignacion?: string;
     inspector?: string;
+
+    // Nuevas columnas agregadas
+    constru?: string;
+    piso?: number;
+    piscina?: string;
+    tiporeser?: string;
+    estadoservicio_a?: string;
+    diametro_a?: string;
+    tipomterial?: string;
+    materialc?: string;
+    loccaja_a?: string;
+    nro_medidor?: string;
+    fecha_inst?: string;
+    diametro_m?: string;
+    estadoservicio_d?: string;
+    diametro_d?: string;
+    tipomterial_d?: string;
+    caja_d?: string;
+    cant_uso?: number;
+    reprutrep?: number;
+    contipmul?: number;
+    contipult?: number;
+    prelocali?: number;
+    caltip?: string;
+    urbtip?: string;
 }
 
 // Response de la API
