@@ -1,15 +1,16 @@
 import { useCallback, useState } from 'react';
 import { buscarExacto, getData } from '@/service/data.actions';
 
-interface DataMapperOptions {
-    dataAttributes: string[];      // Array de nombres de atributos de la data original
-    tableNames: string[];         // Array de nombres de tablas (tipos)
-    tableAttributes: string[];    // Array de atributos de las tablas para comparar
-    conditionalAttributes: { numeroTabla: number, atributo: string, valor: string }[];    // Array de atributos condicionales
+interface DataMapperTiposOptions {
+    dataAttribute: string;      // Nombre del atributo de la data original
+    tableName: string;         // Nombre de la tabla (tipos)
+    tableAttribute: string;    // Atributo de la tabla para comparar
+    tipocon: boolean;         // Si es true usa buscarExacto, si es false usa getData
+    valortipocon: string;     // Valor para tipo conexion (001 - agua / 002 - desague)
 }
 
-interface UseDataMapperReturn {
-    mapDataWithDescriptions: (data: any[], options: DataMapperOptions) => Promise<any[]>;
+interface UseDataMapperTiposReturn {
+    mapDataWithDescriptions: (data: any[], options: DataMapperTiposOptions[]) => Promise<any[]>;
     isLoading: boolean;
     error: string | null;
 }
@@ -17,18 +18,29 @@ interface UseDataMapperReturn {
 /**
  * Hook personalizado para mapear datos con descripciones de tablas de tipos
  * 
- * @returns {UseDataMappersReturn} Objeto con la función de mapeo y estados
+ * @returns {UseDataMapperTiposReturn} Objeto con la función de mapeo y estados
  * 
  * @example
- * const { mapDataWithDescriptions, isLoading, error } = useDataMapper();
+ * const { mapDataWithDescriptions, isLoading, error } = useDataMapperTipos();
  * 
- * const dataMapeada = await mapDataWithDescriptions(dataOriginal, {
- *   dataAttributes: ['tiposervicio', 'estadoservicio'],
- *   tableNames: ['tiposervicio', 'estadoservicio'],
- *   tableAttributes: ['codigo', 'codigo']
- * });
+ * const dataMapeada = await mapDataWithDescriptions(dataOriginal, [
+ *   {
+ *     dataAttribute: 'tiposervicio',
+ *     tableName: 'tiposervicio',
+ *     tableAttribute: 'codigo',
+ *     tipocon: false,
+ *     valortipocon: ''
+ *   },
+ *   {
+ *     dataAttribute: 'tipoaccesoriosconex_a',
+ *     tableName: 'tipoaccesoriosconex',
+ *     tableAttribute: 'codigo',
+ *     tipocon: true,
+ *     valortipocon: '001'
+ *   }
+ * ]);
  */
-export const useDataMapper = (): UseDataMapperReturn => {
+export const useDataMapperTipos = (): UseDataMapperTiposReturn => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -37,10 +49,8 @@ export const useDataMapper = (): UseDataMapperReturn => {
      */
     const mapDataWithDescriptions = useCallback(async (
         data: any[],
-        options: DataMapperOptions
+        options: DataMapperTiposOptions[]
     ): Promise<any[]> => {
-        const { dataAttributes, tableNames, tableAttributes, conditionalAttributes } = options;
-
         try {
             setIsLoading(true);
             setError(null);
@@ -50,38 +60,39 @@ export const useDataMapper = (): UseDataMapperReturn => {
                 throw new Error('Los datos deben ser un array no vacío');
             }
 
-            if (dataAttributes.length !== tableNames.length || tableNames.length !== tableAttributes.length) {
-                throw new Error('Los arrays dataAttributes, tableNames y tableAttributes deben tener la misma longitud');
+            if (!Array.isArray(options) || options.length === 0) {
+                throw new Error('Las opciones deben ser un array no vacío');
             }
 
-            const tableDataPromises = tableNames.map(async (tableName, index) => {
-                // Buscar si el índice actual está en conditionalAttributes
-                const conditionalAttr = conditionalAttributes.find(item => item.numeroTabla === index);
+            const tableDataPromises = options.map(async (option) => {
+                const { tableName, tipocon, valortipocon } = option;
 
-                return conditionalAttr
-                    ? await buscarExacto(tableName, [conditionalAttr.atributo], [conditionalAttr.valor])
-                    : await getData(tableName);
+                if (tipocon) {
+                    return await buscarExacto(tableName, ["tipocon"], [valortipocon]);
+                } else {
+                    return await getData(tableName);
+                }
             });
 
             const tableDataResults = await Promise.all(tableDataPromises);
 
             // Verificar que todas las consultas fueron exitosas
-            const failedRequests = tableDataResults.filter(result => !result.success);
+            const failedRequests = tableDataResults.filter((result: any) => !result.success);
             if (failedRequests.length > 0) {
-                const errorMessages = failedRequests.map(result => result.message).join(', ');
+                const errorMessages = failedRequests.map((result: any) => result.message).join(', ');
                 throw new Error(`Error al obtener datos de tablas: ${errorMessages}`);
             }
 
             // Crear un mapa de códigos a descripciones para cada tabla
-            const codeToDescriptionMaps = tableDataResults.map((result, index) => {
+            const codeToDescriptionMaps = tableDataResults.map((result: any, index: number) => {
                 const tableData = result.data;
-                const tableAttribute = tableAttributes[index];
+                const tableAttribute = options[index].tableAttribute;
 
                 const map = new Map();
 
                 tableData.forEach((item: any) => {
                     const code = item[tableAttribute];
-                    const description = item.descripcion;
+                    const description = item.descripcion || item.nombre;
 
                     if (code !== undefined && description !== undefined) {
                         map.set(code.toString(), description);
@@ -92,10 +103,11 @@ export const useDataMapper = (): UseDataMapperReturn => {
             });
 
             // Mapear los datos originales
-            const mappedData = data.map(item => {
+            const mappedData = data.map((item: any) => {
                 const mappedItem = { ...item };
 
-                dataAttributes.forEach((dataAttribute, index) => {
+                options.forEach((option, index) => {
+                    const { dataAttribute } = option;
                     const codeToDescriptionMap = codeToDescriptionMaps[index];
                     const originalValue = item[dataAttribute];
 
@@ -115,7 +127,7 @@ export const useDataMapper = (): UseDataMapperReturn => {
         } catch (err: any) {
             const errorMessage = err.message || 'Error desconocido al mapear datos';
             setError(errorMessage);
-            console.error('Error en useDataMapper:', err);
+            console.error('Error en useDataMapperTipos:', err);
             throw err;
         } finally {
             setIsLoading(false);
@@ -129,4 +141,4 @@ export const useDataMapper = (): UseDataMapperReturn => {
     };
 };
 
-export default useDataMapper; 
+export default useDataMapperTipos; 
