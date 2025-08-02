@@ -6,3 +6,27 @@ Pass: @2025@
 http://161.132.56.21/Views/Home.aspx
 Usuario:YURITH
 Pass: 123
+
+
+_______________BD_para_pruebas o testeo____________
+Host: 161.132.56.57
+Puerto: 8432
+Usuario: postgres
+Clave: SedaCusco$$2025...
+Database: pruebas_29_05_2025
+
+
+FTP : usuario : userFTP / clave : Cusco159753   , ip server: 161.132.56.57 PORT 21
+
+
+---------------SERVIDOR NUEVO ---------------
+
+skistema Operativo: Almalinux 9
+Dirección IP: 170.249.205.18
+Nombre de usuario administrador: root
+Contraseña de administrador: Lch8MkhNSWCC
+Puerto SSH: 22
+
+Usuario FTP: usuarioftp
+Contraseña: Abc4556Cccx
+Puerto 21

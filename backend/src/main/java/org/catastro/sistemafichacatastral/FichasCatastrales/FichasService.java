@@ -1,12 +1,22 @@
 package org.catastro.sistemafichacatastral.FichasCatastrales;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.opensagres.xdocreport.document.json.JSONArray;
+import fr.opensagres.xdocreport.document.json.JSONObject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
+import org.catastro.sistemafichacatastral.fichacatastral.FichaCatastro;
+import org.catastro.sistemafichacatastral.fichacatastral.FichaCatastroEpsUnidUso;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -48,5 +58,47 @@ public class FichasService {
             throw new RuntimeException("Error al buscar ficha catastral: " + e.getMessage(), e);
         }
     }
+
+    public FichaCatastro obtenerDataFichaCatastroJSON(Integer codcliente) {
+        try {
+            // Ejecutar procedimiento
+            Query query = entityManager.createNativeQuery(
+                    "SELECT fichacatastral.usp_ficha_catastral_json(?1)"
+            );
+            query.setParameter(1, codcliente);
+
+            Object result = query.getSingleResult();
+            if (result == null) {
+                throw new RuntimeException("No se encontró información para el cliente: " + codcliente);
+            }
+
+            // Crear JSONObject directamente del resultado
+            JSONObject jsonObject = new JSONObject(result.toString());
+
+            // Ejemplo de acceso directo con JSONObject
+            System.out.println("Región: " + jsonObject.optString("region", "N/D"));
+
+            if (jsonObject.has("list_fichacatastro_epsuniduso")) {
+                JSONArray listaJson = jsonObject.getJSONArray("list_fichacatastro_epsuniduso");
+                if (listaJson.length() > 0) {
+                    JSONObject item = listaJson.getJSONObject(0);
+                    System.out.println("Tarifa: " + item.optString("tarifa", "N/D"));
+                }
+            }
+
+            // Usar ObjectMapper con el JSONObject como fuente
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            FichaCatastro retorno = mapper.readValue(jsonObject.toString(), FichaCatastro.class);
+
+            return retorno;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar ficha catastral: " + e.getMessage(), e);
+        }
+    }
+
+
 
 }

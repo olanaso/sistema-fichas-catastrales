@@ -1,10 +1,24 @@
 package org.catastro.sistemafichacatastral.fichacatastral;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.images.ClassPathImageProvider;
+import fr.opensagres.xdocreport.document.images.IImageProvider;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
+import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import fr.opensagres.xdocreport.template.formatter.FieldsMetadata;
+import fr.opensagres.xdocreport.template.formatter.NullImageBehaviour;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import org.catastro.sistemafichacatastral.Project;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 @Service
 public class FichaCatastralService {
@@ -35,22 +49,6 @@ public class FichaCatastralService {
             return result != null ? result.toString() : "{\"total\":0,\"data\":[]}";
         } catch (Exception e) {
             throw new RuntimeException("Error al obtener JSON paginado con total: " + e.getMessage(), e);
-        }
-    }
-
-    public String buscarPorColumna(String tabla, String columna, String valor) {
-        try {
-            Query query = entityManager.createNativeQuery(
-                    "SELECT fichacatastral.usp_buscar_por_columna(?1, ?2, ?3)"
-            );
-            query.setParameter(1, tabla);
-            query.setParameter(2, columna);
-            query.setParameter(3, valor);
-
-            Object result = query.getSingleResult();
-            return result != null ? result.toString() : "[]";
-        } catch (Exception e) {
-            throw new RuntimeException("Error al buscar en la tabla: " + e.getMessage(), e);
         }
     }
 
